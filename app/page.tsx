@@ -43,24 +43,24 @@ export default function Home() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500"></span>
               AI-Powered Learning Platform
             </span>
-            <h1 className="bg-gradient-to-r from-[color:var(--text)] via-blue-600 to-indigo-600 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl lg:text-6xl">
+            <h1 className="bg-gradient-to-r from-[color:var(--text)] via-blue-600 to-indigo-600 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent sm:text-5xl lg:text-6xl">
               Turn any syllabus into a clearer study path.
             </h1>
-            <p className="mx-auto max-w-2xl text-base leading-8 text-[color:var(--muted)] sm:text-lg lg:mx-0">
+            <p className="mx-auto max-w-2xl text-sm leading-7 text-[color:var(--muted)] sm:text-base lg:mx-0">
               EduMethod AI helps students and teachers break down chapters into
               structured topics, estimate study times, and generate interactive,
               spaced-repetition study roadmaps instantly.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 lg:justify-start">
+            <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
               <Link
                 href="/upload"
-                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 hover:translate-y-[-1px] active:scale-95"
+                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 hover:translate-y-[-1px] active:scale-95"
               >
                 Analyze Your Syllabus
               </Link>
               <a
                 href="#features"
-                className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)]/50 px-8 py-4 font-bold text-[color:var(--text)] backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-[color:var(--surface)] hover:text-blue-600 active:scale-95"
+                className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)]/50 px-6 py-3.5 text-sm font-bold text-[color:var(--text)] backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-[color:var(--surface)] hover:text-blue-600 active:scale-95"
               >
                 Explore Features
               </a>
@@ -68,9 +68,9 @@ export default function Home() {
           </div>
 
           {/* Premium UI Mockup Preview */}
-          <div className="animate-float relative mx-auto w-full max-w-md lg:max-w-none">
+          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-blue-500 to-indigo-500 opacity-20 blur-xl dark:opacity-30"></div>
-            <div className="relative rounded-[2rem] border border-[color:var(--border)] bg-[color:var(--surface)]/80 p-6 shadow-2xl backdrop-blur-md dark:shadow-slate-950/40">
+            <div className="relative rounded-[2rem] border border-[color:var(--border)] bg-[color:var(--surface)]/85 p-6 shadow-2xl backdrop-blur-md dark:shadow-slate-950/40">
               
               {/* Window Controls */}
               <div className="mb-6 flex items-center justify-between border-b border-[color:var(--border)]/50 pb-4">
