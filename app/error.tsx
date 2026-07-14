@@ -38,7 +38,7 @@ export default function Error({
               Oops! Something went wrong
             </h1>
             <p className="mt-4 text-[color:var(--muted)]">
-              We encountered an unexpected error. Don't worry, our team has been
+              We encountered an unexpected error. Don&apos;t worry, our team has been
               notified.
             </p>
 

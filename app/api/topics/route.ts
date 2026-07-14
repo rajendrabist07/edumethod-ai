@@ -93,11 +93,12 @@ export async function POST(req: NextRequest) {
 
       // Step 8: Return result to frontend
       return NextResponse.json({ learningPathId: data.id, topics: validated.data.topics });
-    } catch (groqError: any) {
+    } catch (groqError) {
       console.error("Groq error:", groqError);
       
+      const err = groqError as { status?: number; message?: string };
       // Handle rate limiting
-      if (groqError?.status === 429 || groqError?.message?.includes("429")) {
+      if (err?.status === 429 || err?.message?.includes("429")) {
         return NextResponse.json(
           { error: "AI service is busy. Please try again in a moment." },
           { status: 429 }

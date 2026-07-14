@@ -95,6 +95,7 @@ export function ThemeToggle() {
         ? "dark"
         : "light");
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(preferredTheme);
     document.documentElement.classList.toggle(
       "dark",

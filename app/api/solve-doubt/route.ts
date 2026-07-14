@@ -59,11 +59,12 @@ export async function POST(req: NextRequest) {
           ],
         });
         aiResponseText = result.response.text() || "Unable to process the image. Please try again.";
-      } catch (geminiError: any) {
+      } catch (geminiError) {
         console.error("Gemini error:", geminiError);
         
+        const err = geminiError as { status?: number; message?: string };
         // Handle rate limiting (429)
-        if (geminiError?.status === 429 || geminiError?.message?.includes("429")) {
+        if (err?.status === 429 || err?.message?.includes("429")) {
           return NextResponse.json(
             { 
               error: "Image processing service is busy. Please try asking a text question or wait a moment." 
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
         }
         
         // Handle quota exceeded
-        if (geminiError?.message?.includes("quota") || geminiError?.message?.includes("Quota")) {
+        if (err?.message?.includes("quota") || err?.message?.includes("Quota")) {
           return NextResponse.json(
             { 
               error: "Image processing quota exceeded. Please use text-based questions for now." 
@@ -108,11 +109,12 @@ export async function POST(req: NextRequest) {
         });
 
         aiResponseText = completion.choices[0].message.content || "";
-      } catch (groqError: any) {
+      } catch (groqError) {
         console.error("Groq error:", groqError);
         
+        const err = groqError as { status?: number; message?: string };
         // Handle rate limiting
-        if (groqError?.status === 429 || groqError?.message?.includes("429")) {
+        if (err?.status === 429 || err?.message?.includes("429")) {
           return NextResponse.json(
             { error: "AI service is busy. Please try again in a moment." },
             { status: 429 }
