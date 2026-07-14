@@ -25,7 +25,7 @@ Complete step-by-step guide to deploy EduMethod AI to production on Vercel.
 
 ### Option A: Via GitHub Web Interface (Recommended)
 
-1. Go to [github.com/new](https://github.com/new)
+1. Go to [github.com/new](https://github.com/rajendrabist07)
 2. Fill in:
    - **Repository name**: `edumethod-ai`
    - **Description**: "AI-powered personalized learning platform"
@@ -78,7 +78,7 @@ Branch 'main' set up to track remote branch 'main' from 'origin'.
 
 ### 3.1 Connect GitHub to Vercel
 
-1. Go to [vercel.com/dashboard](https://vercel.com/dashboard)
+1. Go to [vercel.com/dashboard](https://edumethod-ai.vercel.app)
 2. Click **"Add New..."** → **"Project"**
 3. Click **"Continue with GitHub"** (login if needed)
 4. Authorize Vercel to access your GitHub account

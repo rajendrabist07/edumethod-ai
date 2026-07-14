@@ -91,7 +91,7 @@
 ### Installation
 
 ```bash
-git clone https://github.com/rajendrabist/edumethod-ai.git
+git clone https://github.com/rajendrabist07/edumethod-ai.git
 cd edumethod-ai
 npm install
 ```
@@ -195,7 +195,7 @@ git push origin main
 
 ### Step 2: Connect to Vercel
 
-1. Go to [vercel.com](https://vercel.com)
+1. Go to [vercel.com](https://vercel.com/rajendra-bists-projects)
 2. Click "Add New Project"
 3. Select your `edumethod-ai` repo
 4. Click "Import"
@@ -298,7 +298,7 @@ MIT License - use freely for projects.
 ## 👤 Developer
 
 **Rajendra Bist** - Full-Stack AI Engineer  
-[GitHub](https://github.com/rajendrabist) • Portfolio • Email
+[GitHub](https://github.com/rajendrabist07) • Portfolio • Email
 
 ---
 
