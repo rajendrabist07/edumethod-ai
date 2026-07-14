@@ -6,56 +6,51 @@ type BrandMarkProps = {
 export function BrandMark({ compact = false, className = "" }: BrandMarkProps) {
   return (
     <div className={`flex items-center gap-3 ${className}`.trim()}>
-      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 p-[1px] shadow-lg shadow-blue-500/20">
-        <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.45),_transparent_60%)]" />
+      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 p-[1.5px] shadow-lg shadow-blue-500/15 transition-transform duration-300 hover:scale-105">
+        <div className="absolute inset-0 rounded-xl bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.4),_transparent_55%)]" />
         <svg
           viewBox="0 0 64 64"
-          className="relative h-6 w-6 text-white"
+          className="relative h-5.5 w-5.5 text-white"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
         >
+          {/* Stylized Mortarboard Cap */}
           <path
-            d="M19 42.5V26.2c0-5.1 4.1-9.2 9.2-9.2h7.6c5.1 0 9.2 4.1 9.2 9.2v16.3"
+            d="M32 14L50 23L32 32L14 23L32 14Z"
+            stroke="currentColor"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Under-cap body indicating Structure/Method */}
+          <path
+            d="M20 26.5V38.5C20 44 25.4 48 32 48C38.6 48 44 44 44 38.5V26.5"
+            stroke="currentColor"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Tassel */}
+          <path
+            d="M45 24.5V34"
             stroke="currentColor"
             strokeWidth="3"
             strokeLinecap="round"
           />
-          <path
-            d="M24 42.5V33c0-4.4 3.6-8 8-8h0c4.4 0 8 3.6 8 8v9.5"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          <circle cx="32" cy="20" r="4" fill="currentColor" />
-          <path
-            d="M18 18l6-6"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          <path
-            d="M46 18l-6-6"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          <path
-            d="M20 48h24"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
+          <circle cx="45" cy="36" r="2.5" fill="currentColor" />
+          {/* Smart Nodes */}
+          <circle cx="32" cy="23" r="3" fill="currentColor" />
         </svg>
       </div>
 
       {!compact ? (
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+        <div className="flex flex-col justify-center">
+          <p className="text-sm font-black uppercase tracking-[0.25em] bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
             EduMethod AI
           </p>
-          <p className="text-xs text-[color:var(--muted)]">
-            AI-powered study planning
+          <p className="text-[10px] font-bold tracking-wide text-[color:var(--muted)]">
+            AI-POWERED COGNITION
           </p>
         </div>
       ) : null}
@@ -64,7 +59,7 @@ export function BrandMark({ compact = false, className = "" }: BrandMarkProps) {
 }
 
 export function FeatureIcon({ kind }: { kind: "spark" | "target" | "chart" }) {
-  const common = "h-6 w-6 text-blue-600";
+  const common = "h-5 w-5 text-blue-600 dark:text-blue-400 transition-transform duration-300 group-hover:scale-110";
 
   if (kind === "spark") {
     return (
@@ -75,16 +70,9 @@ export function FeatureIcon({ kind }: { kind: "spark" | "target" | "chart" }) {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M12 2l1.6 5.3L19 9l-5.4 1.7L12 16l-1.6-5.3L5 9l5.4-1.7L12 2Z"
+          d="M12 2L15 8L21 9.5L16.5 14.5L18 21L12 17.5L6 21L7.5 14.5L3 9.5L9 8L12 2Z"
           stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M18 15l.8 2.3L21 18l-2.2.7L18 21l-.8-2.3L15 18l2.2-.7L18 15Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -100,32 +88,9 @@ export function FeatureIcon({ kind }: { kind: "spark" | "target" | "chart" }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.7" />
-        <circle cx="12" cy="12" r="4" fill="currentColor" />
-        <path
-          d="M12 4V2"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-        />
-        <path
-          d="M12 22v-2"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-        />
-        <path
-          d="M4 12H2"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-        />
-        <path
-          d="M22 12h-2"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-        />
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+        <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="12" cy="12" r="1.5" fill="currentColor" />
       </svg>
     );
   }
@@ -138,28 +103,18 @@ export function FeatureIcon({ kind }: { kind: "spark" | "target" | "chart" }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M5 18V9"
+        d="M3 3V21H21"
         stroke="currentColor"
-        strokeWidth="1.7"
+        strokeWidth="2"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
-        d="M12 18V5"
+        d="M7 16L12 11L16 15L21 8"
         stroke="currentColor"
-        strokeWidth="1.7"
+        strokeWidth="2"
         strokeLinecap="round"
-      />
-      <path
-        d="M19 18v-6"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-      <path
-        d="M3 18h18"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
