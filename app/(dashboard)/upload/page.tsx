@@ -56,7 +56,16 @@ export default function UploadPage() {
         body: JSON.stringify({ subject, rawText }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("JSON parse error:", jsonErr);
+        const text = await res.text();
+        console.error("Response was not JSON:", text);
+        setError(`Server returned status ${res.status}. Check console for details.`);
+        return;
+      }
 
       if (!res.ok) {
         setError(data.error || "Something went wrong");
@@ -66,8 +75,9 @@ export default function UploadPage() {
       setTopics(data.topics);
       setLearningPathId(data.learningPathId);
       setPlan([]);
-    } catch {
-      setError("Network error, please try again");
+    } catch (err) {
+      console.error("Submit error:", err);
+      setError("Network error, please check connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -89,7 +99,16 @@ export default function UploadPage() {
         body: JSON.stringify({ learningPathId }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("JSON parse error in plan generation:", jsonErr);
+        const text = await res.text();
+        console.error("Plan generation response was not JSON:", text);
+        setError(`Server returned status ${res.status}. Check console for details.`);
+        return;
+      }
 
       if (!res.ok) {
         setError(data.error || "Failed to generate learning plan");
@@ -97,7 +116,8 @@ export default function UploadPage() {
       }
 
       setPlan(data.plan.days);
-    } catch {
+    } catch (err) {
+      console.error("Plan generation error:", err);
       setError("Network error while generating the plan");
     } finally {
       setGeneratingPlan(false);
@@ -106,22 +126,35 @@ export default function UploadPage() {
 
   async function handleGenerateQuiz() {
     setLoadingQuiz(true);
+    setError("");
     try {
       const res = await fetch("/api/generate-quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ learningPathId }),
       });
-      const data = await res.json();
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("JSON parse error in quiz generation:", jsonErr);
+        const text = await res.text();
+        console.error("Quiz generation response was not JSON:", text);
+        setError(`Server returned status ${res.status}. Check console for details.`);
+        return;
+      }
+
       if (res.ok) {
         setQuizId(data.quizId);
         setQuizQuestions(data.questions);
         setUserAnswers(new Array(data.questions.length).fill(-1));
         setQuizResult(null);
       } else {
-        setError(data.error);
+        setError(data.error || "Failed to create quiz");
       }
-    } catch {
+    } catch (err) {
+      console.error("Quiz generation error:", err);
       setError("Network error while creating the quiz");
     } finally {
       setLoadingQuiz(false);
