@@ -84,6 +84,7 @@ While Vercel builds, get your `.env.local` file and:
 Your live URL: **`https://edumethod-ai.vercel.app`**
 
 Share this with:
+
 - Your GitHub profile README
 - Portfolio website
 - Resume as portfolio project
