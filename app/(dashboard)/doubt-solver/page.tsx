@@ -479,9 +479,13 @@ export default function DoubtSolverPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/upload"
-              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-4.5 py-2 text-2xs font-extrabold text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 sm:text-xs"
+              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] p-2 sm:px-4.5 sm:py-2 text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
+              title="Back to study dashboard"
             >
-              Back to Study
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              <span className="hidden sm:inline text-xs font-bold">Back to Study</span>
             </Link>
             <ThemeToggle />
           </div>
@@ -534,26 +538,24 @@ export default function DoubtSolverPage() {
                       <div className="flex items-center gap-1.5 mt-1.5 px-1 text-[color:var(--muted)]">
                         <button
                           onClick={() => submitFeedback(i, "like")}
-                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-green-500 transition duration-150 active:scale-90 ${
+                          className={`p-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-green-500 transition duration-150 active:scale-90 ${
                             m.feedback === "like" ? "text-green-500 bg-green-500/10" : ""
                           }`}
-                          title="Helpful reply"
+                          title="Correct/Helpful explanation"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4 w-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25v.894c0 .556.278 1.04.684 1.399.947.837 1.502 1.987 1.502 3.257V11c0 .717-.075 1.417-.22 2.096-.24 1.127-1.127 1.904-2.227 1.904H15v1.5a3 3 0 0 1-3 3h-1.5a1 1 0 0 1-1-1v-2.5a2 2 0 0 0-2-2H6.633a.75.75 0 0 1-.75-.75V11a.75.75 0 0 1 .75-.75Z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10.25a2 2 0 1 1-4 0M19 10.25h1.5a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5H19" />
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </button>
                         <button
                           onClick={() => handleDislikeClick(i)}
-                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-red-500 transition duration-150 active:scale-90 ${
+                          className={`p-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-red-500 transition duration-150 active:scale-90 ${
                             m.feedback === "dislike" ? "text-red-500 bg-red-500/10" : ""
                           }`}
-                          title="Needs improvement"
+                          title="Incorrect/Bad explanation"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4 w-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.367 13.75c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672v-.894a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25v.894c0 .556.278 1.04.684 1.399.947.837 1.502 1.987 1.502 3.257V13c0 .717-.075 1.417-.22 2.096-.24 1.127-1.127 1.904-2.227 1.904H9v-1.5a3 3 0 0 1 3-3h1.5a1 1 0 0 1 1-1v2.5a2 2 0 0 0 2 2h2.883a.75.75 0 0 1 .75.75V13c0 .75-.336.75-.75.75Z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13.75a2 2 0 1 1 4 0M5 13.75H3.5a1.5 1.5 0 0 1-1.5-1.5v-3a1.5 1.5 0 0 1 1.5-1.5H5" />
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </button>
                         {m.feedback === "dislike" && (
@@ -580,43 +582,81 @@ export default function DoubtSolverPage() {
           <div ref={chatEndRef} />
         </div>
 
-        {/* 3. Floating Voice Conversation Mode overlay card */}
+        {/* 3. Full-Screen Voice Mode Overlay (Gemini / ChatGPT Style Morphing Blob) */}
         {voiceMode && (
-          <div className="absolute right-4 bottom-24 bg-[color:var(--surface)] border border-purple-500/30 rounded-2xl p-4 shadow-xl w-60 z-30 backdrop-blur-md animate-fade-in flex flex-col gap-3">
-            <div className="flex items-center justify-between border-b border-[color:var(--border)]/40 pb-2">
-              <span className="text-2xs font-bold text-purple-600 tracking-wide">🎙️ Voice Mode Active</span>
+          <div className="fixed inset-0 bg-slate-950/85 dark:bg-slate-950/90 backdrop-blur-2xl flex flex-col items-center justify-between p-6 sm:p-8 z-50 animate-fade-in text-white select-none">
+            
+            {/* Header */}
+            <div className="w-full flex items-center justify-between max-w-lg">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></span>
+                <span className="text-[10px] font-extrabold tracking-widest uppercase text-purple-400">Tutor Session Active</span>
+              </div>
               <button
                 onClick={toggleVoiceMode}
-                className="text-2xs text-red-500 font-bold active:scale-90"
+                className="p-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 active:scale-95 transition text-xs font-bold flex items-center gap-1.5"
               >
-                Close
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Exit Voice</span>
               </button>
             </div>
-            
-            {/* Visual soundwave animation */}
-            <div className="flex flex-col items-center justify-center py-4 text-center">
-              <div className="flex items-end gap-1 h-8 mb-3">
-                <span className={`w-1 rounded-full bg-purple-600 ${voiceState === 'listening' ? 'animate-pulse h-6' : voiceState === 'speaking' ? 'animate-bounce h-8' : 'h-2'}`}></span>
-                <span className={`w-1 rounded-full bg-purple-600 ${voiceState === 'listening' ? 'animate-pulse h-4' : voiceState === 'speaking' ? 'animate-bounce h-6' : 'h-2'}`} style={{ animationDelay: "100ms" }}></span>
-                <span className={`w-1 rounded-full bg-purple-600 ${voiceState === 'listening' ? 'animate-pulse h-7' : voiceState === 'speaking' ? 'animate-bounce h-7' : 'h-2'}`} style={{ animationDelay: "200ms" }}></span>
-                <span className={`w-1 rounded-full bg-purple-600 ${voiceState === 'listening' ? 'animate-pulse h-5' : voiceState === 'speaking' ? 'animate-bounce h-5' : 'h-2'}`} style={{ animationDelay: "300ms" }}></span>
-              </div>
-              <p className="text-3xs font-extrabold text-[color:var(--text)] uppercase tracking-widest">
+
+            {/* Glowing Liquid Morphing Orb */}
+            <div className="relative flex-1 flex flex-col items-center justify-center">
+              {/* Outer pulsing ring 1 */}
+              <div className={`absolute w-44 h-44 sm:w-60 sm:h-60 rounded-full bg-purple-500/10 blur-xl transition-transform duration-700 ${
+                voiceState === 'listening' ? 'scale-110 opacity-70' : voiceState === 'speaking' ? 'scale-125 opacity-80' : 'scale-90 opacity-40'
+              }`}></div>
+              
+              {/* Outer pulsing ring 2 */}
+              <div className={`absolute w-32 h-32 sm:w-44 sm:h-44 rounded-full bg-cyan-500/15 blur-lg transition-transform duration-500 delay-75 ${
+                voiceState === 'listening' ? 'scale-120 opacity-80' : voiceState === 'speaking' ? 'scale-130 opacity-90' : 'scale-95 opacity-30'
+              }`}></div>
+
+              {/* Central Morphing Liquid Blob */}
+              <button
+                type="button"
+                onClick={voiceState === 'idle' ? startVoiceListening : undefined}
+                className={`relative w-28 h-28 sm:w-40 sm:h-40 rounded-full transition-all duration-700 animate-morph-blob voice-orb-glow flex items-center justify-center outline-none ${
+                  voiceState === 'listening'
+                    ? 'bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500'
+                    : voiceState === 'speaking'
+                    ? 'bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 animate-pulse'
+                    : voiceState === 'thinking'
+                    ? 'bg-gradient-to-tr from-purple-500 via-indigo-600 to-pink-500 animate-spin-slow'
+                    : 'bg-gradient-to-tr from-slate-600 via-slate-500 to-slate-400 cursor-pointer active:scale-98 hover:scale-102'
+                }`}
+                title={voiceState === 'idle' ? "Tap to speak" : undefined}
+              >
+                {/* Visual mic/indicator icon inside center if idle */}
+                {voiceState === 'idle' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-8 w-8 text-white">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+                  </svg>
+                )}
+                {voiceState === 'listening' && (
+                  <span className="absolute h-3 w-3 rounded-full bg-white animate-ping"></span>
+                )}
+              </button>
+            </div>
+
+            {/* Footer Text status */}
+            <div className="w-full max-w-md text-center flex flex-col gap-2 pb-6">
+              <h3 className="text-sm font-black tracking-widest uppercase">
                 {voiceState === 'listening' && "🔴 Listening..."}
                 {voiceState === 'speaking' && "🔊 Speaking..."}
                 {voiceState === 'thinking' && "⚡ Thinking..."}
-                {voiceState === 'idle' && "💤 Tap microphone to talk"}
+                {voiceState === 'idle' && "💤 Connection Idle"}
+              </h3>
+              <p className="text-3xs text-white/60 max-w-xs mx-auto leading-relaxed">
+                {voiceState === 'listening' && "Speak clearly. The AI is listening to your question..."}
+                {voiceState === 'speaking' && "Tutor is talking. Turn up your volume..."}
+                {voiceState === 'thinking' && "Analyzing query context. Preparing step-by-step logic..."}
+                {voiceState === 'idle' && "Speak mode is waiting. Tap the orb above to talk again."}
               </p>
             </div>
-
-            {voiceState === 'idle' && (
-              <button
-                onClick={startVoiceListening}
-                className="w-full bg-purple-600 text-white text-2xs font-bold py-2 rounded-xl hover:bg-purple-700 active:scale-95"
-              >
-                🎙️ Speak Now
-              </button>
-            )}
           </div>
         )}
 
@@ -644,20 +684,20 @@ export default function DoubtSolverPage() {
             </div>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2">
             
             {/* Image attachment trigger */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className={`flex shrink-0 h-12 w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
+              className={`flex shrink-0 h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
                 imageFile 
                   ? "bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-950/65 dark:text-blue-300"
                   : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
               }`}
               title="Attach homework or syllabus image"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-5 w-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5 w-4.5 sm:h-5.5 sm:w-5.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
               </svg>
             </button>
@@ -667,14 +707,14 @@ export default function DoubtSolverPage() {
               <button
                 type="button"
                 onClick={toggleVoiceMode}
-                className={`flex shrink-0 h-12 w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
+                className={`flex shrink-0 h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
                   voiceMode 
                     ? "bg-purple-100 text-purple-700 border-purple-400 dark:bg-purple-950/65 dark:text-purple-300 animate-pulse"
                     : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
                 }`}
                 title="Speak live using voice conversation"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-5 w-5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5 w-4.5 sm:h-5.5 sm:w-5.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
                 </svg>
               </button>
@@ -685,8 +725,8 @@ export default function DoubtSolverPage() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={imageFile ? "Add details or a question about this image..." : "Ask your step-by-step doubt..."}
-              className="flex-1 border border-[color:var(--border)] rounded-xl px-4 py-3 text-xs sm:text-sm bg-[color:var(--surface-soft)]/50 text-[color:var(--text)] outline-none transition duration-200 focus:border-purple-500 focus:bg-[color:var(--surface)] focus:ring-4 focus:ring-purple-500/10"
+              placeholder={imageFile ? "Image details..." : "Ask your step-by-step doubt..."}
+              className="flex-1 border border-[color:var(--border)] rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-2xs sm:text-xs h-10 sm:h-12 bg-[color:var(--surface-soft)]/50 text-[color:var(--text)] outline-none transition duration-200 focus:border-purple-500 focus:bg-[color:var(--surface)] focus:ring-4 focus:ring-purple-500/10"
               onKeyDown={(e) =>
                 e.key === "Enter" && !loading && handleSend()
               }
@@ -696,9 +736,10 @@ export default function DoubtSolverPage() {
             <button
               onClick={() => handleSend()}
               disabled={loading}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl px-5 py-3 text-xs sm:text-sm font-bold shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition active:scale-95 shrink-0 flex items-center gap-1.5"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl h-10 w-10 sm:h-12 sm:w-auto p-0 sm:px-5 sm:py-3 font-bold shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
+              title="Send question"
             >
-              <span>Send</span>
+              <span className="hidden sm:inline text-xs font-bold">Send</span>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
               </svg>

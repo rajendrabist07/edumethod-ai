@@ -125,7 +125,7 @@ export function ThemeToggle() {
       aria-label="Toggle color theme"
     >
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-      <span>{theme === "dark" ? "Light" : "Dark"}</span>
+      <span className="hidden sm:inline">{theme === "dark" ? "Light" : "Dark"}</span>
     </button>
   );
 }

@@ -116,6 +116,45 @@ body {
   animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Organic Morphing Blob for AI Voice Mode (Gemini / ChatGPT style) */
+@keyframes morphBlob {
+  0%, 100% {
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    transform: scale(1);
+  }
+  30% {
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+    transform: scale(1.03) rotate(3deg);
+  }
+  60% {
+    border-radius: 30% 70% 60% 40% / 50% 60% 40% 50%;
+    transform: scale(0.97) rotate(-2deg);
+  }
+  80% {
+    border-radius: 65% 35% 50% 50% / 40% 60% 50% 50%;
+    transform: scale(1.01) rotate(1deg);
+  }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-morph-blob {
+  animation: morphBlob 8s ease-in-out infinite alternate;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
+
+.voice-orb-glow {
+  box-shadow: 0 0 60px 10px rgba(129, 140, 248, 0.4),
+              0 0 100px 30px rgba(236, 72, 153, 0.25),
+              inset 0 0 25px rgba(255, 255, 255, 0.3);
+}
+
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--text);
