@@ -416,7 +416,10 @@ export default function DoubtSolverPage() {
             onClick={handleNewChat}
             className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-purple-500/40 bg-purple-500/5 py-2.5 text-xs font-bold text-purple-600 hover:bg-purple-500/10 active:scale-98 transition duration-200"
           >
-            ➕ New Conversation
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-4 w-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            New Conversation
           </button>
         </div>
 
@@ -431,13 +434,16 @@ export default function DoubtSolverPage() {
               <button
                 key={s.id}
                 onClick={() => loadSession(s.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-2xs font-semibold truncate block transition duration-200 ${
+                className={`w-full flex items-center gap-2 text-left px-3 py-2.5 rounded-lg text-2xs font-semibold transition duration-200 ${
                   s.id === sessionId
                     ? "bg-purple-600/10 border border-purple-500/20 text-purple-700 dark:text-purple-300"
                     : "hover:bg-[color:var(--surface-soft)] text-[color:var(--muted)]"
                 }`}
               >
-                💬 {s.title}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-3.5 w-3.5 shrink-0 opacity-70">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025 10.386 10.386 0 0 1-2.164-3.13C2.662 14.302 2.25 13.181 2.25 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                </svg>
+                <span className="truncate">{s.title}</span>
               </button>
             ))
           )}
@@ -465,7 +471,7 @@ export default function DoubtSolverPage() {
               <span className="hidden sm:flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-red-500 text-xs font-bold text-white shadow-md">D</span>
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-purple-600">Doubt Solver</p>
-                <p className="text-[10px] text-[color:var(--muted)] font-semibold">ChatGPT/Claude Level</p>
+                <p className="text-[10px] text-[color:var(--muted)] font-bold uppercase tracking-wider">Active Cognition</p>
               </div>
             </div>
           </div>
@@ -490,10 +496,14 @@ export default function DoubtSolverPage() {
           )}
 
           {messages.length === 0 ? (
-            <div className="flex-grow flex flex-col items-center justify-center text-center p-8 text-[color:var(--muted)] my-auto">
-              <div className="mb-4 text-5xl animate-bounce">💬</div>
-              <h2 className="font-black text-base text-[color:var(--text)] mb-2">Ask Your Doubts</h2>
-              <p className="max-w-xs text-xs leading-5">Ask text questions, upload homework equations, or turn on the microphone to speak live like ChatGPT.</p>
+            <div className="flex-grow flex flex-col items-center justify-center text-center p-8 text-[color:var(--muted)] my-auto max-w-sm mx-auto">
+              <div className="mb-6 p-4.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" className="h-9 w-9">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21L12 18.75L15 21L14.188 15.904M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9s4.03-9 9-9s9 4.03 9 9zm-9-5.625a.375.375 0 100 .75a.375.375 0 000-.75zM12 9v4.5" />
+                </svg>
+              </div>
+              <h2 className="font-extrabold text-sm tracking-wide uppercase text-[color:var(--text)] mb-2">Ask Your Doubts</h2>
+              <p className="text-2xs font-semibold leading-relaxed">Submit homework equations, upload screenshots, or activate Voice mode to speak live with the tutor.</p>
             </div>
           ) : (
             <div className="space-y-6 flex-grow">
@@ -521,24 +531,36 @@ export default function DoubtSolverPage() {
 
                     {/* Thumbs up/down feedback tools under AI bubble */}
                     {!isUser && (
-                      <div className="flex items-center gap-2 mt-1.5 px-2 text-[10px] text-[color:var(--muted)]">
+                      <div className="flex items-center gap-1.5 mt-1.5 px-1 text-[color:var(--muted)]">
                         <button
                           onClick={() => submitFeedback(i, "like")}
-                          className={`hover:text-green-500 transition duration-150 active:scale-90 font-bold flex items-center gap-1 ${
-                            m.feedback === "like" ? "text-green-600 font-black" : ""
+                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-green-500 transition duration-150 active:scale-90 ${
+                            m.feedback === "like" ? "text-green-500 bg-green-500/10" : ""
                           }`}
+                          title="Helpful reply"
                         >
-                          👍 Like
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4 w-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25v.894c0 .556.278 1.04.684 1.399.947.837 1.502 1.987 1.502 3.257V11c0 .717-.075 1.417-.22 2.096-.24 1.127-1.127 1.904-2.227 1.904H15v1.5a3 3 0 0 1-3 3h-1.5a1 1 0 0 1-1-1v-2.5a2 2 0 0 0-2-2H6.633a.75.75 0 0 1-.75-.75V11a.75.75 0 0 1 .75-.75Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10.25a2 2 0 1 1-4 0M19 10.25h1.5a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5H19" />
+                          </svg>
                         </button>
-                        <span className="text-[color:var(--border)]">|</span>
                         <button
                           onClick={() => handleDislikeClick(i)}
-                          className={`hover:text-red-500 transition duration-150 active:scale-90 font-bold flex items-center gap-1 ${
-                            m.feedback === "dislike" ? "text-red-600 font-black" : ""
+                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-red-500 transition duration-150 active:scale-90 ${
+                            m.feedback === "dislike" ? "text-red-500 bg-red-500/10" : ""
                           }`}
+                          title="Needs improvement"
                         >
-                          👎 Dislike {m.feedbackText && "• feedback saved"}
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4 w-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.367 13.75c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672v-.894a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25v.894c0 .556.278 1.04.684 1.399.947.837 1.502 1.987 1.502 3.257V13c0 .717-.075 1.417-.22 2.096-.24 1.127-1.127 1.904-2.227 1.904H9v-1.5a3 3 0 0 1 3-3h1.5a1 1 0 0 1 1-1v2.5a2 2 0 0 0 2 2h2.883a.75.75 0 0 1 .75.75V13c0 .75-.336.75-.75.75Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13.75a2 2 0 1 1 4 0M5 13.75H3.5a1.5 1.5 0 0 1-1.5-1.5v-3a1.5 1.5 0 0 1 1.5-1.5H5" />
+                          </svg>
                         </button>
+                        {m.feedback === "dislike" && (
+                          <span className="text-[10px] text-purple-600 dark:text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold ml-1">
+                            Feedback saved
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -633,11 +655,10 @@ export default function DoubtSolverPage() {
                   ? "bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-950/65 dark:text-blue-300"
                   : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
               }`}
-              title="Attach homework/syllabus screenshot"
+              title="Attach homework or syllabus image"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-5.5 w-5.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-5 w-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
               </svg>
             </button>
 
@@ -651,9 +672,9 @@ export default function DoubtSolverPage() {
                     ? "bg-purple-100 text-purple-700 border-purple-400 dark:bg-purple-950/65 dark:text-purple-300 animate-pulse"
                     : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
                 }`}
-                title="Speak live like ChatGPT"
+                title="Speak live using voice conversation"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-5.5 w-5.5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-5 w-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
                 </svg>
               </button>
@@ -675,9 +696,12 @@ export default function DoubtSolverPage() {
             <button
               onClick={() => handleSend()}
               disabled={loading}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl px-5 py-3 text-xs sm:text-sm font-bold shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition active:scale-95 shrink-0"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl px-5 py-3 text-xs sm:text-sm font-bold shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition active:scale-95 shrink-0 flex items-center gap-1.5"
             >
-              Send
+              <span>Send</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              </svg>
             </button>
           </div>
         </div>
