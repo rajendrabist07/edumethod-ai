@@ -1,13 +1,24 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Gradient background -->
+  <!-- Gradient background with rounded border-radius -->
   <rect width="256" height="256" rx="64" fill="url(#bg-gradient)"/>
   
-  <!-- Subtle lighting glow inside -->
-  <circle cx="128" cy="64" r="96" fill="white" fill-opacity="0.04" filter="blur(32px)"/>
+  <!-- Outer Neon Glowing Ring -->
+  <rect x="8" y="8" width="240" height="240" rx="56" stroke="url(#accent-gradient)" stroke-width="2" stroke-opacity="0.2"/>
+  <rect x="12" y="12" width="232" height="232" rx="52" stroke="url(#accent-gradient)" stroke-width="6" stroke-opacity="0.08" filter="blur(4px)"/>
 
-  <!-- Mortgage cap shape matching the new BrandMark -->
-  <g transform="translate(32, 32) scale(3)">
-    <!-- Cap Diamond -->
+  <!-- High-end glowing center blur -->
+  <circle cx="128" cy="128" r="80" fill="url(#glow-gradient)" opacity="0.15" filter="blur(24px)"/>
+
+  <!-- Main Cap Graphics -->
+  <g transform="translate(32, 28) scale(3)">
+    <!-- stylized mortarboard diamond shadow -->
+    <path
+      d="M32 14L50 23L32 32L14 23L32 14Z"
+      fill="#030712"
+      fill-opacity="0.3"
+    />
+    
+    <!-- Cap Diamond with thick glowing gradient -->
     <path
       d="M32 14L50 23L32 32L14 23L32 14Z"
       stroke="url(#accent-gradient)"
@@ -15,7 +26,8 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     />
-    <!-- Cap base -->
+    
+    <!-- Cap Base mapping -->
     <path
       d="M20 26.5V38.5C20 44 25.4 48 32 48C38.6 48 44 44 44 38.5V26.5"
       stroke="url(#accent-gradient)"
@@ -23,30 +35,50 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     />
-    <!-- Tassel -->
+    
+    <!-- Tassel string and dot -->
     <path
       d="M45 24.5V34"
-      stroke="#F8FAFC"
-      stroke-width="3"
+      stroke="#F9FAFb"
+      stroke-width="3.5"
       stroke-linecap="round"
     />
-    <circle cx="45" cy="36" r="2.5" fill="#F8FAFC" />
-    <!-- Smart center node -->
-    <circle cx="32" cy="23" r="3" fill="#F8FAFC" />
+    <circle cx="45" cy="36.5" r="2.5" fill="#F9FAFb" />
+    
+    <!-- AI Spark Center Node -->
+    <circle cx="32" cy="23" r="3.5" fill="#ffffff" filter="url(#glow-filter)"/>
+    <circle cx="32" cy="23" r="2.5" fill="url(#accent-gradient)"/>
+    
+    <!-- Spark Nodes -->
+    <path d="M32 8v3M32 33v3M17 23h3M44 23h3" stroke="#F9FAFb" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
   </g>
 
   <defs>
     <!-- Background Gradient -->
     <linearGradient id="bg-gradient" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#030712"/>
-      <stop offset="1" stop-color="#0F172A"/>
+      <stop stop-color="#020617"/>
+      <stop offset="0.5" stop-color="#070a13"/>
+      <stop offset="1" stop-color="#0f172a"/>
     </linearGradient>
 
-    <!-- Accent Gradient matching the main logo -->
+    <!-- Accent Gradient -->
     <linearGradient id="accent-gradient" x1="14" y1="14" x2="50" y2="48" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3B82F6"/>
-      <stop offset="0.5" stop-color="#6366F1"/>
-      <stop offset="1" stop-color="#8B5CF6"/>
+      <stop stop-color="#3b82f6"/>
+      <stop offset="0.4" stop-color="#6366f1"/>
+      <stop offset="0.7" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#ec4899"/>
     </linearGradient>
+
+    <!-- Center Glow -->
+    <radialGradient id="glow-gradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+
+    <!-- Filter for glowing AI spark node -->
+    <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
   </defs>
 </svg>

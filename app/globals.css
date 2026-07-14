@@ -66,8 +66,8 @@ body {
 
 /* Scrollbar styles */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -94,8 +94,8 @@ body {
   background-image: 
     radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
     radial-gradient(circle at 0% 100%, rgba(124, 58, 237, 0.08) 0%, transparent 40%),
-    linear-gradient(rgba(37, 99, 235, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37, 99, 235, 0.015) 1px, transparent 1px);
+    linear-gradient(rgba(37, 99, 235, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.012) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
 }
 
@@ -110,12 +110,17 @@ body {
 /* Keyframe animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-float {
@@ -124,6 +129,10 @@ body {
 
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @theme inline {
