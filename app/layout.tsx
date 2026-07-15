@@ -5,10 +5,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "EduMethod AI",
   description: "Learn any subject 70% faster with AI-powered methodology",
-  icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/favicon.svg" }],
-  },
 };
 
 export default function RootLayout({

@@ -1,6 +1,10 @@
 import Link from "next/link";
-import { BrandMark, FeatureIcon } from "./components/brand-mark";
+import { BrandMark } from "./components/brand-mark";
 import { ThemeToggle } from "./components/theme-toggle";
+import { DocumentPasteIcon } from "@/components/icons/DocumentPasteIcon";
+import { QuizTargetIcon } from "@/components/icons/QuizTargetIcon";
+import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
+import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 
 const features = [
   {
@@ -23,7 +27,7 @@ export default function Home() {
       <section className="mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         
         {/* Navigation Header */}
-        <header className="mb-12 flex items-center justify-between rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)]/70 px-6 py-4 shadow-lg shadow-blue-500/5 backdrop-blur-md transition-all duration-300 hover:border-blue-500/30">
+        <header className="glass-card mb-12 flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300 hover:border-blue-500/30">
           <BrandMark />
           <div className="flex items-center gap-4">
             <Link
@@ -51,16 +55,16 @@ export default function Home() {
               structured topics, estimate study times, and generate interactive,
               spaced-repetition study roadmaps instantly.
             </p>
-            <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 lg:justify-start w-full sm:w-auto">
               <Link
                 href="/upload"
-                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 hover:translate-y-[-1px] active:scale-95"
+                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 hover:translate-y-[-1px] active:scale-95 text-center min-h-[44px] flex items-center justify-center"
               >
                 Analyze Your Syllabus
               </Link>
               <a
                 href="#features"
-                className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)]/50 px-6 py-3.5 text-sm font-bold text-[color:var(--text)] backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-[color:var(--surface)] hover:text-blue-600 active:scale-95"
+                className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)]/50 px-6 py-3.5 text-sm font-bold text-[color:var(--text)] backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-[color:var(--surface)] hover:text-blue-600 active:scale-95 text-center min-h-[44px] flex items-center justify-center"
               >
                 Explore Features
               </a>
@@ -70,7 +74,7 @@ export default function Home() {
           {/* Premium UI Mockup Preview */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-blue-500 to-indigo-500 opacity-20 blur-xl dark:opacity-30"></div>
-            <div className="relative rounded-[2rem] border border-[color:var(--border)] bg-[color:var(--surface)]/85 p-6 shadow-2xl backdrop-blur-md dark:shadow-slate-950/40">
+            <div className="glass-card relative rounded-[2rem] p-6 shadow-2xl dark:shadow-slate-950/40">
               
               {/* Window Controls */}
               <div className="mb-6 flex items-center justify-between border-b border-[color:var(--border)]/50 pb-4">
@@ -92,7 +96,7 @@ export default function Home() {
                     <p className="text-lg font-bold text-[color:var(--text)]">Quantum Physics</p>
                   </div>
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md">
-                    <FeatureIcon kind="spark" />
+                    <ChatSparkIcon size={18} />
                   </div>
                 </div>
 
@@ -128,15 +132,15 @@ export default function Home() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="glow-hover rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)]/50 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-blue-500/20 hover:bg-[color:var(--surface)]"
+              className="glass-card glass-card-hover rounded-2xl p-6"
             >
               <div className="mb-4 inline-flex rounded-xl bg-blue-50 p-3 text-blue-600 dark:bg-blue-950/40">
                 {feature.title.includes("Extraction") ? (
-                  <FeatureIcon kind="spark" />
+                  <DocumentPasteIcon size={20} />
                 ) : feature.title.includes("Difficulty") ? (
-                  <FeatureIcon kind="target" />
+                  <QuizTargetIcon size={20} />
                 ) : (
-                  <FeatureIcon kind="chart" />
+                  <PathProgressIcon size={20} />
                 )}
               </div>
               <h2 className="text-base font-bold text-[color:var(--text)] sm:text-lg">

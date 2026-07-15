@@ -3,6 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "../../components/theme-toggle";
+import { BrandMark } from "../../components/brand-mark";
+import { Logo } from "@/components/ui/Logo";
+import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
+import { CameraScanIcon } from "@/components/icons/CameraScanIcon";
+import { SpacedRepetitionIcon } from "@/components/icons/SpacedRepetitionIcon";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -393,13 +398,13 @@ export default function DoubtSolverPage() {
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-0"
-        } shrink-0 bg-[color:var(--surface)] border-r border-[color:var(--border)]/70 transition-all duration-300 overflow-hidden flex flex-col h-screen z-20 md:relative fixed inset-y-0 left-0 md:translate-x-0 ${
+        } shrink-0 bg-[color:var(--surface)]/90 backdrop-blur-xl border-r border-[color:var(--border)]/40 transition-all duration-300 overflow-hidden flex flex-col h-screen z-20 md:relative fixed inset-y-0 left-0 md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
         <div className="p-4 border-b border-[color:var(--border)]/40 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs font-bold shadow-md">D</span>
+            <Logo size={20} />
             <span className="font-extrabold text-xs tracking-wider uppercase text-purple-600">History</span>
           </div>
           <button
@@ -454,7 +459,7 @@ export default function DoubtSolverPage() {
       <div className="flex-1 flex flex-col h-screen min-w-0 relative">
         
         {/* Navigation Header */}
-        <header className="flex shrink-0 items-center justify-between border-b border-[color:var(--border)]/35 bg-[color:var(--surface)]/70 px-4 py-3.5 shadow-sm backdrop-blur-md z-10 sm:px-6">
+        <header className="glass-card flex shrink-0 items-center justify-between px-4 py-3.5 shadow-sm z-10 sm:px-6">
           <div className="flex items-center gap-3">
             {/* Sidebar toggle */}
             <button
@@ -468,7 +473,7 @@ export default function DoubtSolverPage() {
             </button>
             
             <div className="flex items-center gap-2">
-              <span className="hidden sm:flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-red-500 text-xs font-bold text-white shadow-md">D</span>
+              <Logo size={26} />
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-purple-600">Doubt Solver</p>
                 <p className="text-[10px] text-[color:var(--muted)] font-bold uppercase tracking-wider">Active Cognition</p>
@@ -501,10 +506,8 @@ export default function DoubtSolverPage() {
 
           {messages.length === 0 ? (
             <div className="flex-grow flex flex-col items-center justify-center text-center p-8 text-[color:var(--muted)] my-auto max-w-sm mx-auto">
-              <div className="mb-6 p-4.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" className="h-9 w-9">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21L12 18.75L15 21L14.188 15.904M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9s4.03-9 9-9s9 4.03 9 9zm-9-5.625a.375.375 0 100 .75a.375.375 0 000-.75zM12 9v4.5" />
-                </svg>
+              <div className="mb-6 p-4.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 animate-pulse animate-duration-1000">
+                <ChatSparkIcon size={36} />
               </div>
               <h2 className="font-extrabold text-sm tracking-wide uppercase text-[color:var(--text)] mb-2">Ask Your Doubts</h2>
               <p className="text-2xs font-semibold leading-relaxed">Submit homework equations, upload screenshots, or activate Voice mode to speak live with the tutor.</p>
@@ -527,7 +530,7 @@ export default function DoubtSolverPage() {
                       className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed whitespace-pre-wrap shadow-sm transition-all duration-300 ${
                         isUser
                           ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-none shadow-blue-500/5"
-                          : "bg-[color:var(--surface)] text-[color:var(--text)] border border-[color:var(--border)]/70 rounded-tl-none"
+                          : "glass-card text-[color:var(--text)] rounded-tl-none"
                       }`}
                     >
                       {m.content}
@@ -568,6 +571,20 @@ export default function DoubtSolverPage() {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Real-time Waiting for response state */}
+          {loading && messages.length > 0 && messages[messages.length - 1].role === "user" && (
+            <div className="self-start flex flex-col items-start max-w-[85%] sm:max-w-[80%] shrink-0 animate-pulse">
+              <span className="text-[9px] font-black uppercase tracking-wider text-[color:var(--muted)] mb-1 px-1">
+                AI Tutor
+              </span>
+              <div className="glass-card p-4 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-purple-500 animate-bounce [animation-delay:0s]"></span>
+                <span className="h-2 w-2 rounded-full bg-purple-500 animate-bounce [animation-delay:0.2s]"></span>
+                <span className="h-2 w-2 rounded-full bg-purple-500 animate-bounce [animation-delay:0.4s]"></span>
+              </div>
             </div>
           )}
 
@@ -661,7 +678,7 @@ export default function DoubtSolverPage() {
         )}
 
         {/* Input box pinned to bottom */}
-        <div className="shrink-0 p-4 bg-[color:var(--surface)]/50 border-t border-[color:var(--border)]/35 backdrop-blur-md flex flex-col gap-3">
+        <div className="shrink-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-[color:var(--surface)]/50 border-t border-[color:var(--border)]/35 backdrop-blur-md flex flex-col gap-3">
           
           <input
             type="file"
@@ -690,16 +707,14 @@ export default function DoubtSolverPage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className={`flex shrink-0 h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
+              className={`flex shrink-0 h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
                 imageFile 
                   ? "bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-950/65 dark:text-blue-300"
                   : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
               }`}
               title="Attach homework or syllabus image"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5 w-4.5 sm:h-5.5 sm:w-5.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-              </svg>
+              <CameraScanIcon size={18} />
             </button>
 
             {/* Voice Conversation Activation microphone trigger */}
@@ -707,7 +722,7 @@ export default function DoubtSolverPage() {
               <button
                 type="button"
                 onClick={toggleVoiceMode}
-                className={`flex shrink-0 h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
+                className={`flex shrink-0 h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
                   voiceMode 
                     ? "bg-purple-100 text-purple-700 border-purple-400 dark:bg-purple-950/65 dark:text-purple-300 animate-pulse"
                     : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
@@ -726,7 +741,7 @@ export default function DoubtSolverPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={imageFile ? "Image details..." : "Ask your step-by-step doubt..."}
-              className="flex-1 border border-[color:var(--border)] rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-2xs sm:text-xs h-10 sm:h-12 bg-[color:var(--surface-soft)]/50 text-[color:var(--text)] outline-none transition duration-200 focus:border-purple-500 focus:bg-[color:var(--surface)] focus:ring-4 focus:ring-purple-500/10"
+              className="flex-1 border border-[color:var(--border)] rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-2xs sm:text-xs h-11 sm:h-12 bg-[color:var(--surface-soft)]/50 text-[color:var(--text)] outline-none transition duration-200 focus:border-purple-500 focus:bg-[color:var(--surface)] focus:ring-4 focus:ring-purple-500/10"
               onKeyDown={(e) =>
                 e.key === "Enter" && !loading && handleSend()
               }
@@ -736,7 +751,7 @@ export default function DoubtSolverPage() {
             <button
               onClick={() => handleSend()}
               disabled={loading}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl h-10 w-10 sm:h-12 sm:w-auto p-0 sm:px-5 sm:py-3 font-bold shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl h-11 w-11 sm:h-12 sm:w-auto p-0 sm:px-5 sm:py-3 font-bold shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
               title="Send question"
             >
               <span className="hidden sm:inline text-xs font-bold">Send</span>
@@ -752,7 +767,7 @@ export default function DoubtSolverPage() {
       {/* 4. Feedback Modal Dialog Popup */}
       {feedbackModalOpen && (
         <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
-          <div className="bg-[color:var(--surface)] border border-[color:var(--border)] rounded-2xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-4">
+          <div className="glass-card rounded-2xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-4">
             <div>
               <h3 className="font-extrabold text-sm text-[color:var(--text)]">Provide Feedback</h3>
               <p className="text-[10px] text-[color:var(--muted)] mt-1">Help improve the AI tutor. Tell us what could be improved about this explanation.</p>

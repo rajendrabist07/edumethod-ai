@@ -4,11 +4,14 @@
   color-scheme: light;
   --bg: #f8fafc;
   --surface: #ffffff;
+  --surface-rgb: 255, 255, 255;
   --surface-soft: #f1f5f9;
   --text: #0f172a;
   --muted: #475569;
   --border: #e2e8f0;
+  --border-rgb: 226, 232, 240;
   --accent: #2563eb;
+  --accent-rgb: 37, 99, 235;
   --accent-strong: #1d4ed8;
   --glow-color: rgba(37, 99, 235, 0.08);
 }
@@ -17,11 +20,14 @@ html.dark {
   color-scheme: dark;
   --bg: #090d16;
   --surface: #0e1320;
+  --surface-rgb: 14, 19, 32;
   --surface-soft: #151c2e;
   --text: #f8fafc;
   --muted: #94a3b8;
   --border: #1e293b;
+  --border-rgb: 30, 41, 59;
   --accent: #3b82f6;
+  --accent-rgb: 59, 130, 246;
   --accent-strong: #60a5fa;
   --glow-color: rgba(59, 130, 246, 0.12);
 }
@@ -48,10 +54,27 @@ body {
 
 /* Glassmorphism panel styling */
 .glass-panel {
-  background: rgba(var(--surface), 0.7);
+  background: rgba(var(--surface-rgb), 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(var(--border), 0.5);
+  border: 1px solid rgba(var(--border-rgb), 0.5);
+}
+
+/* Premium Liquid Glass Card styling */
+.glass-card {
+  background: rgba(var(--surface-rgb), 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(var(--border-rgb), 0.45);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  background: rgba(var(--surface-rgb), 0.75);
+  border-color: rgba(var(--accent-rgb), 0.25);
+  box-shadow: 0 12px 40px 0 var(--glow-color);
+  transform: translateY(-2px);
 }
 
 /* Glow effects */

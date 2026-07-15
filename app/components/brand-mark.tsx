@@ -1,3 +1,5 @@
+import { Logo } from "@/components/ui/Logo";
+
 type BrandMarkProps = {
   compact?: boolean;
   className?: string;
@@ -8,40 +10,7 @@ export function BrandMark({ compact = false, className = "" }: BrandMarkProps) {
     <div className={`flex items-center gap-3 ${className}`.trim()}>
       <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 p-[1.5px] shadow-lg shadow-blue-500/15 transition-transform duration-300 hover:scale-105">
         <div className="absolute inset-0 rounded-xl bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.4),_transparent_55%)]" />
-        <svg
-          viewBox="0 0 64 64"
-          className="relative h-5.5 w-5.5 text-white"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          {/* Stylized Mortarboard Cap */}
-          <path
-            d="M32 14L50 23L32 32L14 23L32 14Z"
-            stroke="currentColor"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          {/* Under-cap body indicating Structure/Method */}
-          <path
-            d="M20 26.5V38.5C20 44 25.4 48 32 48C38.6 48 44 44 44 38.5V26.5"
-            stroke="currentColor"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          {/* Tassel */}
-          <path
-            d="M45 24.5V34"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          <circle cx="45" cy="36" r="2.5" fill="currentColor" />
-          {/* Smart Nodes */}
-          <circle cx="32" cy="23" r="3" fill="currentColor" />
-        </svg>
+        <Logo size={22} className="relative text-white" colored={false} />
       </div>
 
       {!compact ? (

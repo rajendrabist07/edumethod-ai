@@ -3,6 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "../../components/theme-toggle";
+import { BrandMark } from "../../components/brand-mark";
+import { DocumentPasteIcon } from "@/components/icons/DocumentPasteIcon";
+import { QuizTargetIcon } from "@/components/icons/QuizTargetIcon";
+import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
+import { SpacedRepetitionIcon } from "@/components/icons/SpacedRepetitionIcon";
+import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
+import { CameraScanIcon } from "@/components/icons/CameraScanIcon";
+import { LoadingPulse } from "@/components/ui/LoadingPulse";
 
 interface Topic {
   name: string;
@@ -22,6 +30,48 @@ interface QuizQuestion {
   question: string;
   options: string[];
   topic: string;
+}
+
+function TopicsSkeleton() {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 animate-pulse mt-4">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="glass-card rounded-2xl p-4 shadow-sm opacity-60">
+          <div className="flex items-start justify-between gap-2">
+            <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-2/3"></div>
+            <div className="h-4.5 bg-slate-300 dark:bg-slate-700 rounded-full w-12"></div>
+          </div>
+          <div className="mt-4 h-3 bg-slate-300 dark:bg-slate-700 rounded w-1/2"></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TimelineSkeleton() {
+  return (
+    <div className="relative pl-6 border-l-2 border-blue-500/10 space-y-6 animate-pulse mt-4">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="relative opacity-65">
+          {/* Timeline Dot */}
+          <div className="absolute -left-[31px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700">
+            <div className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+          </div>
+          <div className="glass-card rounded-2xl p-5">
+            <div className="flex items-center justify-between border-b border-[color:var(--border)]/30 pb-2 mb-2.5">
+              <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-16"></div>
+              <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-20"></div>
+            </div>
+            <div className="space-y-2 mt-3">
+              <div className="h-3 bg-slate-300 dark:bg-slate-700 rounded w-5/6"></div>
+              <div className="h-3 bg-slate-300 dark:bg-slate-700 rounded w-3/4"></div>
+              <div className="h-8 bg-slate-200/50 dark:bg-slate-800/40 rounded-xl mt-3"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function UploadPage() {
@@ -190,20 +240,8 @@ export default function UploadPage() {
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         
         {/* Header Bar */}
-        <header className="flex items-center justify-between rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)]/70 px-6 py-4 shadow-lg shadow-blue-500/5 backdrop-blur-md transition-all duration-300">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-lg font-bold text-white shadow-md">
-              E
-            </div>
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-                EduMethod AI
-              </p>
-              <p className="text-[10px] font-medium text-[color:var(--muted)]">
-                AI Study Roadmaps
-              </p>
-            </div>
-          </div>
+        <header className="glass-card flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300">
+          <BrandMark />
           <div className="flex items-center gap-4">
             <Link
               href="/doubt-solver"
@@ -216,9 +254,9 @@ export default function UploadPage() {
         </header>
 
         {/* Hero Card */}
-        <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)]/60 p-6 shadow-sm backdrop-blur-sm sm:p-8">
+        <div className="glass-card rounded-3xl p-6 shadow-sm sm:p-8">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-2xs font-bold uppercase tracking-wider text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
-            📚 Core Engine
+            <DocumentPasteIcon size={12} /> Core Engine
           </span>
           <h1 className="mt-3 text-2xl font-black sm:text-3xl lg:text-4xl">
             Build your personalized learning roadmap.
@@ -231,7 +269,7 @@ export default function UploadPage() {
         {/* Input Form */}
         <form
           onSubmit={handleSubmit}
-          className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)]/60 p-6 shadow-md backdrop-blur-sm"
+          className="glass-card rounded-3xl p-6 shadow-md"
         >
           <div className="space-y-5">
             <div>
@@ -279,9 +317,40 @@ export default function UploadPage() {
           </div>
         )}
 
+        {/* Loading Concept Map state */}
+        {loading && (
+          <div className="glass-card rounded-3xl p-6 shadow-sm flex flex-col gap-6">
+            <LoadingPulse message="Extracting syllabus modules & complexity..." />
+            <TopicsSkeleton />
+          </div>
+        )}
+
+        {/* Empty State before syllabus upload */}
+        {topics.length === 0 && !loading && (
+          <div className="glass-card rounded-3xl p-8 text-center text-[color:var(--muted)] flex flex-col items-center gap-4 justify-center">
+            <div className="p-4 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <PathProgressIcon size={32} />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-sm text-[color:var(--text)]">Your Learning Roadmap Awaits</h3>
+              <p className="text-2xs font-semibold leading-relaxed max-w-sm mt-1 mx-auto">
+                Submit your syllabus or outlined topics above. Our AI engine will partition concepts, map relative difficulty, and construct an optimal study schedule.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Loading 7-Day Plan state */}
+        {generatingPlan && (
+          <div className="glass-card rounded-3xl p-6 shadow-sm flex flex-col gap-6">
+            <LoadingPulse message="Structuring optimal 7-day study path..." />
+            <TimelineSkeleton />
+          </div>
+        )}
+
         {/* Extracted Topics */}
-        {topics.length > 0 && (
-          <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)]/60 p-6 shadow-sm backdrop-blur-sm">
+        {topics.length > 0 && !loading && (
+          <div className="glass-card rounded-3xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4 border-b border-[color:var(--border)]/30 pb-3">
               <h2 className="text-lg font-bold text-[color:var(--text)]">
                 Extracted Concept Map
@@ -295,7 +364,7 @@ export default function UploadPage() {
               {topics.map((topic, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 shadow-sm transition duration-300 hover:border-blue-500/20"
+                  className="glass-card glass-card-hover rounded-2xl p-4 shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <p className="font-bold text-sm text-[color:var(--text)]">
@@ -311,8 +380,8 @@ export default function UploadPage() {
                       {topic.difficulty}
                     </span>
                   </div>
-                  <p className="mt-2 text-2xs text-[color:var(--muted)] flex items-center gap-1">
-                    ⏱️ Estimated time: <span className="font-bold text-[color:var(--text)]">{topic.estimatedHours} hours</span>
+                  <p className="mt-2 text-2xs text-[color:var(--muted)] flex items-center gap-1.5">
+                    <SpacedRepetitionIcon size={12} className="text-blue-500" /> Estimated time: <span className="font-bold text-[color:var(--text)]">{topic.estimatedHours} hours</span>
                   </p>
                 </div>
               ))}
@@ -333,20 +402,20 @@ export default function UploadPage() {
 
         {/* 7-Day Plan timeline */}
         {plan.length > 0 && (
-          <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)]/60 p-6 shadow-sm backdrop-blur-sm">
-            <h2 className="text-lg font-bold text-[color:var(--text)] border-b border-[color:var(--border)]/30 pb-3 mb-6">
-              Your 7-Day Learning Roadmap
+          <div className="glass-card rounded-3xl p-6 shadow-sm">
+            <h2 className="text-lg font-bold text-[color:var(--text)] border-b border-[color:var(--border)]/30 pb-3 mb-6 flex items-center gap-2">
+              <PathProgressIcon size={18} className="text-blue-500" /> Your 7-Day Learning Roadmap
             </h2>
             
             <div className="relative pl-6 border-l-2 border-blue-500/30 space-y-6">
               {plan.map((day) => (
                 <div key={day.day} className="relative group">
                   {/* Timeline Indicator Dot */}
-                  <div className="absolute -left-[31px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[color:var(--surface)] border-2 border-blue-500 transition-all duration-300 group-hover:bg-blue-500">
-                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500 group-hover:bg-[color:var(--surface)]"></div>
+                  <div className="absolute -left-[31px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[color:var(--surface-soft)] border-2 border-blue-500 transition-all duration-300 group-hover:bg-blue-500">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500 group-hover:bg-white"></div>
                   </div>
 
-                  <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-sm transition duration-300 hover:border-blue-500/20 hover:shadow-md">
+                  <div className="glass-card glass-card-hover rounded-2xl p-5">
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--border)]/30 pb-2 mb-2.5">
                       <p className="font-extrabold text-sm text-blue-600 dark:text-blue-400">
                         Day {day.day}
@@ -365,8 +434,11 @@ export default function UploadPage() {
                         <span className="font-semibold text-[color:var(--muted)]">Methodology: </span>
                         <span className="font-medium text-[color:var(--text)]">{day.method}</span>
                       </div>
-                      <div className="mt-3 rounded-xl bg-blue-50/60 p-3 text-xs italic text-blue-800 dark:bg-blue-950/20 dark:text-blue-300 border border-blue-100/50 dark:border-blue-900/20">
-                        💡 <span className="font-bold">Mnemonic / Tip:</span> {day.hack}
+                      <div className="mt-3 rounded-xl bg-blue-50/60 p-3 text-xs italic text-blue-800 dark:bg-blue-950/20 dark:text-blue-300 border border-blue-100/50 dark:border-blue-900/20 flex items-start gap-1.5">
+                        <ChatSparkIcon size={14} className="text-amber-500 shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold">Mnemonic / Tip:</span> {day.hack}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -376,23 +448,30 @@ export default function UploadPage() {
           </div>
         )}
 
+        {/* Loading Quiz state */}
+        {loadingQuiz && (
+          <div className="glass-card rounded-3xl p-6 shadow-sm flex flex-col gap-6">
+            <LoadingPulse message="Crafting active recall quiz questions..." />
+          </div>
+        )}
+
         {/* Take Quiz Button */}
-        {plan.length > 0 && quizQuestions.length === 0 && (
+        {plan.length > 0 && quizQuestions.length === 0 && !loadingQuiz && (
           <button
             onClick={handleGenerateQuiz}
             disabled={loadingQuiz}
             className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full py-4 font-bold shadow-lg shadow-purple-500/20 transition-all duration-300 hover:from-purple-700 hover:to-indigo-700 hover:shadow-purple-500/30 disabled:opacity-50 active:scale-98"
           >
-            {loadingQuiz ? "Crafting active recall quiz questions..." : "Take Active Recall Quiz"}
+            Take Active Recall Quiz
           </button>
         )}
 
         {/* Active Recall Quiz Panel */}
         {quizQuestions.length > 0 && !quizResult && (
-          <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)]/60 p-6 shadow-md backdrop-blur-sm flex flex-col gap-6">
+          <div className="glass-card rounded-3xl p-6 shadow-md flex flex-col gap-6">
             <div className="border-b border-[color:var(--border)]/30 pb-3">
-              <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-0.5 text-3xs font-extrabold uppercase tracking-wide text-purple-700 dark:bg-purple-950/50 dark:text-purple-300">
-                📝 Active Recall
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-2.5 py-0.5 text-3xs font-extrabold uppercase tracking-wide text-purple-700 dark:bg-purple-950/50 dark:text-purple-300">
+                <QuizTargetIcon size={12} /> Active Recall
               </span>
               <h2 className="text-xl font-bold mt-1 text-[color:var(--text)]">Concept Retention Quiz</h2>
               <p className="text-xs text-[color:var(--muted)]">Answer all questions to analyze and detect your weaker topic areas.</p>
@@ -400,7 +479,7 @@ export default function UploadPage() {
             
             <div className="space-y-6">
               {quizQuestions.map((q, qi) => (
-                <div key={qi} className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-sm">
+                <div key={qi} className="glass-card rounded-2xl p-5">
                   <div className="flex items-start gap-2 mb-4">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-100 text-3xs font-bold text-purple-700 dark:bg-purple-950 dark:text-purple-300">
                       {qi + 1}
@@ -418,8 +497,8 @@ export default function UploadPage() {
                           key={oi}
                           className={`flex items-center gap-3 border rounded-xl px-4 py-3 text-xs font-semibold cursor-pointer transition duration-300 hover:bg-[color:var(--surface-soft)]/50 ${
                             isSelected 
-                              ? "border-purple-600 bg-purple-50/50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-300"
-                              : "border-[color:var(--border)]/80 bg-[color:var(--surface-soft)]/20 text-[color:var(--text)]"
+                              ? "border-purple-500 bg-purple-500/10 text-purple-700 dark:text-purple-300"
+                              : "border-[color:var(--border)]/60 bg-transparent text-[color:var(--text)]"
                           }`}
                         >
                           <input
@@ -427,9 +506,9 @@ export default function UploadPage() {
                             name={`q-${qi}`}
                             checked={isSelected}
                             onChange={() => {
-                              const updated = [...userAnswers];
-                              updated[qi] = oi;
-                              setUserAnswers(updated);
+                                const updated = [...userAnswers];
+                                updated[qi] = oi;
+                                setUserAnswers(updated);
                             }}
                             className="hidden"
                           />
@@ -466,9 +545,9 @@ export default function UploadPage() {
 
         {/* Quiz Result Report Card */}
         {quizResult && (
-          <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-lg backdrop-blur-sm">
-            <h2 className="text-lg font-bold text-[color:var(--text)] border-b border-[color:var(--border)]/30 pb-3 mb-5">
-              Active Recall Assessment Report
+          <div className="glass-card rounded-3xl p-6 shadow-lg">
+            <h2 className="text-lg font-bold text-[color:var(--text)] border-b border-[color:var(--border)]/30 pb-3 mb-5 flex items-center gap-2">
+              <QuizTargetIcon size={18} className="text-blue-500" /> Active Recall Assessment Report
             </h2>
 
             <div className="grid gap-6 sm:grid-cols-[1fr_2fr] items-center">
