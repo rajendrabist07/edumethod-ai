@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "../../components/theme-toggle";
 import { BrandMark } from "../../components/brand-mark";
@@ -11,6 +11,7 @@ import { SpacedRepetitionIcon } from "@/components/icons/SpacedRepetitionIcon";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 import { CameraScanIcon } from "@/components/icons/CameraScanIcon";
 import { LoadingPulse } from "@/components/ui/LoadingPulse";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface Topic {
   name: string;
@@ -75,6 +76,10 @@ function TimelineSkeleton() {
 }
 
 export default function UploadPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathId = searchParams.get("pathId");
+
   const [subject, setSubject] = useState("");
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -93,6 +98,70 @@ export default function UploadPage() {
     weakTopics: string[];
   } | null>(null);
   const [loadingQuiz, setLoadingQuiz] = useState(false);
+
+  // Sync with URL query parameter to load existing path
+  useEffect(() => {
+    if (pathId) {
+      loadLearningPath(pathId);
+    } else {
+      setSubject("");
+      setRawText("");
+      setTopics([]);
+      setLearningPathId("");
+      setPlan([]);
+      setQuizId("");
+      setQuizQuestions([]);
+      setUserAnswers([]);
+      setQuizResult(null);
+    }
+  }, [pathId]);
+
+  async function loadLearningPath(id: string) {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/history/${id}`);
+      if (!res.ok) {
+        setError("Failed to load learning path details");
+        return;
+      }
+      const data = await res.json();
+      if (data.type === "path") {
+        setSubject(data.path.subject || "");
+        setTopics(data.path.topics || []);
+        setLearningPathId(data.path.id || "");
+        if (data.path.learningPlan) {
+          setPlan(data.path.learningPlan.days || []);
+        } else {
+          setPlan([]);
+        }
+
+        // If there's an existing quiz question list, load it
+        if (data.path.quizzes && data.path.quizzes.length > 0) {
+          const quiz = data.path.quizzes[0];
+          setQuizId(quiz.id);
+          const formattedQuestions = quiz.questions.map((q: any) => ({
+            question: q.question,
+            options: q.options,
+            topic: q.topic,
+          }));
+          setQuizQuestions(formattedQuestions);
+          setQuizResult(null);
+          setUserAnswers(new Array(quiz.questions.length).fill(-1));
+        } else {
+          setQuizId("");
+          setQuizQuestions([]);
+          setQuizResult(null);
+          setUserAnswers([]);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error while loading study path details");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -241,13 +310,15 @@ export default function UploadPage() {
         
         {/* Header Bar */}
         <header className="glass-card flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300">
-          <BrandMark />
+          <div className="flex items-center gap-2 pl-12 lg:pl-0">
+            <BrandMark />
+          </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/doubt-solver"
-              className="rounded-full bg-purple-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-purple-600/10 transition duration-300 hover:bg-purple-700 hover:shadow-lg active:scale-95 sm:text-sm"
+              href="/dashboard"
+              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-2 text-xs font-bold text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
             >
-              Doubt Solver
+              Dashboard
             </Link>
             <ThemeToggle />
           </div>

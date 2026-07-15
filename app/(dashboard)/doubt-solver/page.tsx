@@ -3,11 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "../../components/theme-toggle";
-import { BrandMark } from "../../components/brand-mark";
 import { Logo } from "@/components/ui/Logo";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 import { CameraScanIcon } from "@/components/icons/CameraScanIcon";
-import { SpacedRepetitionIcon } from "@/components/icons/SpacedRepetitionIcon";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -16,24 +15,17 @@ interface ChatMessage {
   feedbackText?: string;
 }
 
-interface ChatSession {
-  id: string;
-  title: string;
-  updatedAt: string;
-}
-
 export default function DoubtSolverPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sessionIdParam = searchParams.get("sessionId");
+
   const [sessionId, setSessionId] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // Sidebar & Sessions history states
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [loadingSessions, setLoadingSessions] = useState(false);
 
   // Voice Interaction Mode states
   const [voiceMode, setVoiceMode] = useState(false);
@@ -68,29 +60,21 @@ export default function DoubtSolverPage() {
     }
   }, []);
 
-  // Fetch list of user doubt sessions on load
+  // Sync with search parameter to resume conversations
   useEffect(() => {
-    fetchSessions();
-  }, []);
-
-  async function fetchSessions() {
-    setLoadingSessions(true);
-    try {
-      const res = await fetch("/api/solve-doubt/sessions");
-      if (res.ok) {
-        const data = await res.json();
-        setSessions(data.sessions || []);
-      }
-    } catch (err) {
-      console.error("Failed to fetch sessions:", err);
-    } finally {
-      setLoadingSessions(false);
+    if (sessionIdParam) {
+      loadSession(sessionIdParam);
+    } else {
+      setSessionId("");
+      setMessages([]);
+      setInput("");
+      setImageFile(null);
+      setError("");
     }
-  }
+  }, [sessionIdParam]);
 
   // Load a specific session
   async function loadSession(id: string) {
-    if (loading) return;
     setError("");
     setLoading(true);
     setSessionId(id);
@@ -119,16 +103,7 @@ export default function DoubtSolverPage() {
   // Start a new chat session
   function handleNewChat() {
     if (loading) return;
-    setSessionId("");
-    setMessages([]);
-    setInput("");
-    setImageFile(null);
-    setError("");
-    
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      setVoiceState("idle");
-    }
+    router.push("/doubt-solver");
   }
 
   // Voice recognition activation logic
@@ -291,8 +266,8 @@ export default function DoubtSolverPage() {
       const newSessionId = res.headers.get("x-session-id");
       if (newSessionId && newSessionId !== sessionId) {
         setSessionId(newSessionId);
-        // Refresh sidebar
-        fetchSessions();
+        // Update URL to match current conversation state, refreshing the global history sidebar
+        router.replace(`/doubt-solver?sessionId=${newSessionId}`);
       }
 
       // Read response stream
@@ -394,85 +369,14 @@ export default function DoubtSolverPage() {
   return (
     <main className="grid-bg min-h-screen flex text-[color:var(--text)] transition-colors duration-300">
       
-      {/* 1. Sidebar Panel (ChatGPT/Claude History) */}
-      <aside
-        className={`${
-          sidebarOpen ? "w-64" : "w-0"
-        } shrink-0 bg-[color:var(--surface)]/90 backdrop-blur-xl border-r border-[color:var(--border)]/40 transition-all duration-300 overflow-hidden flex flex-col h-screen z-20 md:relative fixed inset-y-0 left-0 md:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
-      >
-        <div className="p-4 border-b border-[color:var(--border)]/40 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2">
-            <Logo size={20} />
-            <span className="font-extrabold text-xs tracking-wider uppercase text-purple-600">History</span>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="md:hidden text-[color:var(--muted)] hover:text-purple-600 active:scale-90"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* New Chat Button */}
-        <div className="p-3 shrink-0">
-          <button
-            onClick={handleNewChat}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-purple-500/40 bg-purple-500/5 py-2.5 text-xs font-bold text-purple-600 hover:bg-purple-500/10 active:scale-98 transition duration-200"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-4 w-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            New Conversation
-          </button>
-        </div>
-
-        {/* Sessions list */}
-        <div className="flex-1 overflow-y-auto px-2 space-y-1 py-2">
-          {loadingSessions ? (
-            <div className="text-center text-3xs text-[color:var(--muted)] py-4 animate-pulse">Loading sessions...</div>
-          ) : sessions.length === 0 ? (
-            <div className="text-center text-3xs text-[color:var(--muted)] py-8">No previous doubts</div>
-          ) : (
-            sessions.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => loadSession(s.id)}
-                className={`w-full flex items-center gap-2 text-left px-3 py-2.5 rounded-lg text-2xs font-semibold transition duration-200 ${
-                  s.id === sessionId
-                    ? "bg-purple-600/10 border border-purple-500/20 text-purple-700 dark:text-purple-300"
-                    : "hover:bg-[color:var(--surface-soft)] text-[color:var(--muted)]"
-                }`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-3.5 w-3.5 shrink-0 opacity-70">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025 10.386 10.386 0 0 1-2.164-3.13C2.662 14.302 2.25 13.181 2.25 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                </svg>
-                <span className="truncate">{s.title}</span>
-              </button>
-            ))
-          )}
-        </div>
-      </aside>
-
-      {/* 2. Main Chat Panel Area */}
+      {/* Main Chat Panel Area */}
       <div className="flex-1 flex flex-col h-screen min-w-0 relative">
         
         {/* Navigation Header */}
         <header className="glass-card flex shrink-0 items-center justify-between px-4 py-3.5 shadow-sm z-10 sm:px-6">
           <div className="flex items-center gap-3">
-            {/* Sidebar toggle */}
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 border border-[color:var(--border)] rounded-xl bg-[color:var(--surface)] text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600 transition active:scale-95"
-              aria-label="Toggle Sidebar"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-4.5 w-4.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-            </button>
-            
-            <div className="flex items-center gap-2">
+            {/* Logo and title */}
+            <div className="flex items-center gap-2 pl-12 lg:pl-0">
               <Logo size={26} />
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-purple-600">Doubt Solver</p>
@@ -483,14 +387,14 @@ export default function DoubtSolverPage() {
 
           <div className="flex items-center gap-3">
             <Link
-              href="/upload"
+              href="/dashboard"
               className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] p-2 sm:px-4.5 sm:py-2 text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
               title="Back to study dashboard"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
-              <span className="hidden sm:inline text-xs font-bold">Back to Study</span>
+              <span className="hidden sm:inline text-xs font-bold">Dashboard</span>
             </Link>
             <ThemeToggle />
           </div>

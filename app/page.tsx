@@ -24,15 +24,43 @@ const features = [
 export default function Home() {
   return (
     <main className="grid-bg min-h-screen text-[color:var(--text)] transition-colors duration-300">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "EduMethod AI",
+            "operatingSystem": "All",
+            "applicationCategory": "EducationalApplication",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "description": "An intelligent learning assistant that transforms raw syllabus text or images into structured 7-day study paths, adaptive quizzes, and step-by-step problem solutions.",
+            "creator": {
+              "@type": "Person",
+              "name": "Rajendra Bist"
+            }
+          })
+        }}
+      />
       <section className="mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         
         {/* Navigation Header */}
         <header className="glass-card mb-12 flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300 hover:border-blue-500/30">
           <BrandMark />
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link
+              href="/doubt-solver"
+              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)]/50 px-4 py-2 text-xs sm:text-sm font-semibold text-[color:var(--text)] transition hover:text-blue-600 active:scale-95"
+            >
+              Try Doubt Solver
+            </Link>
             <Link
               href="/upload"
-              className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-blue-600/10 transition duration-300 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/20 active:scale-95"
+              className="rounded-full bg-blue-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-600/10 transition duration-300 hover:bg-blue-700 hover:shadow-lg active:scale-95"
             >
               Get Started
             </Link>
@@ -69,6 +97,19 @@ export default function Home() {
                 Explore Features
               </a>
             </div>
+
+            {/* Social Proof badges */}
+            <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-2.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 text-3xs font-black uppercase tracking-wider text-[color:var(--muted)]">
+                ⚡ Powered by Groq + Gemini
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 text-3xs font-black uppercase tracking-wider text-[color:var(--muted)]">
+                📅 7-Day Adaptive Plans
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 text-3xs font-black uppercase tracking-wider text-[color:var(--muted)]">
+                👁️ Multimodal Input
+              </span>
+            </div>
           </div>
 
           {/* Premium UI Mockup Preview */}
@@ -101,7 +142,7 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="rounded-xl border border-[color:var(--border)]/50 bg-[color:var(--surface)] p-3.5 shadow-sm transition-all duration-300 hover:border-emerald-400/30">
+                  <div className="rounded-xl border border-[color:var(--border)]/50 bg-[color:var(--surface)] p-3.5 shadow-sm transition-all duration-300 hover:border-emerald-400/30 animate-pulse-emerald">
                     <div className="flex items-center justify-between text-xs text-[color:var(--muted)]">
                       <span>Topic 1</span>
                       <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
@@ -111,7 +152,7 @@ export default function Home() {
                     <p className="mt-1.5 font-semibold text-[color:var(--text)]">Wave-Particle Duality</p>
                   </div>
 
-                  <div className="rounded-xl border border-[color:var(--border)]/50 bg-[color:var(--surface)] p-3.5 shadow-sm transition-all duration-300 hover:border-amber-400/30">
+                  <div className="rounded-xl border border-[color:var(--border)]/50 bg-[color:var(--surface)] p-3.5 shadow-sm transition-all duration-300 hover:border-amber-400/30 animate-pulse-amber">
                     <div className="flex items-center justify-between text-xs text-[color:var(--muted)]">
                       <span>Topic 2</span>
                       <span className="rounded-full bg-amber-50 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
@@ -123,6 +164,57 @@ export default function Home() {
                 </div>
               </div>
 
+            </div>
+          </div>
+        </div>
+
+        {/* How It Works Section */}
+        <div className="mt-20 border-t border-[color:var(--border)]/20 pt-16">
+          <div className="text-center max-w-lg mx-auto mb-10">
+            <span className="rounded-full bg-blue-50 dark:bg-blue-950/40 px-3.5 py-1 text-4xs font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">
+              Cognitive Progression Path
+            </span>
+            <h2 className="text-xl font-black mt-3 sm:text-2xl">How EduMethod AI Works</h2>
+            <p className="text-2xs font-semibold text-[color:var(--muted)] leading-relaxed mt-1 uppercase tracking-wider">
+              Three steps to structured academic mastery.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Step 1 */}
+            <div className="glass-card rounded-2xl p-6 relative">
+              <span className="absolute top-4 right-6 text-3xl font-black text-blue-600/10 dark:text-blue-500/5 select-none">01</span>
+              <div className="mb-4 inline-flex rounded-xl bg-blue-50 p-2.5 text-blue-600 dark:bg-blue-950/40">
+                <DocumentPasteIcon size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-[color:var(--text)] uppercase tracking-wider">1. Input Syllabus</h3>
+              <p className="mt-2 text-2xs leading-relaxed text-[color:var(--muted)]">
+                Paste raw lecture schedules, syllabus topics, outline notes, or upload structural snapshots.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="glass-card rounded-2xl p-6 relative">
+              <span className="absolute top-4 right-6 text-3xl font-black text-purple-600/10 dark:text-purple-500/5 select-none">02</span>
+              <div className="mb-4 inline-flex rounded-xl bg-purple-50 p-2.5 text-purple-600 dark:bg-purple-950/40">
+                <ChatSparkIcon size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-[color:var(--text)] uppercase tracking-wider">2. AI Decomposition</h3>
+              <p className="mt-2 text-2xs leading-relaxed text-[color:var(--muted)]">
+                AI analyzes topics, partitions them into modules, and assigns estimated hours and difficulty.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="glass-card rounded-2xl p-6 relative">
+              <span className="absolute top-4 right-6 text-3xl font-black text-emerald-600/10 dark:text-emerald-500/5 select-none">03</span>
+              <div className="mb-4 inline-flex rounded-xl bg-emerald-50 p-2.5 text-emerald-600 dark:bg-emerald-950/40">
+                <PathProgressIcon size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-[color:var(--text)] uppercase tracking-wider">3. Spaced Study Path</h3>
+              <p className="mt-2 text-2xs leading-relaxed text-[color:var(--muted)]">
+                Follow your structured 7-day adaptive plan and test recall weaknesses with active quizzes.
+              </p>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { groq } from "@/lib/groq";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { checkUsageLimit } from "@/lib/usage";
 
 const requestSchema = z.object({
   learningPathId: z.string().uuid(),
@@ -24,6 +25,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Validate usage limit for quiz generation
+    const usage = await checkUsageLimit(userId, "quiz");
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: "Daily limit reached. Upgrade to Pro for unlimited access." },
+        { status: 429 }
+      );
     }
 
     const body = await req.json();

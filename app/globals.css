@@ -182,3 +182,22 @@ body {
   --color-background: var(--bg);
   --color-foreground: var(--text);
 }
+
+@keyframes pulseGlowEmerald {
+  0%, 100% { border-color: rgba(var(--border-rgb), 0.45); box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+  50% { border-color: rgba(16, 185, 129, 0.35); box-shadow: 0 0 16px rgba(16, 185, 129, 0.15); }
+}
+
+@keyframes pulseGlowAmber {
+  0%, 100% { border-color: rgba(var(--border-rgb), 0.45); box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+  50% { border-color: rgba(245, 158, 11, 0.35); box-shadow: 0 0 16px rgba(245, 158, 11, 0.15); }
+}
+
+.animate-pulse-emerald {
+  animation: pulseGlowEmerald 4s ease-in-out infinite;
+}
+
+.animate-pulse-amber {
+  animation: pulseGlowAmber 4s ease-in-out infinite;
+  animation-delay: 2s;
+}

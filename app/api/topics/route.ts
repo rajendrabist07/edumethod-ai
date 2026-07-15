@@ -3,8 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { groq } from "@/lib/groq";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-// import { topicSchema } from "@/lib/schemas";
-
+import { checkUsageLimit } from "@/lib/usage";
 
 // Step 1: Define what input we expect from frontend
 const requestSchema = z.object({
@@ -30,6 +29,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Step 3.5: Validate usage limit
+    const usage = await checkUsageLimit(userId, "learning_path");
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: "Daily limit reached. Upgrade to Pro for unlimited access." },
+        { status: 429 }
+      );
     }
 
     // Step 4: Validate incoming request body

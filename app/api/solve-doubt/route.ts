@@ -5,6 +5,7 @@ import { groq } from "@/lib/groq";
 import { geminiVisionModel as gemini } from "@/lib/gemini";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
+import { checkUsageLimit } from "@/lib/usage";
 
 const requestSchema = z.object({
   sessionId: z.string().uuid().optional(),
@@ -18,6 +19,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Validate usage limit for doubt solving messages
+    const usage = await checkUsageLimit(userId, "doubt_message");
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: "Daily limit reached. Upgrade to Pro for unlimited access." },
+        { status: 429 }
+      );
     }
 
     const body = await req.json();
