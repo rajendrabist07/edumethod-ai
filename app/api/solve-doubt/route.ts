@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { groq } from "@/lib/groq";
-import { geminiVisionModel as gemini } from "@/lib/gemini";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
 import { checkUsageLimit } from "@/lib/usage";
@@ -12,7 +11,16 @@ const requestSchema = z.object({
   message: z.string().min(1),
   imageBase64: z.string().optional(),
   mimeType: z.string().optional(),
+  regenerate: z.boolean().optional(),
 });
+
+const SYSTEM_PROMPT = `You are a patient, encouraging tutor. Solve questions step-by-step, explaining reasoning at each step.
+Follow these formatting rules for mathematical expressions:
+1. Always output math equations, variables, operations, and fractions using standard LaTeX formatting.
+2. Use single dollar signs ($...$) for inline math (e.g. $x^2 + 5x + 6 = 0$).
+3. Use double dollar signs ($$...$$) for block or display equations (e.g. $$e = mc^2$$).
+4. Do not output raw text symbols for math formulas (like x^2 or /frac). Use valid LaTeX markup.
+5. If the student asks a follow-up, use the conversation history to give context-aware answers.`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,27 +39,34 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const parsed = requestSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    const parseResult = requestSchema.safeParse(body);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Invalid request payload", details: parseResult.error.format() },
+        { status: 400 }
+      );
     }
 
-    const { sessionId, message, imageBase64, mimeType } = parsed.data;
+    const { sessionId, message, imageBase64, mimeType, regenerate } = parseResult.data;
 
-    let session;
     let finalSessionId = sessionId;
+    let session = null;
     
-    if (sessionId) {
+    if (finalSessionId) {
       const { data } = await supabaseAdmin
         .from("doubt_sessions")
         .select("*")
-        .eq("id", sessionId)
+        .eq("id", finalSessionId)
         .eq("user_id", userId)
         .single();
       session = data;
     }
 
-    const history = session?.messages || [];
+    let history = session?.messages || [];
+    if (regenerate && history.length >= 2) {
+      history = history.slice(0, -2);
+    }
+
     const userMessage = { role: "user" as const, content: message };
     const updatedMessagesWithUser = [...history, userMessage];
 
@@ -81,41 +96,63 @@ export async function POST(req: NextRequest) {
     if (imageBase64 && mimeType) {
       const stream = new ReadableStream({
         async start(controller) {
+          let fullResponseText = "";
           try {
-            const result = await gemini.generateContent({
-              contents: [
+            const completionStream = await groq.chat.completions.create({
+              model: "meta-llama/llama-4-scout-17b-16e-instruct",
+              messages: [
+                {
+                  role: "system",
+                  content: SYSTEM_PROMPT,
+                },
+                ...history.map((m: { role: "user" | "assistant"; content: string }) => ({
+                  role: m.role,
+                  content: m.content,
+                })),
                 {
                   role: "user",
-                  parts: [
+                  content: [
                     {
-                      text: `You are a patient tutor. A student has this question. Solve it step-by-step, explaining the reasoning at each step, not just the final answer. Question context: ${message}`,
+                      type: "text",
+                      text: message,
                     },
                     {
-                      inlineData: { mimeType, data: imageBase64 },
+                      type: "image_url",
+                      image_url: {
+                        url: `data:${mimeType};base64,${imageBase64}`,
+                      },
                     },
                   ],
                 },
               ],
+              stream: true,
             });
-            const text = result.response.text() || "Unable to process the image.";
-            controller.enqueue(encoder.encode(text));
-            
-            const finalMessages = [...updatedMessagesWithUser, { role: "assistant", content: text }];
+
+            for await (const chunk of completionStream) {
+              const text = chunk.choices[0]?.delta?.content || "";
+              if (text) {
+                fullResponseText += text;
+                controller.enqueue(encoder.encode(text));
+              }
+            }
+
+            const finalMessages = [...updatedMessagesWithUser, { role: "assistant", content: fullResponseText }];
             await supabaseAdmin
               .from("doubt_sessions")
               .update({ messages: finalMessages })
               .eq("id", finalSessionId);
-              
-          } catch (geminiError) {
-            console.error("Gemini error in stream:", geminiError);
-            const err = geminiError as { status?: number; message?: string };
-            let errMsg = "Failed to process image. Please try a text question instead.";
-            if (err?.status === 429 || err?.message?.includes("429")) {
-              errMsg = "Image processing service is busy or quota exceeded. Please ask a text question or wait a moment.";
-            } else if (err?.message?.includes("quota") || err?.message?.includes("Quota")) {
-              errMsg = "Image processing quota exceeded. Please use text-based questions for now.";
+
+          } catch (groqVisionError: any) {
+            console.error("Groq vision error in stream:", groqVisionError);
+            const errStatus = groqVisionError?.status || groqVisionError?.statusCode || "UNKNOWN";
+            const errMsg = groqVisionError?.message || String(groqVisionError);
+            console.error(`Exact Groq Vision Error: Status ${errStatus} - Message: ${errMsg}`);
+            
+            let userFriendlyMsg = "Failed to process image. Please try a text question instead.";
+            if (errStatus === 429 || errMsg.includes("429")) {
+              userFriendlyMsg = "Image processing service is busy. Please wait a moment or try a text question.";
             }
-            controller.enqueue(encoder.encode(`⚠️ ERROR: ${errMsg}`));
+            controller.enqueue(encoder.encode(`⚠️ ERROR: ${userFriendlyMsg} (Details: ${errMsg})`));
           } finally {
             controller.close();
           }
@@ -133,8 +170,7 @@ export async function POST(req: NextRequest) {
       const messagesToSend = [
         {
           role: "system" as const,
-          content:
-            "You are a patient, encouraging tutor. Solve questions step-by-step, explaining reasoning at each step. If the student asks a follow-up, use the conversation history to give context-aware answers.",
+          content: SYSTEM_PROMPT,
         },
         ...history.map((m: { role: "user" | "assistant"; content: string }) => ({
           role: m.role,

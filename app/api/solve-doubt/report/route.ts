@@ -3,10 +3,11 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
-const feedbackSchema = z.object({
+const reportSchema = z.object({
   sessionId: z.string().uuid(),
   messageIndex: z.number().int().nonnegative(),
-  rating: z.enum(["up", "down"]),
+  messageContent: z.string().min(1),
+  reportText: z.string().min(1),
 });
 
 export async function POST(req: NextRequest) {
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const parseResult = feedbackSchema.safeParse(body);
+    const parseResult = reportSchema.safeParse(body);
     if (!parseResult.success) {
       return NextResponse.json(
         { error: "Invalid request payload", details: parseResult.error.format() },
@@ -25,30 +26,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { sessionId, messageIndex, rating } = parseResult.data;
+    const { sessionId, messageIndex, messageContent, reportText } = parseResult.data;
 
-    // Perform an upsert in the message_feedback table
+    // Save report in user_reports table
     const { error } = await supabaseAdmin
-      .from("message_feedback")
-      .upsert(
-        {
-          user_id: userId,
-          session_id: sessionId,
-          message_index: messageIndex,
-          rating,
-          created_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id,session_id,message_index" }
-      );
+      .from("user_reports")
+      .insert({
+        user_id: userId,
+        session_id: sessionId,
+        message_index: messageIndex,
+        message_content: messageContent,
+        report_text: reportText,
+      });
 
     if (error) {
-      console.error("Supabase upsert error in feedback route:", error);
-      return NextResponse.json({ error: "Failed to save feedback rating." }, { status: 500 });
+      console.error("Supabase insert error in user_reports route:", error);
+      return NextResponse.json({ error: "Failed to submit issue report." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("Feedback route error:", err);
+    console.error("Report route error:", err);
     return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
   }
 }

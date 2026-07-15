@@ -229,8 +229,16 @@ export function HistorySidebar() {
         {/* Scrollable History List */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
           {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <span className="h-5 w-5 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
+            <div className="space-y-4 animate-pulse px-1.5 py-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex items-center gap-3 py-2 px-2 rounded-xl">
+                  <div className="h-5 w-5 bg-slate-200/60 dark:bg-slate-800/65 rounded-lg shrink-0" />
+                  <div className="flex-1 space-y-2 min-w-0">
+                    <div className="h-3 bg-slate-200/50 dark:bg-slate-800/55 rounded w-3/4" />
+                    <div className="h-2 bg-slate-200/50 dark:bg-slate-800/55 rounded w-1/2" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : history.length === 0 ? (
             <div className="py-8 px-4 text-center">

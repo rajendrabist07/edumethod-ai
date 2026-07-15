@@ -201,3 +201,18 @@ body {
   animation: pulseGlowAmber 4s ease-in-out infinite;
   animation-delay: 2s;
 }
+
+/* Streaming cursor blink animations */
+.chat-streaming p:last-child::after {
+  content: "▊";
+  display: inline-block;
+  margin-left: 4px;
+  color: #a855f7; /* purple-500 */
+  animation: cursorBlink 0.8s step-end infinite;
+  vertical-align: middle;
+}
+
+@keyframes cursorBlink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}

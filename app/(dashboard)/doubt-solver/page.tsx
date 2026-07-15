@@ -7,11 +7,14 @@ import { Logo } from "@/components/ui/Logo";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 import { CameraScanIcon } from "@/components/icons/CameraScanIcon";
 import { useRouter, useSearchParams } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-  feedback?: "like" | "dislike";
+  feedback?: "up" | "down";
   feedbackText?: string;
 }
 
@@ -36,6 +39,9 @@ export default function DoubtSolverPage() {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [feedbackIndex, setFeedbackIndex] = useState<number | null>(null);
   const [feedbackText, setFeedbackText] = useState("");
+
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [activeDropdownIndex, setActiveDropdownIndex] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -212,7 +218,7 @@ export default function DoubtSolverPage() {
   }
 
   // Message Send & Stream response logic
-  async function handleSend(forcedInput?: string) {
+  async function handleSend(forcedInput?: string, isRegenerate = false) {
     const textToSend = forcedInput !== undefined ? forcedInput : input;
     if (!textToSend.trim() && !imageFile) return;
 
@@ -235,9 +241,11 @@ export default function DoubtSolverPage() {
         message: string;
         imageBase64?: string;
         mimeType?: string;
+        regenerate?: boolean;
       } = { message: textToSend || "Analyze the attached image." };
 
       if (sessionId) payload.sessionId = sessionId;
+      if (isRegenerate) payload.regenerate = true;
 
       if (imageFile) {
         payload.imageBase64 = await fileToBase64(imageFile);
@@ -320,8 +328,8 @@ export default function DoubtSolverPage() {
     }
   }
 
-  // Message feedback thumbs up/down updates
-  async function submitFeedback(index: number, feedback: "like" | "dislike", customText?: string) {
+  // Message rating updates
+  async function submitFeedback(index: number, rating: "up" | "down") {
     if (!sessionId) return;
 
     try {
@@ -331,8 +339,7 @@ export default function DoubtSolverPage() {
         body: JSON.stringify({
           sessionId,
           messageIndex: index,
-          feedback,
-          feedbackText: customText,
+          rating,
         }),
       });
 
@@ -341,8 +348,7 @@ export default function DoubtSolverPage() {
           const updated = [...prev];
           updated[index] = {
             ...updated[index],
-            feedback,
-            feedbackText: customText,
+            feedback: rating,
           };
           return updated;
         });
@@ -352,18 +358,72 @@ export default function DoubtSolverPage() {
     }
   }
 
-  function handleDislikeClick(index: number) {
+  function handleReportClick(index: number) {
     setFeedbackIndex(index);
     setFeedbackText("");
     setFeedbackModalOpen(true);
   }
 
-  function handleFeedbackSubmit() {
-    if (feedbackIndex !== null) {
-      submitFeedback(feedbackIndex, "dislike", feedbackText);
+  async function handleFeedbackSubmit() {
+    if (feedbackIndex !== null && feedbackText.trim()) {
+      const messageContent = messages[feedbackIndex].content;
+      try {
+        const res = await fetch("/api/solve-doubt/report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            messageIndex: feedbackIndex,
+            messageContent,
+            reportText: feedbackText,
+          }),
+        });
+
+        if (res.ok) {
+          alert("Thank you. Your issue report has been submitted successfully!");
+        } else {
+          alert("Failed to submit issue report.");
+        }
+      } catch (err) {
+        console.error("Report submit error:", err);
+        alert("Failed to submit issue report.");
+      }
     }
     setFeedbackModalOpen(false);
     setFeedbackIndex(null);
+    setFeedbackText("");
+  }
+
+  function handleCopyMessage(index: number, content: string) {
+    navigator.clipboard.writeText(content).then(() => {
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 1500);
+    }).catch((err) => {
+      console.error("Clipboard copy failed:", err);
+    });
+  }
+
+  function handleShareMessage(index: number, content: string) {
+    const shareText = `EduMethod AI Tutor Response:\n\n${content}\n\nJoin and solve your doubts at: ${window.location.origin}`;
+    navigator.clipboard.writeText(shareText).then(() => {
+      alert("Share link content copied to clipboard!");
+    }).catch((err) => {
+      console.error("Clipboard share failed:", err);
+    });
+  }
+
+  function handleRegenerateMessage(index: number) {
+    if (index < 1) return;
+    const precedingUserMessage = messages[index - 1];
+    if (precedingUserMessage.role !== "user") return;
+
+    const userText = precedingUserMessage.content;
+    
+    // Visually replace by removing from list
+    setMessages((prev) => prev.slice(0, index - 1));
+
+    // Re-trigger handleSend with regenerate flag
+    handleSend(userText, true);
   }
 
   return (
@@ -431,45 +491,148 @@ export default function DoubtSolverPage() {
                       {isUser ? "You" : "AI Tutor"}
                     </span>
                     <div
-                      className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed whitespace-pre-wrap shadow-sm transition-all duration-300 ${
+                      className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed shadow-sm transition-all duration-300 ${
                         isUser
-                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-none shadow-blue-500/5"
-                          : "glass-card text-[color:var(--text)] rounded-tl-none"
+                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-none shadow-blue-500/5 whitespace-pre-wrap"
+                          : `glass-card text-[color:var(--text)] rounded-tl-none max-w-none text-xs ${
+                              loading && i === messages.length - 1 ? "chat-streaming" : ""
+                            }`
                       }`}
                     >
-                      {m.content}
+                      {isUser ? (
+                        m.content
+                      ) : (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkMath]}
+                          rehypePlugins={[rehypeKatex]}
+                          components={{
+                            code({ className, children, ...props }: any) {
+                              const inline = !className;
+                              return !inline ? (
+                                <pre className="bg-[color:var(--surface-soft)] border border-[color:var(--border)]/35 rounded-xl p-3 my-2 overflow-x-auto text-[10px] font-mono leading-normal">
+                                  <code className={className} {...props}>
+                                    {children}
+                                  </code>
+                                </pre>
+                              ) : (
+                                <code className="bg-[color:var(--surface-soft)] border border-[color:var(--border)]/30 rounded px-1.5 py-0.5 text-[10px] font-mono" {...props}>
+                                  {children}
+                                </code>
+                              );
+                            },
+                            ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1">{children}</ol>,
+                            li: ({ children }) => <li className="text-2xs font-semibold text-[color:var(--text)] leading-relaxed">{children}</li>,
+                            p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                            h1: ({ children }) => <h1 className="text-sm font-black mt-3 mb-1 uppercase tracking-wider text-blue-500">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-xs font-black mt-2.5 mb-1 uppercase tracking-wider text-indigo-500">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-2xs font-extrabold mt-2 mb-0.5 uppercase tracking-wider text-purple-500">{children}</h3>,
+                          }}
+                        >
+                          {m.content}
+                        </ReactMarkdown>
+                      )}
                     </div>
-
                     {/* Thumbs up/down feedback tools under AI bubble */}
                     {!isUser && (
-                      <div className="flex items-center gap-1.5 mt-1.5 px-1 text-[color:var(--muted)]">
+                      <div className="flex items-center gap-1 mt-1 px-1 text-[color:var(--muted)] relative select-none">
+                        
+                        {/* 1. Like rating */}
                         <button
-                          onClick={() => submitFeedback(i, "like")}
-                          className={`p-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-green-500 transition duration-150 active:scale-90 ${
-                            m.feedback === "like" ? "text-green-500 bg-green-500/10" : ""
+                          onClick={() => submitFeedback(i, "up")}
+                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-green-500 transition duration-150 active:scale-90 ${
+                            m.feedback === "up" ? "text-green-500 bg-green-500/10" : ""
                           }`}
                           title="Correct/Helpful explanation"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <svg xmlns="http://www.w3.org/2000/svg" fill={m.feedback === "up" ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-3.5 w-3.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.421.068.848.068 1.285 0 1.839-.564 3.546-1.533 4.962-.486.709-1.284 1.138-2.147 1.138H13.5a3.375 3.375 0 01-3.375-3.375V10.5z" />
                           </svg>
                         </button>
+
+                        {/* 2. Dislike rating */}
                         <button
-                          onClick={() => handleDislikeClick(i)}
-                          className={`p-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-red-500 transition duration-150 active:scale-90 ${
-                            m.feedback === "dislike" ? "text-red-500 bg-red-500/10" : ""
+                          onClick={() => submitFeedback(i, "down")}
+                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-red-500 transition duration-150 active:scale-90 ${
+                            m.feedback === "down" ? "text-red-500 bg-red-500/10" : ""
                           }`}
                           title="Incorrect/Bad explanation"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <svg xmlns="http://www.w3.org/2000/svg" fill={m.feedback === "down" ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-3.5 w-3.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.367 13.5c-.806 0-1.533.446-2.031 1.08a9.041 9.041 0 01-2.861 2.4c-.723.384-1.35.956-1.653 1.715a4.498 4.498 0 00-.322 1.672v.21a.75.75 0 01-.75.75 2.25 2.25 0 01-2.25-2.25c0-1.152.26-2.243.723-3.218.266-.558-.107-1.282-.725-1.282H4.374c-1.026 0-1.945-.694-2.054-1.715A12.137 12.137 0 012.25 12c0-1.839.564-3.546 1.533-4.962.486-.709 1.284-1.138 2.147-1.138H10.5a3.375 3.375 0 013.375 3.375V13.5h3.492z" />
                           </svg>
                         </button>
-                        {m.feedback === "dislike" && (
-                          <span className="text-[10px] text-purple-600 dark:text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold ml-1">
-                            Feedback saved
-                          </span>
-                        )}
+
+                        {/* 3. Regenerate button */}
+                        <button
+                          onClick={() => handleRegenerateMessage(i)}
+                          className="p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-purple-500 transition duration-150 active:scale-90"
+                          title="Regenerate reply"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-3.5 w-3.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                          </svg>
+                        </button>
+
+                        {/* 4. Copy Message */}
+                        <button
+                          onClick={() => handleCopyMessage(i, m.content)}
+                          className="p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-purple-500 transition duration-150 active:scale-90"
+                          title="Copy explanation"
+                        >
+                          {copiedIndex === i ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5 text-green-500">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-3.5 w-3.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.875V18a2.25 2.25 0 002.25 2.25h5.25a2.25 2.25 0 002.25-2.25V7.875a2.25 2.25 0 00-2.25-2.25H9a2.25 2.25 0 00-2.25 2.25z" />
+                            </svg>
+                          )}
+                        </button>
+
+                        {/* 5. More optionsDropdown Trigger */}
+                        <div className="relative inline-block">
+                          <button
+                            onClick={() => setActiveDropdownIndex(activeDropdownIndex === i ? null : i)}
+                            className="p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-purple-500 transition duration-150 active:scale-90"
+                            title="More options"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                            </svg>
+                          </button>
+
+                          {/* Dropdown Menu Container */}
+                          {activeDropdownIndex === i && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setActiveDropdownIndex(null)}
+                              />
+                              <div className="absolute left-0 mt-1 w-32 glass-card rounded-xl shadow-xl z-20 border border-[color:var(--border)]/45 bg-[color:var(--surface)] p-1.5 flex flex-col gap-1 text-[10px] font-bold">
+                                <button
+                                  onClick={() => {
+                                    handleReportClick(i);
+                                    setActiveDropdownIndex(null);
+                                  }}
+                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] text-red-500 hover:text-red-600 transition flex items-center gap-1.5"
+                                >
+                                  ⚠️ Report Issue
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    handleShareMessage(i, m.content);
+                                    setActiveDropdownIndex(null);
+                                  }}
+                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] text-[color:var(--text)] transition flex items-center gap-1.5"
+                                >
+                                  🔗 Share Link
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -668,17 +831,17 @@ export default function DoubtSolverPage() {
 
       </div>
 
-      {/* 4. Feedback Modal Dialog Popup */}
+      {/* 4. Report Issue Modal Dialog Popup */}
       {feedbackModalOpen && (
         <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
           <div className="glass-card rounded-2xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-4">
             <div>
-              <h3 className="font-extrabold text-sm text-[color:var(--text)]">Provide Feedback</h3>
-              <p className="text-[10px] text-[color:var(--muted)] mt-1">Help improve the AI tutor. Tell us what could be improved about this explanation.</p>
+              <h3 className="font-extrabold text-sm text-[color:var(--text)]">Report an Issue</h3>
+              <p className="text-[10px] text-[color:var(--muted)] mt-1">Help improve the AI tutor. Tell us what is incorrect or could be improved about this explanation.</p>
             </div>
             
             <textarea
-              placeholder="e.g. The math equation has a typo, too brief explanation, slow completion response..."
+              placeholder="e.g. Typo in the math equation, incorrect step calculation, formatting is broken..."
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
               className="w-full h-24 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-soft)]/50 px-3 py-2 text-xs outline-none focus:border-purple-500 focus:bg-[color:var(--surface)]"
@@ -695,7 +858,7 @@ export default function DoubtSolverPage() {
                 onClick={handleFeedbackSubmit}
                 className="rounded-full bg-purple-600 text-white px-4 py-1.5 font-bold hover:bg-purple-700"
               >
-                Submit Feedback
+                Submit Report
               </button>
             </div>
           </div>
