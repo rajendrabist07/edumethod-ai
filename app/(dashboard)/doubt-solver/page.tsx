@@ -469,12 +469,54 @@ export default function DoubtSolverPage() {
           )}
 
           {messages.length === 0 ? (
-            <div className="flex-grow flex flex-col items-center justify-center text-center p-8 text-[color:var(--muted)] my-auto max-w-sm mx-auto">
-              <div className="mb-6 p-4.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 animate-pulse animate-duration-1000">
-                <ChatSparkIcon size={36} />
+            <div className="flex-grow flex flex-col items-center justify-center text-center p-6 my-auto max-w-xl mx-auto w-full select-none animate-in fade-in zoom-in-95 duration-500">
+              {/* Pulsing neural cognition graphics icon */}
+              <div className="mb-8 relative">
+                <div className="absolute inset-0 bg-purple-500/10 rounded-full blur-2xl animate-pulse" />
+                <div className="relative p-5 rounded-3xl bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#1c1d20]/80 shadow-md text-purple-600 dark:text-purple-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" className="w-10 h-10 animate-spin-slow">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.467 5.99 5.99 0 0 0-1.925 3.546 5.974 5.974 0 0 1-2.133-1A3.75 3.75 0 0 0 12 18Z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75a3.75 3.75 0 1 1 0-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </div>
               </div>
-              <h2 className="font-extrabold text-sm tracking-wide uppercase text-[color:var(--text)] mb-2">Ask Your Doubts</h2>
-              <p className="text-2xs font-semibold leading-relaxed">Submit homework equations, upload screenshots, or activate Voice mode to speak live with the tutor.</p>
+              
+              <h2 className="font-black text-lg tracking-tight text-[color:var(--text)] mb-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
+                What can I help with?
+              </h2>
+              <p className="text-2xs font-semibold text-[color:var(--muted)] leading-relaxed max-w-sm mb-8">
+                Submit homework equations, upload screenshots, or ask quick step-by-step calculus limits questions.
+              </p>
+
+              {/* Quick action prompt badges */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full">
+                {[
+                  {
+                    title: "📐 Solve Calculus Limit",
+                    desc: "Calculate lim x->0 sin(x)/x step-by-step",
+                    prompt: "Solve the limit equation: \\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 step-by-step."
+                  },
+                  {
+                    title: "🧪 Biology Processes",
+                    desc: "Explain the cellular respiration cycle",
+                    prompt: "Explain the process of cellular respiration in clear, simplified biology terms."
+                  },
+                  {
+                    title: "🍎 Physics Equation",
+                    desc: "Explain the force formula F = ma",
+                    prompt: "Explain Newton's second law of motion and explain its equation $F = ma$ with examples."
+                  }
+                ].map((action, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setInput(action.prompt)}
+                    className="p-3.5 rounded-2xl border border-slate-200 dark:border-[#1c1d20]/80 bg-white dark:bg-[#121214] hover:bg-slate-50 dark:hover:bg-[#1c1d20]/40 text-left transition hover:border-purple-500/30 hover:shadow-sm active:scale-98 cursor-pointer"
+                  >
+                    <p className="text-3xs font-extrabold text-[color:var(--text)] uppercase tracking-wide mb-1">{action.title}</p>
+                    <p className="text-4xs font-medium text-[color:var(--muted)] leading-normal">{action.desc}</p>
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="space-y-6 flex-grow">
@@ -487,14 +529,14 @@ export default function DoubtSolverPage() {
                       isUser ? "self-end items-end ml-auto" : "self-start items-start mr-auto"
                     }`}
                   >
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[color:var(--muted)] mb-1 px-1">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-[color:var(--muted)]/50 mb-1 px-1">
                       {isUser ? "You" : "AI Tutor"}
                     </span>
                     <div
-                      className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed shadow-sm transition-all duration-300 ${
+                      className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed transition-all duration-300 shadow-xs ${
                         isUser
-                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-none shadow-blue-500/5 whitespace-pre-wrap"
-                          : `glass-card text-[color:var(--text)] rounded-tl-none max-w-none text-xs ${
+                          ? "bg-purple-600/10 dark:bg-purple-500/10 border border-purple-500/15 text-[color:var(--text)] rounded-tr-none"
+                          : `bg-slate-50 dark:bg-[#121214] border border-slate-200/50 dark:border-[#1c1d20]/50 text-[color:var(--text)] rounded-tl-none max-w-none text-xs ${
                               loading && i === messages.length - 1 ? "chat-streaming" : ""
                             }`
                       }`}
@@ -744,8 +786,8 @@ export default function DoubtSolverPage() {
           </div>
         )}
 
-        {/* Input box pinned to bottom */}
-        <div className="shrink-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-[color:var(--surface)]/50 border-t border-[color:var(--border)]/35 backdrop-blur-md flex flex-col gap-3">
+        {/* Floating Input Pill Area */}
+        <div className="shrink-0 w-full max-w-2xl sm:max-w-3xl mx-auto px-4 pb-6 bg-transparent flex flex-col gap-3 z-10 relative">
           
           <input
             type="file"
@@ -768,20 +810,21 @@ export default function DoubtSolverPage() {
             </div>
           )}
 
-          <div className="flex gap-1.5 sm:gap-2">
+          {/* Unified Input Pill Container */}
+          <div className="relative flex items-center bg-white dark:bg-[#121214] border border-slate-200 dark:border-[#1c1d20]/80 rounded-2xl p-1.5 pl-3 shadow-lg focus-within:border-purple-500/40 focus-within:ring-4 focus-within:ring-purple-500/5 transition duration-200">
             
             {/* Image attachment trigger */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className={`flex shrink-0 h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
+              className={`flex shrink-0 h-9 w-9 items-center justify-center rounded-xl transition duration-200 active:scale-95 ${
                 imageFile 
-                  ? "bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-950/65 dark:text-blue-300"
-                  : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
+                  ? "bg-blue-100 text-blue-700 dark:bg-blue-950/65 dark:text-blue-300"
+                  : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-purple-600"
               }`}
               title="Attach homework or syllabus image"
             >
-              <CameraScanIcon size={18} />
+              <CameraScanIcon size={16} />
             </button>
 
             {/* Voice Conversation Activation microphone trigger */}
@@ -789,14 +832,14 @@ export default function DoubtSolverPage() {
               <button
                 type="button"
                 onClick={toggleVoiceMode}
-                className={`flex shrink-0 h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[color:var(--border)] transition duration-200 active:scale-95 ${
+                className={`flex shrink-0 h-9 w-9 items-center justify-center rounded-xl transition duration-200 active:scale-95 ${
                   voiceMode 
-                    ? "bg-purple-100 text-purple-700 border-purple-400 dark:bg-purple-950/65 dark:text-purple-300 animate-pulse"
-                    : "bg-[color:var(--surface-soft)]/50 text-[color:var(--muted)] hover:border-purple-500/50 hover:text-purple-600"
+                    ? "bg-purple-100 text-purple-700 animate-pulse dark:bg-purple-950/65 dark:text-purple-300"
+                    : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-purple-600"
                 }`}
                 title="Speak live using voice conversation"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5 w-4.5 sm:h-5.5 sm:w-5.5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5 w-4.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
                 </svg>
               </button>
@@ -808,22 +851,21 @@ export default function DoubtSolverPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={imageFile ? "Image details..." : "Ask your step-by-step doubt..."}
-              className="flex-1 border border-[color:var(--border)] rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-2xs sm:text-xs h-11 sm:h-12 bg-[color:var(--surface-soft)]/50 text-[color:var(--text)] outline-none transition duration-200 focus:border-purple-500 focus:bg-[color:var(--surface)] focus:ring-4 focus:ring-purple-500/10"
+              className="flex-1 bg-transparent text-2xs sm:text-xs text-[color:var(--text)] outline-none border-none px-3.5 py-2.5 placeholder-slate-450/80"
               onKeyDown={(e) =>
                 e.key === "Enter" && !loading && handleSend()
               }
             />
 
-            {/* Send button */}
+            {/* Send button (rounded circle like ChatGPT) */}
             <button
               onClick={() => handleSend()}
-              disabled={loading}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl h-11 w-11 sm:h-12 sm:w-auto p-0 sm:px-5 sm:py-3 font-bold shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
+              disabled={loading || (!input.trim() && !imageFile)}
+              className="h-9 w-9 rounded-full bg-purple-600 text-white flex items-center justify-center hover:bg-purple-700 disabled:opacity-30 disabled:hover:bg-purple-600 transition active:scale-95 shrink-0 shadow-sm"
               title="Send question"
             >
-              <span className="hidden sm:inline text-xs font-bold">Send</span>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-4 w-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
               </svg>
             </button>
           </div>

@@ -57,7 +57,7 @@ export default function PricingPage() {
   }
 
   return (
-    <main className="grid-bg min-h-screen px-4 py-8 text-[color:var(--text)] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
+    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-[color:var(--text)] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         
         {/* Header Bar */}

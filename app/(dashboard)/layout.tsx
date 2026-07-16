@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </Suspense>
 
       {/* Main content scroll container */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
         <Suspense fallback={
           <div className="flex-grow flex items-center justify-center h-screen bg-[color:var(--bg)]">
             <span className="h-6 w-6 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>

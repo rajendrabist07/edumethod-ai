@@ -216,3 +216,7 @@ body {
   from, to { opacity: 1; }
   50% { opacity: 0; }
 }
+
+.animate-spin-slow {
+  animation: spin 10s linear infinite;
+}
