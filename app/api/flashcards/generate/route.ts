@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { groq } from "@/lib/groq";
+import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkUsageLimit } from "@/lib/usage";
 
@@ -55,14 +55,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Associated study path not found" }, { status: 404 });
     }
 
-    // Call Groq LLM to generate cards
     try {
-      const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: `You are an expert curriculum designer. Given a subject and a specific topic, generate exactly 8-10 high-quality flashcards for active recall study.
+      const result = await aiGateway.chat(
+        {
+          messages: [
+            {
+              role: "system",
+              content: `You are an expert curriculum designer. Given a subject and a specific topic, generate exactly 8-10 high-quality flashcards for active recall study.
 Each flashcard must contain:
 1. "front": A conceptual question, core term, or study prompt. For math/scientific topics, wrap equations in valid LaTeX: single dollar signs ($...$) for inline math, and double dollar signs ($$...$$) for block display equations.
 2. "back": The concise, clear, and complete answer or explanation (also using LaTeX math formatting if applicable).
@@ -73,16 +72,18 @@ Return ONLY a valid JSON object in this exact format:
     { "front": "string", "back": "string" }
   ]
 }`,
-          },
-          {
-            role: "user",
-            content: `Subject: ${learningPath.subject}\nTopic: ${topicName}\nRaw Syllabus Reference Context: ${learningPath.raw_input}`,
-          },
-        ],
-        response_format: { type: "json_object" },
-      });
+            },
+            {
+              role: "user",
+              content: `Subject: ${learningPath.subject}\nTopic: ${topicName}\nRaw Syllabus Reference Context: ${learningPath.raw_input}`,
+            },
+          ],
+          jsonMode: true,
+        },
+        userId
+      );
 
-      const aiText = completion.choices[0].message.content;
+      const aiText = result.text;
       let aiData;
       try {
         aiData = JSON.parse(aiText || "{}");
@@ -150,16 +151,12 @@ Return ONLY a valid JSON object in this exact format:
       }
 
       return NextResponse.json({ deckId: newDeck.id, count: cardsToInsert.length });
-    } catch (groqError) {
-      console.error("Groq error in flashcard route:", groqError);
-      const err = groqError as { status?: number; message?: string };
-      if (err?.status === 429 || err?.message?.includes("429")) {
-        return NextResponse.json(
-          { error: "AI service is busy. Please try again in a moment." },
-          { status: 429 }
-        );
-      }
-      throw groqError;
+    } catch (aiError: any) {
+      console.error("AI Gateway error in flashcard generation:", aiError);
+      return NextResponse.json(
+        { error: aiError.message || "AI service is busy. Please try again in a moment." },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Generate flashcards error:", error);

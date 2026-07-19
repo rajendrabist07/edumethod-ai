@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { groq } from "@/lib/groq";
+import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
 import { checkUsageLimit } from "@/lib/usage";
@@ -98,43 +98,22 @@ export async function POST(req: NextRequest) {
         async start(controller) {
           let fullResponseText = "";
           try {
-            const completionStream = await groq.chat.completions.create({
-              model: "meta-llama/llama-4-scout-17b-16e-instruct",
-              messages: [
-                {
-                  role: "system",
-                  content: SYSTEM_PROMPT,
-                },
-                ...history.map((m: { role: "user" | "assistant"; content: string }) => ({
-                  role: m.role,
+            await aiGateway.visionStream(
+              {
+                message,
+                imageBase64,
+                mimeType,
+                history: history.map((m: any) => ({
+                  role: m.role as "user" | "assistant" | "system",
                   content: m.content,
                 })),
-                {
-                  role: "user",
-                  content: [
-                    {
-                      type: "text",
-                      text: message,
-                    },
-                    {
-                      type: "image_url",
-                      image_url: {
-                        url: `data:${mimeType};base64,${imageBase64}`,
-                      },
-                    },
-                  ],
-                },
-              ],
-              stream: true,
-            });
-
-            for await (const chunk of completionStream) {
-              const text = chunk.choices[0]?.delta?.content || "";
-              if (text) {
-                fullResponseText += text;
-                controller.enqueue(encoder.encode(text));
-              }
-            }
+              },
+              (chunk) => {
+                fullResponseText += chunk;
+                controller.enqueue(encoder.encode(chunk));
+              },
+              userId
+            );
 
             const finalMessages = [...updatedMessagesWithUser, { role: "assistant", content: fullResponseText }];
             await supabaseAdmin
@@ -142,17 +121,10 @@ export async function POST(req: NextRequest) {
               .update({ messages: finalMessages })
               .eq("id", finalSessionId);
 
-          } catch (groqVisionError: any) {
-            console.error("Groq vision error in stream:", groqVisionError);
-            const errStatus = groqVisionError?.status || groqVisionError?.statusCode || "UNKNOWN";
-            const errMsg = groqVisionError?.message || String(groqVisionError);
-            console.error(`Exact Groq Vision Error: Status ${errStatus} - Message: ${errMsg}`);
-            
-            let userFriendlyMsg = "Failed to process image. Please try a text question instead.";
-            if (errStatus === 429 || errMsg.includes("429")) {
-              userFriendlyMsg = "Image processing service is busy. Please wait a moment or try a text question.";
-            }
-            controller.enqueue(encoder.encode(`⚠️ ERROR: ${userFriendlyMsg} (Details: ${errMsg})`));
+          } catch (aiVisionError: any) {
+            console.error("AI Gateway vision stream error:", aiVisionError);
+            const userFriendlyMsg = aiVisionError.message || "Failed to process image. Please try a text question instead.";
+            controller.enqueue(encoder.encode(`⚠️ ERROR: ${userFriendlyMsg}`));
           } finally {
             controller.close();
           }
@@ -183,19 +155,16 @@ export async function POST(req: NextRequest) {
         async start(controller) {
           let fullResponseText = "";
           try {
-            const completionStream = await groq.chat.completions.create({
-              model: "llama-3.3-70b-versatile",
-              messages: messagesToSend,
-              stream: true,
-            });
-
-            for await (const chunk of completionStream) {
-              const text = chunk.choices[0]?.delta?.content || "";
-              if (text) {
-                fullResponseText += text;
-                controller.enqueue(encoder.encode(text));
-              }
-            }
+            await aiGateway.chatStream(
+              {
+                messages: messagesToSend,
+              },
+              (chunk) => {
+                fullResponseText += chunk;
+                controller.enqueue(encoder.encode(chunk));
+              },
+              userId
+            );
 
             const finalMessages = [...updatedMessagesWithUser, { role: "assistant", content: fullResponseText }];
             await supabaseAdmin
@@ -203,14 +172,10 @@ export async function POST(req: NextRequest) {
               .update({ messages: finalMessages })
               .eq("id", finalSessionId);
 
-          } catch (groqError) {
-            console.error("Groq stream error:", groqError);
-            const err = groqError as { status?: number; message?: string };
-            let errMsg = "AI service error. Please try again.";
-            if (err?.status === 429 || err?.message?.includes("429")) {
-              errMsg = "AI service is busy (rate limit reached). Please try again in a moment.";
-            }
-            controller.enqueue(encoder.encode(`⚠️ ERROR: ${errMsg}`));
+          } catch (aiError: any) {
+            console.error("AI Gateway text stream error:", aiError);
+            const userFriendlyMsg = aiError.message || "AI tutor service error. Please try again.";
+            controller.enqueue(encoder.encode(`⚠️ ERROR: ${userFriendlyMsg}`));
           } finally {
             controller.close();
           }

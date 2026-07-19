@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { groq } from "@/lib/groq";
+import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkUsageLimit } from "@/lib/usage";
 
@@ -56,22 +56,24 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization. Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
-          },
-          {
-            role: "user",
-            content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
-          },
-        ],
-        response_format: { type: "json_object" },
-      });
+      const result = await aiGateway.chat(
+        {
+          messages: [
+            {
+              role: "system",
+              content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization. Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
+            },
+            {
+              role: "user",
+              content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
+            },
+          ],
+          jsonMode: true,
+        },
+        userId
+      );
 
-      const aiText = completion.choices[0].message.content;
+      const aiText = result.text;
 
       let aiData;
       try {
@@ -106,19 +108,12 @@ export async function POST(req: NextRequest) {
       }));
 
       return NextResponse.json({ quizId: quiz.id, questions: questionsForFrontend });
-    } catch (groqError) {
-      console.error("Groq error:", groqError);
-      
-      const err = groqError as { status?: number; message?: string };
-      // Handle rate limiting
-      if (err?.status === 429 || err?.message?.includes("429")) {
-        return NextResponse.json(
-          { error: "AI service is busy. Please try again in a moment." },
-          { status: 429 }
-        );
-      }
-      
-      throw groqError;
+    } catch (aiError: any) {
+      console.error("AI Gateway error in quiz generation:", aiError);
+      return NextResponse.json(
+        { error: aiError.message || "AI service is busy. Please try again in a moment." },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Generate quiz error:", error);

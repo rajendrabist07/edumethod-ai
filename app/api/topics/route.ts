@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { groq } from "@/lib/groq";
+import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkUsageLimit } from "@/lib/usage";
 
@@ -50,24 +50,26 @@ export async function POST(req: NextRequest) {
     const { subject, rawText } = parsed.data;
 
     try {
-      // Step 5: Call Groq with a structured prompt
-      const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are an expert curriculum analyzer. Given raw syllabus text, extract topics as JSON only, no extra text. Format: { \"subject\": string, \"topics\": [{ \"name\": string, \"difficulty\": \"easy\"|\"medium\"|\"hard\", \"estimatedHours\": number }] }",
-          },
-          {
-            role: "user",
-            content: `Subject: ${subject}\n\nSyllabus text:\n${rawText}`,
-          },
-        ],
-        response_format: { type: "json_object" },
-      });
+      // Step 5: Call AI Gateway
+      const result = await aiGateway.chat(
+        {
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are an expert curriculum analyzer. Given raw syllabus text, extract topics as JSON only, no extra text. Format: { \"subject\": string, \"topics\": [{ \"name\": string, \"difficulty\": \"easy\"|\"medium\"|\"hard\", \"estimatedHours\": number }] }",
+            },
+            {
+              role: "user",
+              content: `Subject: ${subject}\n\nSyllabus text:\n${rawText}`,
+            },
+          ],
+          jsonMode: true,
+        },
+        userId
+      );
 
-      const aiResponseText = completion.choices[0].message.content;
+      const aiResponseText = result.text;
 
       // Step 6: Validate AI's response matches our expected shape
       let aiData;
@@ -101,19 +103,12 @@ export async function POST(req: NextRequest) {
 
       // Step 8: Return result to frontend
       return NextResponse.json({ learningPathId: data.id, topics: validated.data.topics });
-    } catch (groqError) {
-      console.error("Groq error:", groqError);
-      
-      const err = groqError as { status?: number; message?: string };
-      // Handle rate limiting
-      if (err?.status === 429 || err?.message?.includes("429")) {
-        return NextResponse.json(
-          { error: "AI service is busy. Please try again in a moment." },
-          { status: 429 }
-        );
-      }
-      
-      throw groqError;
+    } catch (aiError: any) {
+      console.error("AI Gateway error in topics extraction:", aiError);
+      return NextResponse.json(
+        { error: aiError.message || "AI service is temporarily busy. Please try again." },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Topics extraction error:", error);

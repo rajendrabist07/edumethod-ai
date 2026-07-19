@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
-import { groq } from "@/lib/groq";
+import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 const requestSchema = z.object({
@@ -47,22 +47,24 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: `You are a learning science expert. Given a list of topics with difficulty and estimated hours, create an optimal 7-day study plan using interleaving (mix related topics), spaced repetition principles, and active recall methods. Return ONLY valid JSON in this exact format: { "days": [{ "day": number, "topics": string[], "method": string, "durationMinutes": number, "hack": string }] }. "method" should describe the study technique for that day (e.g. "Active recall with flashcards"). "hack" should be one practical tip/mnemonic for that day's topics.`,
-          },
-          {
-            role: "user",
-            content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
-          },
-        ],
-        response_format: { type: "json_object" },
-      });
+      const result = await aiGateway.chat(
+        {
+          messages: [
+            {
+              role: "system",
+              content: `You are a learning science expert. Given a list of topics with difficulty and estimated hours, create an optimal 7-day study plan using interleaving (mix related topics), spaced repetition principles, and active recall methods. Return ONLY valid JSON in this exact format: { "days": [{ "day": number, "topics": string[], "method": string, "durationMinutes": number, "hack": string }] }. "method" should describe the study technique for that day (e.g. "Active recall with flashcards"). "hack" should be one practical tip/mnemonic for that day's topics.`,
+            },
+            {
+              role: "user",
+              content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
+            },
+          ],
+          jsonMode: true,
+        },
+        userId
+      );
 
-      const aiText = completion.choices[0].message.content;
+      const aiText = result.text;
 
       let aiData;
       try {
@@ -86,19 +88,12 @@ export async function POST(req: NextRequest) {
       }
 
       return NextResponse.json({ plan: validated.data });
-    } catch (groqError) {
-      console.error("Groq error:", groqError);
-      
-      const err = groqError as { status?: number; message?: string };
-      // Handle rate limiting
-      if (err?.status === 429 || err?.message?.includes("429")) {
-        return NextResponse.json(
-          { error: "AI service is busy. Please try again in a moment." },
-          { status: 429 }
-        );
-      }
-      
-      throw groqError;
+    } catch (aiError: any) {
+      console.error("AI Gateway error in plan generation:", aiError);
+      return NextResponse.json(
+        { error: aiError.message || "AI service is busy. Please try again in a moment." },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Generate path error:", error);
