@@ -234,20 +234,27 @@ export function HistorySidebar() {
             <span className="text-4xs opacity-75 uppercase tracking-wider bg-white/10 px-1.5 py-0.5 rounded-md font-mono">⌘N</span>
           </Link>
 
-          <div className="grid grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-3 gap-1.5">
             <Link
               href="/dashboard"
-              className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-1 text-[color:var(--muted)] hover:text-[color:var(--text)]"
+              className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-0.5 text-[color:var(--muted)] hover:text-[color:var(--text)]"
               onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
             >
               <span>🏡</span> Home
             </Link>
             <Link
               href="/upload"
-              className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-1 text-[color:var(--muted)] hover:text-[color:var(--text)]"
+              className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-0.5 text-[color:var(--muted)] hover:text-[color:var(--text)]"
               onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
             >
-              <span>📚</span> New Path
+              <span>📚</span> Path
+            </Link>
+            <Link
+              href="/flashcards"
+              className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-0.5 text-[color:var(--muted)] hover:text-[color:var(--text)]"
+              onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
+            >
+              <span>🗂️</span> Cards
             </Link>
           </div>
         </div>

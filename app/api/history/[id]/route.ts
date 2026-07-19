@@ -49,6 +49,12 @@ export async function GET(req: NextRequest, { params }: DynamicParams) {
         .select("id, questions")
         .eq("learning_path_id", path.id);
 
+      // Also fetch any flashcard decks associated with this learning path
+      const { data: decks } = await supabaseAdmin
+        .from("flashcard_decks")
+        .select("id, topic")
+        .eq("learning_path_id", path.id);
+
       return NextResponse.json({
         type: "path",
         path: {
@@ -58,6 +64,7 @@ export async function GET(req: NextRequest, { params }: DynamicParams) {
           learningPlan: path.learning_plan || null,
           createdAt: path.created_at,
           quizzes: quizzes || [],
+          decks: decks || [],
         },
       });
     }

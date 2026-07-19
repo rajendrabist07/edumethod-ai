@@ -12,6 +12,7 @@ import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 import { CameraScanIcon } from "@/components/icons/CameraScanIcon";
 import { LoadingPulse } from "@/components/ui/LoadingPulse";
 import { useSearchParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Topic {
   name: string;
@@ -99,6 +100,10 @@ export default function UploadPage() {
   } | null>(null);
   const [loadingQuiz, setLoadingQuiz] = useState(false);
 
+  // Flashcards Integration states
+  const [decks, setDecks] = useState<{ id: string; topic: string }[]>([]);
+  const [generatingCardsTopic, setGeneratingCardsTopic] = useState<string | null>(null);
+
   // Sync with URL query parameter to load existing path
   useEffect(() => {
     if (pathId) {
@@ -113,6 +118,8 @@ export default function UploadPage() {
       setQuizQuestions([]);
       setUserAnswers([]);
       setQuizResult(null);
+      setDecks([]);
+      setGeneratingCardsTopic(null);
     }
   }, [pathId]);
 
@@ -130,6 +137,7 @@ export default function UploadPage() {
         setSubject(data.path.subject || "");
         setTopics(data.path.topics || []);
         setLearningPathId(data.path.id || "");
+        setDecks(data.path.decks || []);
         if (data.path.learningPlan) {
           setPlan(data.path.learningPlan.days || []);
         } else {
@@ -163,10 +171,44 @@ export default function UploadPage() {
     }
   }
 
+  async function handleGenerateCardsForTopic(topicName: string) {
+    if (!learningPathId) return;
+    setGeneratingCardsTopic(topicName);
+    setError("");
+
+    try {
+      const res = await fetch("/api/flashcards/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          learningPathId,
+          topicName,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setDecks((prev) => [...prev, { id: data.deckId, topic: topicName }]);
+        toast.success(`Successfully generated flashcards for "${topicName}"!`);
+        router.push(`/flashcards/${data.deckId}`);
+      } else {
+        setError(data.error || "Failed to generate flashcards");
+        toast.error(data.error || "Failed to generate flashcards");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error while generating flashcards");
+      toast.error("Network error while generating flashcards");
+    } finally {
+      setGeneratingCardsTopic(null);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setDecks([]);
 
     try {
       const res = await fetch("/api/topics", {
@@ -432,30 +474,62 @@ export default function UploadPage() {
             </div>
             
             <div className="grid gap-3 sm:grid-cols-2">
-              {topics.map((topic, i) => (
-                <div
-                  key={i}
-                  className="glass-card glass-card-hover rounded-2xl p-4 shadow-sm"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold text-sm text-[color:var(--text)]">
-                      {topic.name}
-                    </p>
-                    <span className={`rounded-full px-2 py-0.5 text-3xs font-extrabold uppercase tracking-wide ${
-                      topic.difficulty === "easy" 
-                        ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/45 dark:text-emerald-400"
-                        : topic.difficulty === "medium"
-                        ? "bg-amber-50 text-amber-600 dark:bg-amber-950/45 dark:text-amber-400"
-                        : "bg-rose-50 text-rose-600 dark:bg-rose-950/45 dark:text-rose-400"
-                    }`}>
-                      {topic.difficulty}
-                    </span>
+              {topics.map((topic, i) => {
+                const existingDeck = decks.find((d) => d.topic === topic.name);
+                return (
+                  <div
+                    key={i}
+                    className="glass-card glass-card-hover rounded-2xl p-4 shadow-sm flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-bold text-sm text-[color:var(--text)]">
+                          {topic.name}
+                        </p>
+                        <span className={`rounded-full px-2 py-0.5 text-3xs font-extrabold uppercase tracking-wide ${
+                          topic.difficulty === "easy" 
+                            ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/45 dark:text-emerald-400"
+                            : topic.difficulty === "medium"
+                            ? "bg-amber-50 text-amber-600 dark:bg-amber-950/45 dark:text-amber-400"
+                            : "bg-rose-50 text-rose-600 dark:bg-rose-950/45 dark:text-rose-400"
+                        }`}>
+                          {topic.difficulty}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-2xs text-[color:var(--muted)] flex items-center gap-1.5">
+                        <SpacedRepetitionIcon size={12} className="text-blue-500" /> Estimated time: <span className="font-bold text-[color:var(--text)]">{topic.estimatedHours} hours</span>
+                      </p>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-[color:var(--border)]/20 flex items-center justify-between select-none">
+                      {existingDeck ? (
+                        <Link
+                          href={`/flashcards/${existingDeck.id}`}
+                          className="text-3xs font-black text-emerald-600 hover:text-emerald-700 hover:underline uppercase tracking-widest flex items-center gap-1"
+                        >
+                          ⚡ Review Flashcards
+                        </Link>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleGenerateCardsForTopic(topic.name)}
+                          disabled={generatingCardsTopic === topic.name}
+                          className="text-3xs font-black text-blue-600 hover:text-blue-700 hover:underline uppercase tracking-widest flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                        >
+                          {generatingCardsTopic === topic.name ? (
+                            <>
+                              <span className="h-2.5 w-2.5 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
+                              Creating...
+                            </>
+                          ) : (
+                            <>🗂️ Generate Flashcards</>
+                          )}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <p className="mt-2 text-2xs text-[color:var(--muted)] flex items-center gap-1.5">
-                    <SpacedRepetitionIcon size={12} className="text-blue-500" /> Estimated time: <span className="font-bold text-[color:var(--text)]">{topic.estimatedHours} hours</span>
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {plan.length === 0 && (
@@ -646,15 +720,41 @@ export default function UploadPage() {
                       <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">
                         We detected concept weaknesses in these modules (&lt;60% accuracy):
                       </p>
-                      <div className="flex flex-wrap gap-2">
-                        {quizResult.weakTopics.map((topic, i) => (
-                          <span
-                            key={i}
-                            className="rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-2xs font-bold text-rose-700 dark:bg-rose-950/30 dark:border-rose-900/50 dark:text-rose-400"
-                          >
-                            ⚠️ {topic}
-                          </span>
-                        ))}
+                      <div className="flex flex-col gap-2">
+                        {quizResult.weakTopics.map((topic, i) => {
+                          const existingDeck = decks.find((d) => d.topic === topic);
+                          return (
+                            <div key={i} className="flex items-center gap-2">
+                              <span className="rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-2xs font-bold text-rose-700 dark:bg-rose-950/30 dark:border-rose-900/50 dark:text-rose-400">
+                                ⚠️ {topic}
+                              </span>
+                              {existingDeck ? (
+                                <Link
+                                  href={`/flashcards/${existingDeck.id}`}
+                                  className="text-4xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest hover:underline flex items-center gap-0.5"
+                                >
+                                  ⚡ Study Cards
+                                </Link>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleGenerateCardsForTopic(topic)}
+                                  disabled={generatingCardsTopic === topic}
+                                  className="text-4xs font-black text-blue-500 hover:text-blue-600 uppercase tracking-widest hover:underline disabled:opacity-50 cursor-pointer flex items-center gap-0.5"
+                                >
+                                  {generatingCardsTopic === topic ? (
+                                    <>
+                                      <span className="h-2 w-2 rounded-full border border-t-blue-500 border-r-transparent animate-spin"></span>
+                                      Creating...
+                                    </>
+                                  ) : (
+                                    <>🗂️ Build Cards</>
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                       <p className="text-2xs text-[color:var(--muted)] mt-1">
                         Use the **Doubt Solver** chat to ask follow-up questions about these topics for step-by-step help.
