@@ -288,9 +288,6 @@ export default function DoubtSolverPage() {
         return;
       }
 
-      // Append blank assistant block to begin stream writing
-      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-
       let accumulatedText = "";
       while (true) {
         const { value, done } = await reader.read();
@@ -300,14 +297,17 @@ export default function DoubtSolverPage() {
         accumulatedText += chunk;
 
         setMessages((prev) => {
-          const updated = [...prev];
-          if (updated.length > 0) {
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg && lastMsg.role === "assistant") {
+            const updated = [...prev];
             updated[updated.length - 1] = {
-              ...updated[updated.length - 1],
+              ...lastMsg,
               content: accumulatedText,
             };
+            return updated;
+          } else {
+            return [...prev, { role: "assistant", content: accumulatedText }];
           }
-          return updated;
         });
       }
 
