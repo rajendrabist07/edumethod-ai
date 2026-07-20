@@ -1,316 +1,203 @@
-# 🎓 EduMethod AI - AI-Powered Personalized Learning Platform
+# 🎓 EduMethod AI — Premium Cognitive EdTech Platform
 
-> An intelligent learning assistant that transforms raw syllabus text/images into structured learning paths, adaptive quizzes, and step-by-step problem solutions.
+<div align="center">
 
-![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=flat-square&logo=next.js)
-![React](https://img.shields.io/badge/React-19.2-61dafb?style=flat-square&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-38b2ac?style=flat-square&logo=tailwindcss)
-![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green?style=flat-square&logo=supabase)
+  <!-- Project Brand Logo / Banner SVG -->
+  <svg viewBox="0 0 800 200" width="100%" height="150" xmlns="http://www.w3.org/2000/svg" style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 24px;">
+    <defs>
+      <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#a855f7" />
+        <stop offset="50%" stop-color="#6366f1" />
+        <stop offset="100%" stop-color="#3b82f6" />
+      </linearGradient>
+      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="8" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+    </defs>
+    <!-- Logo Symbol -->
+    <g transform="translate(60, 55)">
+      <path d="M40 10 L80 40 L80 90 L40 100 L0 90 L0 40 Z" fill="url(#logo-grad)" opacity="0.9" filter="url(#glow)"/>
+      <path d="M40 25 L65 45 L65 80 L40 90 L15 80 L15 45 Z" fill="#0f172a" />
+      <!-- Small spark detail -->
+      <path d="M40 40 L45 52 L57 52 L47 59 L51 71 L40 63 L29 71 L33 59 L23 52 L35 52 Z" fill="url(#logo-grad)" />
+    </g>
+    <!-- Typography -->
+    <text x="180" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="44" fill="#ffffff" letter-spacing="4">EDUMETHOD AI</text>
+    <text x="184" y="130" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="14" fill="#94a3b8" letter-spacing="6">INTELLIGENT COGNITION HUB</text>
+  </svg>
 
----
+  <p align="center">
+    A production-grade, AI-powered learning workspace designed to transform unstructured syllabus syllabi, notes, and textbook captures into customized learning roadmaps, interactive flashcards, and conceptual quizzes.
+  </p>
 
-## 🚀 Live Demo
+  <p align="center">
+    <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.2_(Turbopack)-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16" /></a>
+    <a href="https://supabase.com"><img src="https://img.shields.io/badge/Supabase-PostgreSQL-10b981?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" /></a>
+    <a href="https://clerk.com"><img src="https://img.shields.io/badge/Clerk-Authentication-6c47ff?style=for-the-badge&logo=clerk&logoColor=white" alt="Clerk Auth" /></a>
+    <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-v4.0-38b2ac?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS v4" /></a>
+  </p>
 
-**[EduMethod AI Live](https://edumethod-ai.vercel.app)** — Try it now!
+  <h4>
+    🚀 <strong><a href="https://edumethod-ai.vercel.app">Try the Live Workspace Platform</a></strong>
+  </h4>
 
----
-
-## ✨ Core Features
-
-### 1. **Smart Topic Extraction**
-
-- Upload syllabus text or paste content
-- AI automatically extracts and categorizes topics
-- Assigns difficulty levels (easy/medium/hard)
-- Estimates study time for each topic
-
-### 2. **AI-Powered 7-Day Learning Path Generator**
-
-- Generates optimal study schedule using **interleaving** principle
-- Mixes related topics for better retention
-- Includes study methods (active recall, spaced repetition)
-- Daily learning hacks and mnemonics
-
-### 3. **Adaptive Quiz System**
-
-- AI generates 5 conceptual questions (not just memorization)
-- Tracks weak topics automatically
-- Identifies areas needing focus
-- Never sends answer keys to frontend (server-side security)
-
-### 4. **Intelligent Doubt Solver**
-
-- Ask questions via text or upload problem images
-- AI provides **step-by-step solutions** with explanations
-- Maintains conversation history for follow-ups
-- Uses Groq for text (fast), Gemini for images (accurate)
-
-### 5. **Production-Ready Security**
-
-- Clerk authentication for user sessions
-- Supabase RLS policies for data isolation
-- Never exposes API keys or answers in frontend
-- User-specific data access control
+</div>
 
 ---
 
-## 🛠️ Tech Stack
+## 🏛️ Platform Architecture Blueprint
 
-### **Frontend**
+The platform separates frontend client layout panels from raw AI models using a resilient middle-layer gateway, backed by PostgreSQL session storage:
 
-- **Next.js 16** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS 4** - Responsive UI (desktop + mobile)
-- **Zod** - Runtime input validation
-- **React Hook Form** - Form state management
+```mermaid
+graph TD
+    Client[Next.js Client Layout] -->|1. Request| Gateway[Resilient AI Gateway]
+    Gateway -->|Log Telemetry| DB[(Supabase Postgres)]
+    Gateway -->|2. Try Primary| Gemini[Google Gemini 2.5 Flash]
+    Gemini -->|Quota Limit / Failure| Fallback[Groq Model Router]
+    Fallback -->|3. Route Request| Qwen[Qwen 2.5 72B / Llama 3]
+    Qwen -->|4. Stream Response| Gateway
+    Gateway -->|5. Push Stream Chunks| Client
+```
 
-### **Backend & APIs**
+### 1. Unified AI Gateway Platform (`lib/ai/gateway.ts`)
+Designed to handle experimental API limitations and network faults:
+* **Fault-Tolerant Fallback Routing**: If Gemini returns a `429` (Quota Exception) or `503` service fault, the request immediately redirects to Groq providers.
+* **Exponential Backoff Retry Pipeline**: Configured with jitter algorithms to resolve API request collisions.
+* **Database Telemetry Logger**: Captures usage tokens, execution latency, model routers, and prompt histories in the `ai_request_logs` table.
 
-- **Next.js API Routes** - Serverless backend
-- **Supabase** - PostgreSQL database + auth
-- **Groq LLM** - Fast text generation
-- **Google Gemini Vision** - Image understanding
-- **Clerk** - User authentication
-
-### **Deployment**
-
-- **Vercel** - Hosting & serverless functions
-- **PostgreSQL** - Data persistence
-- **Environment-based secrets** - Secure configuration
+### 2. Spaced Repetition Learning Engine (`lib/spaced-repetition.ts`)
+EduMethod AI incorporates the **SuperMemo SM-2 Algorithm** to calculate optimal memory reinforcement schedules:
+* **Memory Retention Interval ($I$)**:
+  $$I(1) = 1, \quad I(2) = 6, \quad I(n) = I(n-1) \times EF$$
+* **Easiness Factor Adjustment ($EF$)**:
+  $$EF' = EF + (0.1 - (5 - q) \times (0.08 + (5 - q) \times 0.02))$$
+  *(where $q$ represents user response quality graded from 0 to 5)*
+* **Weak Topic Isolation**: Incorrectly answered quiz questions automatically update the database schema, generating high-priority flashcard decks.
 
 ---
 
-## 📋 Getting Started
+## 📂 Database Schema Entity Relationship
 
-### Prerequisites
+The database is built on PostgreSQL with Clerk user isolation. Supabase **Row Level Security (RLS)** prevents cross-tenant access:
 
-- Node.js 18+
-- npm or yarn
+```
+                  ┌──────────────────────┐
+                  │    user_profiles     │
+                  └──────────┬───────────┘
+                             │ (1:1)
+     ┌───────────────────────┼───────────────────────┐
+     │ (1:N)                 │ (1:N)                 │ (1:N)
+┌────▼─────────────────┐┌────▼─────────────────┐┌────▼─────────────────┐
+│    learning_paths    ││    doubt_sessions    ││   flashcard_decks    │
+└──────────┬───────────┘└──────────────────────┘└──────────┬───────────┘
+           │ (1:N)                                         │ (1:N)
+┌──────────▼───────────┐                        ┌──────────▼───────────┐
+│       quizzes        │                        │      flashcards      │
+└──────────────────────┘                        └──────────────────────┘
+```
 
-### Installation
+---
 
+## 🛠️ Technology Catalog & Standards
+
+### Client Layer
+* **Framework**: Next.js 16.2.10 (configured with Turbopack for compilation and HMR).
+* **React Engine**: React 19.2.4 (supporting server actions and concurrent suspense pipelines).
+* **Style Engine**: Tailwind CSS v4.0. Custom class-based dark mode configurations resolve OS-level media overrides:
+  ```css
+  @custom-variant dark (&:where(.dark, .dark *));
+  ```
+* **Forms & Types**: React Hook Form linked with Zod client schema validators.
+
+### Storage & Server Layer
+* **Auth Platform**: Clerk Middleware (JWT authorization token verifications).
+* **Database**: Supabase PostgreSQL with schema migrations managed via Prisma ORM.
+* **Caching & Rate Limiting**: Upstash Redis (Sliding-window token bucket algorithm).
+
+---
+
+## 🚀 Step-by-Step Installation
+
+### 1. Prerequisites
+Ensure you have Node.js 18+ and a running PostgreSQL/Supabase database.
+
+### 2. Clone and Setup Dependencies
 ```bash
 git clone https://github.com/rajendrabist07/edumethod-ai.git
 cd edumethod-ai
 npm install
 ```
 
-### Environment Variables
-
-Create `.env.local`:
-
+### 3. Environment Setup
+Create a `.env.local` file inside the root directory:
 ```env
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_key
-CLERK_SECRET_KEY=your_secret
+# Clerk Authentication Configuration
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
-SUPABASE_SECRET_KEY=your_secret
+# Database Connection Keys (Prisma + Supabase)
+DATABASE_URL="postgres://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres?schema=public"
+NEXT_PUBLIC_SUPABASE_URL=https://[REF].supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci...
+SUPABASE_SECRET_KEY=eyJhbGci...
 
-# AI APIs
-GROQ_API_KEY=your_key
-GEMINI_API_KEY=your_key
+# LLM Providers Keys
+GROQ_API_KEY=gsk_...
+GEMINI_API_KEY=AIzaSy...
+
+# Upstash Redis Configuration (Ratelimiting)
+UPSTASH_REDIS_REST_URL=https://...upstash.io
+UPSTASH_REDIS_REST_TOKEN=...
 ```
 
-### Development
-
+### 4. Database Sync
+Apply database schema configurations to your Supabase instance:
 ```bash
+npx prisma db push
+```
+
+### 5. Running the Workspace
+```bash
+# Start Turbopack local development server
 npm run dev
-# Open http://localhost:3000
-```
 
-### Production Build
-
-```bash
+# Build production distribution bundles
 npm run build
-npm run start
 ```
 
 ---
 
-## 📁 Project Structure
+## 📡 API Core Routes
 
-```
-edu-method-ai/
-├── app/
-│   ├── (dashboard)/
-│   │   ├── upload/           # Topic extraction UI
-│   │   └── doubt-solver/     # Doubt solver chat UI
-│   ├── api/
-│   │   ├── topics/           # Extract topics
-│   │   ├── generate-path/    # 7-day plan
-│   │   ├── generate-quiz/    # Quiz questions
-│   │   ├── submit-quiz/      # Check answers
-│   │   └── solve-doubt/      # Step-by-step solutions
-│   ├── sign-in/ & sign-up/   # Clerk auth pages
-│   ├── error.tsx             # Global error boundary
-│   ├── layout.tsx            # Root layout
-│   └── globals.css           # Global styles
-├── lib/
-│   ├── groq.ts               # Groq client
-│   ├── gemini.ts             # Gemini client
-│   ├── supabase.ts           # Supabase client
-│   └── supabase-admin.ts     # Supabase admin
-├── components/               # UI components
-├── types/                    # TypeScript types
-└── .env.local               # ⚠️ Not in git
-```
+| Route | Method | Payload | Function |
+| :--- | :--- | :--- | :--- |
+| `/api/topics` | `POST` | `{ subject: string, syllabus: string }` | Extracts and ranks core syllabus topics |
+| `/api/generate-path` | `POST` | `{ pathId: string }` | Generates 7-Day interleaved plan |
+| `/api/generate-quiz` | `POST` | `{ topic: string }` | Generates 5 conceptual questions |
+| `/api/submit-quiz` | `POST` | `{ answers: Record<string, string> }` | Checks answers and isolates weak areas |
+| `/api/solve-doubt` | `POST` | Stream (`ReadableStream`) | Handles text & image multimodal queries |
+| `/api/history` | `GET` | *None (Reads user token)* | Returns combined learning paths & chats |
 
 ---
 
-## 🔄 Data Flow
-
-**Topic Extraction → 7-Day Plan → Quiz → Doubt Solver**
-
-Each module stores data in Supabase with user isolation.
-
----
-
-## 📱 Responsive Design
-
-✅ **Fully responsive** across all devices:
-
-- Desktop (1024px+): Full layouts
-- Tablet (768px-1023px): Touch-optimized
-- Mobile (<768px): Single column, large buttons
-
-All components use Tailwind breakpoints (`sm:`, `md:`, `lg:`).
-
----
-
-## 🚀 Deployment to Vercel
-
-### Step 1: Push to GitHub
-
-```bash
-git add .
-git commit -m "Production ready"
-git push origin main
-```
-
-### Step 2: Connect to Vercel
-
-1. Go to [vercel.com](https://vercel.com/rajendra-bists-projects)
-2. Click "Add New Project"
-3. Select your `edumethod-ai` repo
-4. Click "Import"
-
-### Step 3: Set Environment Variables
-
-In Vercel dashboard, add all variables from `.env.local`
-
-### Step 4: Deploy
-
-Click "Deploy" — live in 2-3 minutes!
-
-### Step 5: Update Clerk Production Keys
-
-1. Go to Clerk Dashboard
-2. Add your Vercel domain to allowed domains
-3. Copy production keys
-4. Update Vercel environment variables
-
----
-
-## ✅ Pre-Deployment Checklist
-
-- [ ] All features work locally (`npm run dev`)
-- [ ] Sign up/login works
-- [ ] Topic extraction works (both text & image)
-- [ ] 7-day plan generation works
-- [ ] Quiz generation & submission works
-- [ ] Weak topic detection works
-- [ ] Doubt solver works (text mode at minimum)
-- [ ] Mobile UI responsive (inspect → device toolbar)
-- [ ] Error messages show gracefully (no blank screens)
-- [ ] `.env.local` NOT in git (verify with `git log --all -- .env.local`)
-- [ ] README.md is comprehensive
-- [ ] Build succeeds (`npm run build`)
-
----
-
-## 🧪 Usage Examples
-
-### Extract Topics
-
-```
-/upload → Enter subject & syllabus → Click generate
-```
-
-### Take Quiz
-
-```
-/upload → Generate path → "Take a Quiz" → Answer questions → See weak areas
-```
-
-### Ask Doubt Solver
-
-```
-/doubt-solver → Type question → Get step-by-step answer
-```
-
----
-
-## 🔐 Security Features
-
-✅ Authentication via Clerk  
-✅ Database user isolation  
-✅ Answer keys stored server-side only  
-✅ Zod input validation  
-✅ Environment variable protection  
-✅ Rate limit error handling
-
----
-
-## 📊 Learning Science
-
-- **Interleaving**: Mix topics for 40% better retention
-- **Spaced Repetition**: Quiz scheduling
-- **Active Recall**: Multiple-choice practice
-- **Elaboration**: Step-by-step explanations
-- **Metacognition**: Weakness detection
-
----
-
-## 🐛 Troubleshooting
-
-| Issue                       | Solution                              |
-| --------------------------- | ------------------------------------- |
-| "Invalid input" error       | Enter at least 5 characters           |
-| "Quota exceeded"            | Gemini free tier limit. Use text mode |
-| Blank doubt solver response | Check API keys in `.env.local`        |
-| Supabase connection error   | Verify credentials                    |
-| Mobile UI overflow          | Check browser zoom (should be 100%)   |
+## 🔐 Security Protocols & RLS Checklists
+> [!IMPORTANT]
+> To guarantee complete multi-tenant isolation, the database implements database-level RLS policies on all tables, supplemented by server-side Clerk verification checks:
+- **Tenant Validation**: Every API route extracts user sessions from the Clerk JWT. Raw client parameters are never trusted for user database indices.
+- **Server-Side Verification**: Quiz answer key evaluation is kept server-side inside `/api/submit-quiz` (never exposed in JSON client payloads).
+- **Environment Isolation**: API endpoints are routed through local Next.js Edge proxy servers to prevent token key leakage.
 
 ---
 
 ## 📄 License
-
-MIT License - use freely for projects.
-
----
-
-## 👤 Developer
-
-**Rajendra Bist** - Full-Stack AI Engineer  
-[GitHub](https://github.com/rajendrabist07) • Portfolio • Email
+This repository is licensed under the **MIT License**. Use freely for learning and enterprise integration.
 
 ---
 
-## 📚 Resources
-
-- [Next.js](https://nextjs.org/docs)
-- [Supabase](https://supabase.com/docs)
-- [Clerk](https://clerk.com/docs)
-- [Groq API](https://console.groq.com/keys)
-- [Gemini API](https://makersuite.google.com/app/apikey)
-- [Tailwind CSS](https://tailwindcss.com/docs)
-
----
-
-_Production-ready. Deployed with ❤️_
+<div align="center">
+  <sub>Designed and Developed by <strong><a href="https://github.com/rajendrabist07">Rajendra Bist</a></strong>. Deployed on Vercel with ❤️</sub>
+</div>
