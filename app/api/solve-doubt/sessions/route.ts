@@ -31,9 +31,9 @@ export async function GET(req: NextRequest) {
     // Otherwise, list all sessions
     const { data: sessions, error } = await supabaseAdmin
       .from("doubt_sessions")
-      .select("id, updated_at, messages")
+      .select("id, created_at, messages")
       .eq("user_id", userId)
-      .order("updated_at", { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Database fetch error:", error);
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
       return {
         id: s.id,
         title: title || "New Conversation",
-        updatedAt: s.updated_at,
+        updatedAt: s.created_at,
       };
     });
 

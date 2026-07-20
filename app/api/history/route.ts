@@ -28,9 +28,9 @@ export async function GET(req: NextRequest) {
     // 2. Fetch doubt solver sessions (lightweight columns)
     const { data: sessions, error: sessionError } = await supabaseAdmin
       .from("doubt_sessions")
-      .select("id, updated_at, messages")
+      .select("id, created_at, messages")
       .eq("user_id", userId)
-      .order("updated_at", { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (sessionError) {
       console.error("Error querying doubt sessions history:", sessionError);
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
         id: s.id,
         type: "doubt",
         title: title || "New Conversation",
-        date: s.updated_at,
+        date: s.created_at,
       };
     });
 
