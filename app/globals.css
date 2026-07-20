@@ -14,6 +14,16 @@
   --accent-rgb: 37, 99, 235;
   --accent-strong: #1d4ed8;
   --glow-color: rgba(37, 99, 235, 0.08);
+
+  /* Unified Sidebar & Layout Design Tokens */
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --sidebar-text: #0f172a;
+  --sidebar-muted: #64748b;
+  --sidebar-hover: #f1f5f9;
+  --sidebar-active: #f1f5f9;
+  --sidebar-accent: #7c3aed; /* Purple-600 */
+  --sidebar-accent-hover: #6d28d9; /* Purple-700 */
 }
 
 html.dark {
@@ -30,6 +40,16 @@ html.dark {
   --accent-rgb: 59, 130, 246;
   --accent-strong: #60a5fa;
   --glow-color: rgba(59, 130, 246, 0.12);
+
+  /* Unified Sidebar & Layout Design Tokens */
+  --sidebar-bg: #0b0f19;
+  --sidebar-border: #1e293b;
+  --sidebar-text: #f8fafc;
+  --sidebar-muted: #94a3b8;
+  --sidebar-hover: #151c2e;
+  --sidebar-active: #151c2e;
+  --sidebar-accent: #8b5cf6; /* Purple-500 */
+  --sidebar-accent-hover: #7c3aed; /* Purple-600 */
 }
 
 * {

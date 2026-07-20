@@ -1,20 +1,19 @@
 import React, { Suspense } from "react";
-import { HistorySidebar } from "@/components/HistorySidebar";
+import { cookies } from "next/headers";
+import { LayoutProvider } from "@/components/layout/LayoutContext";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  return (
-    <div className="min-h-screen flex bg-slate-50/50 dark:bg-slate-950/20 text-[color:var(--text)] transition-colors duration-300">
-      {/* Mixed History Sidebar inside Suspense since it reads query searchParams */}
-      <Suspense fallback={<div className="w-[280px] h-screen bg-[color:var(--surface)] border-r border-[color:var(--border)]/45 shrink-0" />}>
-        <HistorySidebar />
-      </Suspense>
+export default async function DashboardLayout({ children }: DashboardLayoutProps) {
+  const cookieStore = await cookies();
+  const collapsed = cookieStore.get("sidebar-collapsed")?.value === "true";
 
-      {/* Main content scroll container */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
+  return (
+    <LayoutProvider initialCollapsed={collapsed}>
+      <AppLayout>
         <Suspense fallback={
           <div className="flex-grow flex items-center justify-center h-screen bg-[color:var(--bg)]">
             <span className="h-6 w-6 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
@@ -22,7 +21,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         }>
           {children}
         </Suspense>
-      </div>
-    </div>
+      </AppLayout>
+    </LayoutProvider>
   );
 }
