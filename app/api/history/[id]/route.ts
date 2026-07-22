@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { z } from "zod";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 type DynamicParams = {
   params: Promise<{ id: string }>;
 };
+
+const paramSchema = z.string().uuid();
 
 export async function GET(req: NextRequest, { params }: DynamicParams) {
   try {
@@ -14,6 +18,19 @@ export async function GET(req: NextRequest, { params }: DynamicParams) {
     }
 
     const { id } = await params;
+    const validation = paramSchema.safeParse(id);
+    if (!validation.success) {
+      return NextResponse.json({ error: "Invalid resource ID format" }, { status: 400 });
+    }
+
+    // Rate Limit: 30 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:history-detail`, 30, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
+    }
 
     // 1. Check if the resource exists in doubt_sessions
     const { data: session } = await supabaseAdmin
@@ -84,6 +101,19 @@ export async function DELETE(req: NextRequest, { params }: DynamicParams) {
     }
 
     const { id } = await params;
+    const validation = paramSchema.safeParse(id);
+    if (!validation.success) {
+      return NextResponse.json({ error: "Invalid resource ID format" }, { status: 400 });
+    }
+
+    // Rate Limit: 30 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:history-delete`, 30, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
+    }
 
     // 1. Check if session exists in doubt_sessions
     const { data: session } = await supabaseAdmin

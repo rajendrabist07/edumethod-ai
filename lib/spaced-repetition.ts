@@ -84,3 +84,12 @@ export function mapRatingToQuality(rating: "again" | "hard" | "good" | "easy"): 
       return 4;
   }
 }
+
+/**
+ * Calculates a mastery percentage (0-100) from SM-2 metrics.
+ */
+export function calculateMasteryScore(avgRepetitions: number, avgEaseFactor: number): number {
+  const rawMastery = (avgRepetitions * 20) + ((avgEaseFactor - 1.3) * 30);
+  return Math.min(Math.max(Math.round(rawMastery), 0), 100);
+}
+

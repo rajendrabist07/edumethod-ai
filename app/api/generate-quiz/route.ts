@@ -4,6 +4,8 @@ import { z } from "zod";
 import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkUsageLimit } from "@/lib/usage";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getHash, getCache, setCache } from "@/lib/cache";
 
 const requestSchema = z.object({
   learningPathId: z.string().uuid(),
@@ -25,6 +27,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate Limit: 10 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:generate-quiz`, 10, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
     }
 
     // Validate usage limit for quiz generation
@@ -53,6 +64,33 @@ export async function POST(req: NextRequest) {
 
     if (fetchError || !learningPath) {
       return NextResponse.json({ error: "Learning path not found" }, { status: 404 });
+    }
+
+    // Cost Caching: Check if we already have generated quiz questions for these topics
+    const cacheKey = `cache:quiz:${getHash(learningPath.topics)}`;
+    const cachedQuiz = await getCache<any>(cacheKey);
+    if (cachedQuiz) {
+      const { data: quiz, error: insertError } = await supabaseAdmin
+        .from("quizzes")
+        .insert({
+          learning_path_id: learningPathId,
+          user_id: userId,
+          questions: cachedQuiz.questions,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        return NextResponse.json({ error: insertError.message }, { status: 500 });
+      }
+
+      const questionsForFrontend = cachedQuiz.questions.map((q: any) => ({
+        question: q.question,
+        options: q.options,
+        topic: q.topic,
+      }));
+
+      return NextResponse.json({ quizId: quiz.id, questions: questionsForFrontend, cached: true });
     }
 
     try {
@@ -100,6 +138,9 @@ export async function POST(req: NextRequest) {
       if (insertError) {
         return NextResponse.json({ error: insertError.message }, { status: 500 });
       }
+
+      // Write plan to cache
+      await setCache(cacheKey, validated.data);
 
       const questionsForFrontend = validated.data.questions.map((q) => ({
         question: q.question,

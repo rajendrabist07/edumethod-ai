@@ -5,9 +5,12 @@ import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
 import { checkUsageLimit } from "@/lib/usage";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getEmbedding } from "@/lib/ai/embeddings";
 
 const requestSchema = z.object({
   sessionId: z.string().uuid().optional(),
+  learningPathId: z.string().uuid().optional(),
   message: z.string().min(1),
   imageBase64: z.string().optional(),
   mimeType: z.string().optional(),
@@ -29,6 +32,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Rate Limit: 10 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:solve-doubt`, 10, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
+    }
+
     // Validate usage limit for doubt solving messages
     const usage = await checkUsageLimit(userId, "doubt_message");
     if (!usage.allowed) {
@@ -47,7 +59,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { sessionId, message, imageBase64, mimeType, regenerate } = parseResult.data;
+    const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate } = parseResult.data;
 
     let finalSessionId = sessionId;
     let session = null;
@@ -91,16 +103,63 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // RAG Similarity Match
+    let finalSystemPrompt = SYSTEM_PROMPT;
+    let chunksMatched: any[] = [];
+    try {
+      let targetLearningPathId = learningPathId || null;
+
+      if (!targetLearningPathId) {
+        // Fetch the user's most recent learning path as fallback
+        const { data: recentPath } = await supabaseAdmin
+          .from("learning_paths")
+          .select("id")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (recentPath) {
+          targetLearningPathId = recentPath.id;
+        }
+      }
+
+      if (targetLearningPathId) {
+        const queryEmbedding = await getEmbedding(message);
+        const { data: matchedChunks, error: rpcError } = await supabaseAdmin.rpc("match_syllabus_chunks", {
+          query_embedding: queryEmbedding,
+          match_threshold: 0.3,
+          match_count: 3,
+          filter_learning_path_id: targetLearningPathId
+        });
+
+        if (!rpcError && matchedChunks && matchedChunks.length > 0) {
+          chunksMatched = matchedChunks;
+          const contextText = matchedChunks
+            .map((c: any, i: number) => `[Syllabus Context Section ${i + 1}]:\n${c.content}`)
+            .join("\n\n");
+          
+          finalSystemPrompt = `${SYSTEM_PROMPT}\n\nUse the following verified syllabus context when answering the student's question. Address the student's question directly, citing the context sections where applicable (e.g. [Syllabus Context Section 1]).\n\nVerified Context:\n${contextText}`;
+        }
+      }
+    } catch (ragError) {
+      console.warn("RAG retrieval failed, falling back to standard AI prompt:", ragError);
+    }
+
     const encoder = new TextEncoder();
 
     if (imageBase64 && mimeType) {
+      const messageWithContext = chunksMatched.length > 0
+        ? `${message}\n\n[Syllabus Context for citation]:\n${chunksMatched.map((c, idx) => `[Section ${idx + 1}]: ${c.content}`).join("\n")}`
+        : message;
+
       const stream = new ReadableStream({
         async start(controller) {
           let fullResponseText = "";
           try {
             await aiGateway.visionStream(
               {
-                message,
+                message: messageWithContext,
                 imageBase64,
                 mimeType,
                 history: history.map((m: any) => ({
@@ -142,7 +201,7 @@ export async function POST(req: NextRequest) {
       const messagesToSend = [
         {
           role: "system" as const,
-          content: SYSTEM_PROMPT,
+          content: finalSystemPrompt,
         },
         ...history.map((m: { role: "user" | "assistant"; content: string }) => ({
           role: m.role,

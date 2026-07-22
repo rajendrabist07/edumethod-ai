@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const requestSchema = z.object({
   quizId: z.string().uuid(),
@@ -12,6 +13,15 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate Limit: 30 requests per minute
+  const rateLimit = await checkRateLimit(`rate-limit:${userId}:submit-quiz`, 30, "60 s");
+  if (!rateLimit.success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again in a moment." },
+      { status: 429 }
+    );
   }
 
   const body = await req.json();

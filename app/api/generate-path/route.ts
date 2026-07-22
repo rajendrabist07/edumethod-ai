@@ -3,6 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { checkUsageLimit } from "@/lib/usage";
+import { getHash, getCache, setCache } from "@/lib/cache";
 
 const requestSchema = z.object({
   learningPathId: z.string().uuid(),
@@ -27,6 +30,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Rate Limit: 10 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:generate-path`, 10, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
+    }
+
+    // Daily Limit check
+    const usage = await checkUsageLimit(userId, "learning_path");
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: "Daily study path limit reached. Upgrade to Pro for unlimited generation." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const parsed = requestSchema.safeParse(body);
     if (!parsed.success) {
@@ -44,6 +65,22 @@ export async function POST(req: NextRequest) {
 
     if (fetchError || !learningPath) {
       return NextResponse.json({ error: "Learning path not found" }, { status: 404 });
+    }
+
+    // Cost Caching: Hash the topics list
+    const cacheKey = `cache:study-plan:${getHash(learningPath.topics)}`;
+    const cachedPlan = await getCache<any>(cacheKey);
+    if (cachedPlan) {
+      const { error: dbUpdateError } = await supabaseAdmin
+        .from("learning_paths")
+        .update({ learning_plan: cachedPlan })
+        .eq("id", learningPathId);
+
+      if (dbUpdateError) {
+        return NextResponse.json({ error: dbUpdateError.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ plan: cachedPlan, cached: true });
     }
 
     try {
@@ -86,6 +123,9 @@ export async function POST(req: NextRequest) {
       if (updateError) {
         return NextResponse.json({ error: updateError.message }, { status: 500 });
       }
+
+      // Write plan to cache
+      await setCache(cacheKey, validated.data);
 
       return NextResponse.json({ plan: validated.data });
     } catch (aiError: any) {

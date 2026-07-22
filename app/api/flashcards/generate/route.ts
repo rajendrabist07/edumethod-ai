@@ -4,6 +4,7 @@ import { z } from "zod";
 import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkUsageLimit } from "@/lib/usage";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const requestSchema = z.object({
   learningPathId: z.string().uuid(),
@@ -24,6 +25,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate Limit: 10 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:generate-flashcards`, 10, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
     }
 
     // Reuse study path limits or allow free generation

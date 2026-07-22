@@ -96,7 +96,7 @@ export async function checkUsageLimit(
         .from("doubt_sessions")
         .select("messages")
         .eq("user_id", userId)
-        .gte("updated_at", startOfDayISO);
+        .gte("created_at", startOfDayISO);
 
       if (!error && data) {
         data.forEach((row) => {

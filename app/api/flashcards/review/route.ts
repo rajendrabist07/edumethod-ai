@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { calculateSM2, mapRatingToQuality } from "@/lib/spaced-repetition";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const reviewSchema = z.object({
   cardId: z.string().uuid(),
@@ -14,6 +15,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate Limit: 30 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:review-flashcard`, 30, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
     }
 
     const body = await req.json();

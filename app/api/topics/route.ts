@@ -4,6 +4,8 @@ import { z } from "zod";
 import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkUsageLimit } from "@/lib/usage";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { chunkText, getEmbedding } from "@/lib/ai/embeddings";
 
 // Step 1: Define what input we expect from frontend
 const requestSchema = z.object({
@@ -29,6 +31,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate Limit: 10 requests per minute
+    const rateLimit = await checkRateLimit(`rate-limit:${userId}:topics`, 10, "60 s");
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in a moment." },
+        { status: 429 }
+      );
     }
 
     // Step 3.5: Validate usage limit
@@ -57,7 +68,7 @@ export async function POST(req: NextRequest) {
             {
               role: "system",
               content:
-                "You are an expert curriculum analyzer. Given raw syllabus text, extract topics as JSON only, no extra text. Format: { \"subject\": string, \"topics\": [{ \"name\": string, \"difficulty\": \"easy\"|\"medium\"|\"hard\", \"estimatedHours\": number }] }",
+                "You are an expert curriculum analyzer. Given raw syllabus text, extract topics as JSON only, no extra text. Format: { \"subject\": string, \"topics\": [{ \"name\": string, \"difficulty\": \"easy\"|\"medium\"|\"hard\", \"estimatedHours\": number }] }"
             },
             {
               role: "user",
@@ -99,6 +110,28 @@ export async function POST(req: NextRequest) {
 
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      // RAG ingestion pipeline: chunk and embed the raw syllabus
+      try {
+        const chunks = chunkText(rawText, 150, 30);
+        if (chunks.length > 0) {
+          const chunkInserts = await Promise.all(
+            chunks.map(async (content) => {
+              const embedding = await getEmbedding(content);
+              return {
+                learning_path_id: data.id,
+                user_id: userId,
+                content,
+                embedding,
+              };
+            })
+          );
+
+          await supabaseAdmin.from("syllabus_chunks").insert(chunkInserts);
+        }
+      } catch (ragError) {
+        console.warn("RAG syllabus chunking failed to ingest:", ragError);
       }
 
       // Step 8: Return result to frontend

@@ -29,6 +29,7 @@ export default function DashboardPage() {
   const { user } = useUser();
   const [usage, setUsage] = useState<UsageLimits | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [masteryData, setMasteryData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +50,13 @@ export default function DashboardPage() {
       if (historyRes.ok) {
         const historyData = await historyRes.json();
         setHistory(historyData.history || []);
+      }
+
+      // Fetch mastery scoring data
+      const masteryRes = await fetch("/api/mastery");
+      if (masteryRes.ok) {
+        const masteryJson = await masteryRes.json();
+        setMasteryData(masteryJson.topics || []);
       }
     } catch (err) {
       console.error("Dashboard data fetch error:", err);
@@ -292,6 +300,83 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Analytics & Mastery Dashboard */}
+        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[color:var(--border)]/40">
+          <h2 className="text-xs font-black uppercase tracking-widest text-[color:var(--muted)] border-b border-[color:var(--border)]/35 pb-2">
+            🧠 Spaced Repetition & Topic Mastery Dashboard
+          </h2>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <span className="h-5 w-5 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
+            </div>
+          ) : masteryData.length === 0 ? (
+            <div className="text-center py-10 text-[color:var(--muted)]">
+              <span className="text-2xl block mb-2">🎓</span>
+              <p className="text-2xs font-bold uppercase tracking-wider">No mastery data available yet</p>
+              <p className="text-4xs font-semibold mt-1">Generate a flashcard deck and review cards to see your topic mastery grow!</p>
+            </div>
+          ) : (
+            <div className="mt-4 space-y-6">
+              {/* Mastery Heatmap / Progress list */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                {masteryData.map((t, idx) => {
+                  const getMasteryColor = (pct: number) => {
+                    if (pct < 40) return "bg-red-500";
+                    if (pct < 75) return "bg-amber-500";
+                    return "bg-emerald-500";
+                  };
+
+                  return (
+                    <div key={idx} className="glass-card p-4 rounded-xl border border-[color:var(--border)]/20 flex flex-col justify-between">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="text-[9px] font-bold text-blue-500 uppercase tracking-wide truncate block">{t.subject}</span>
+                          <h4 className="text-2xs font-black mt-1 leading-snug truncate">{t.topic}</h4>
+                        </div>
+                        <span className={`text-4xs font-extrabold px-2 py-0.5 rounded-full text-white shrink-0 ${getMasteryColor(t.mastery)}`}>
+                          {t.mastery}%
+                        </span>
+                      </div>
+                      
+                      <div className="mt-4">
+                        <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ${getMasteryColor(t.mastery)}`}
+                            style={{ width: `${t.mastery}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between items-center mt-2 text-[8px] font-semibold text-[color:var(--muted)]">
+                          <span>{t.totalCards} Flashcards</span>
+                          <span>
+                            {t.nextReview ? `Next: ${new Date(t.nextReview).toLocaleDateString()}` : "Completed"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Weak-Topic Alert Notification */}
+              {masteryData.some(t => t.mastery < 60) && (
+                <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/5 flex items-start gap-3">
+                  <span className="text-base shrink-0">⚠️</span>
+                  <div>
+                    <h4 className="text-3xs font-black text-red-500 uppercase tracking-wide">Attention: Weak Topics Found</h4>
+                    <p className="text-[10px] font-medium text-[color:var(--muted)] mt-0.5 leading-relaxed">
+                      Your mastery score in some topics is below 60%. We recommend generating more quiz questions or reviewing flashcards for:{" "}
+                      <span className="font-bold text-[color:var(--text)]">
+                        {masteryData.filter(t => t.mastery < 60).map(t => t.topic).join(", ")}
+                      </span>.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </main>

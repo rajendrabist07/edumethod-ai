@@ -18,10 +18,8 @@ async function readSession() {
   }
 
   const session = sessions[0];
-  console.log(`\nSession ID: ${session.id}`);
-  console.log(`Updated At: ${session.updated_at}`);
-  console.log("\nMessages JSON from DB:");
-  console.log(JSON.stringify(session.messages, null, 2));
+  console.log(`\nSession Details from DB:`);
+  console.log(JSON.stringify(session, null, 2));
 }
 
 readSession();
