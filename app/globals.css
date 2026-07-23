@@ -4,14 +4,50 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  color-scheme: dark; /* Force dark-preferred coloring for Prism base */
-  --bg: #0B0D14;      /* Near-black base */
-  --surface: rgba(255, 255, 255, 0.06); /* Prism surface glass */
+  color-scheme: light;
+  --bg: #F8FAFC;      /* Soft light slate base */
+  --surface: rgba(255, 255, 255, 0.45); /* Translucent frosted white glass */
   --surface-rgb: 255, 255, 255;
-  --surface-soft: rgba(255, 255, 255, 0.09);
+  --surface-soft: rgba(255, 255, 255, 0.7);
+  --text: #0F172A;     /* Deep slate text */
+  --muted: #475569;    /* Cool grey text */
+  --border: rgba(15, 23, 42, 0.08); /* Soft hairline slate border */
+  --border-rgb: 15, 23, 42;
+  --accent: #0284c7;   /* Bright Sky Blue accent */
+  --accent-rgb: 2, 132, 199;
+  --accent-strong: #0369a1;
+  --glow-color: rgba(2, 132, 199, 0.08);
+
+  /* Prism Tokens */
+  --prism-base: #F8FAFC;
+  --prism-surface: rgba(255, 255, 255, 0.45);
+  --prism-border: rgba(15, 23, 42, 0.08);
+  --prism-accent: #0284c7;
+  --prism-warm: #EA580C; /* Amber */
+  --prism-text: #0F172A;
+  --prism-muted: #475569;
+
+  /* Unified Sidebar & Layout Design Tokens (re-mapped to Prism theme) */
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: rgba(15, 23, 42, 0.08);
+  --sidebar-text: #0F172A;
+  --sidebar-muted: #475569;
+  --sidebar-hover: rgba(15, 23, 42, 0.04);
+  --sidebar-active: rgba(15, 23, 42, 0.04);
+  --sidebar-accent: #0284c7;
+  --sidebar-accent-hover: #0369a1;
+}
+
+html.dark {
+  /* Enforce Prism tokens on dark mode as well (Unified Prism visual mode) */
+  color-scheme: dark;
+  --bg: #0B0D14;      /* Near-black base */
+  --surface: rgba(255, 255, 255, 0.05); /* Frosted dark glass */
+  --surface-rgb: 255, 255, 255;
+  --surface-soft: rgba(255, 255, 255, 0.08);
   --text: #EDEFF5;     /* Slate-white text */
   --muted: #8E939E;    /* Cool grey muted text */
-  --border: rgba(255, 255, 255, 0.12); /* Hairline edge */
+  --border: rgba(255, 255, 255, 0.1); /* Hairline white edge */
   --border-rgb: 255, 255, 255;
   --accent: #6EE7D8;   /* Cyan-teal clarity accent */
   --accent-rgb: 110, 231, 216;
@@ -20,42 +56,20 @@
 
   /* Prism Tokens */
   --prism-base: #0B0D14;
-  --prism-surface: rgba(255, 255, 255, 0.06);
-  --prism-border: rgba(255, 255, 255, 0.12);
+  --prism-surface: rgba(255, 255, 255, 0.05);
+  --prism-border: rgba(255, 255, 255, 0.1);
   --prism-accent: #6EE7D8;
   --prism-warm: #F0A857;
   --prism-text: #EDEFF5;
   --prism-muted: #8E939E;
 
-  /* Unified Sidebar & Layout Design Tokens (re-mapped to Prism theme) */
+  /* Unified Sidebar & Layout Design Tokens */
   --sidebar-bg: #0B0D14;
-  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-text: #EDEFF5;
   --sidebar-muted: #8E939E;
-  --sidebar-hover: rgba(255, 255, 255, 0.08);
-  --sidebar-active: rgba(255, 255, 255, 0.08);
-  --sidebar-accent: #6EE7D8;
-  --sidebar-accent-hover: #4fd1c5;
-}
-
-html.dark {
-  /* Enforce Prism tokens on dark mode as well (Unified Prism visual mode) */
-  color-scheme: dark;
-  --bg: #0B0D14;
-  --surface: rgba(255, 255, 255, 0.06);
-  --surface-soft: rgba(255, 255, 255, 0.09);
-  --text: #EDEFF5;
-  --muted: #8E939E;
-  --border: rgba(255, 255, 255, 0.12);
-  --accent: #6EE7D8;
-  --glow-color: rgba(110, 231, 216, 0.12);
-
-  --sidebar-bg: #0B0D14;
-  --sidebar-border: rgba(255, 255, 255, 0.12);
-  --sidebar-text: #EDEFF5;
-  --sidebar-muted: #8E939E;
-  --sidebar-hover: rgba(255, 255, 255, 0.08);
-  --sidebar-active: rgba(255, 255, 255, 0.08);
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active: rgba(255, 255, 255, 0.06);
   --sidebar-accent: #6EE7D8;
   --sidebar-accent-hover: #4fd1c5;
 }
@@ -142,20 +156,23 @@ body {
 
 /* Custom Grid background for premium landing page */
 .grid-bg {
+  background-color: var(--bg);
   background-image: 
-    radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 0% 100%, rgba(124, 58, 237, 0.05) 0%, transparent 40%),
-    linear-gradient(rgba(37, 99, 235, 0.008) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37, 99, 235, 0.008) 1px, transparent 1px);
+    radial-gradient(circle at 100% 0%, rgba(var(--accent-rgb), 0.04) 0%, transparent 45%),
+    radial-gradient(circle at 0% 100%, rgba(240, 168, 87, 0.03) 0%, transparent 45%),
+    linear-gradient(rgba(var(--accent-rgb), 0.006) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.006) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark .grid-bg {
+  background-color: var(--bg);
   background-image: 
-    radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 0% 100%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
-    linear-gradient(rgba(59, 130, 246, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.015) 1px, transparent 1px);
+    radial-gradient(circle at 100% 0%, rgba(var(--accent-rgb), 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(240, 168, 87, 0.05) 0%, transparent 50%),
+    linear-gradient(rgba(var(--accent-rgb), 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.012) 1px, transparent 1px);
 }
 
 @keyframes fadeIn {
@@ -261,15 +278,19 @@ body {
   animation: spin 10s linear infinite;
 }
 
-/* Glassmorphism Prism styling */
-.glass-prism {
-  background: var(--prism-surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--prism-border);
-  color: var(--prism-text);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+/* Liquid Glassmorphism styling */
+.glass-prism, .glass-card {
+  background: var(--surface);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.dark .glass-prism, html.dark .glass-card {
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
 /* Camera Focus Lens Animation */

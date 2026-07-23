@@ -179,8 +179,21 @@ npm run build
 | `/api/generate-path` | `POST` | `{ pathId: string }` | Generates 7-Day interleaved plan |
 | `/api/generate-quiz` | `POST` | `{ topic: string }` | Generates 5 conceptual questions |
 | `/api/submit-quiz` | `POST` | `{ answers: Record<string, string> }` | Checks answers and isolates weak areas |
-| `/api/solve-doubt` | `POST` | Stream (`ReadableStream`) | Handles text & image multimodal queries |
+| `/api/solve-doubt` | `POST` | `{ message: string, socratic?: boolean }` | Multimodal query matching RAG context; Socratic guide toggle |
+| `/api/feynman/evaluate` | `POST` | `{ topicName: string, userExplanation: string }` | Evaluates explanation simplicity and highlights logical leaps |
+| `/api/cognitive-insights` | `POST` | `{ learningPathId: string }` | Extracts readability statistics and attention load density |
 | `/api/history` | `GET` | *None (Reads user token)* | Returns combined learning paths & chats |
+
+---
+
+## 🧠 Premium Smart Learning Features (v2)
+
+EduMethod AI introduces next-generation cognitive features built on Top-Tier learning science:
+
+* **Socratic Dialogue Tutor**: Accessible in the RAG Chat interface. When toggled, the AI shifts from direct answer generation to active Socratic guiding prompts to encourage self-directed discovery.
+* **AI Feynman Evaluator**: Tests student comprehension by prompting them to explain a complex concept as if they were teaching a 5-year-old child. The evaluator compares their input against matching pgvector textbook segments and grades simplicity.
+* **Cognitive Readability Diagnostics**: Dynamically calculates vocabulary complexity indexes and reading difficulty levels on uploaded syllabus contents to formulate study attention budgets.
+* **Prism Liquid Glass UI/UX Theme**: Full theme management supporting beautiful frosted white layouts (light mode) and deep obsidian glass overlays (dark mode), integrated with hardware-accelerated ambient glows.
 
 ---
 
