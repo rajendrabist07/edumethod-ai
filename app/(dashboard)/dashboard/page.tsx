@@ -83,16 +83,16 @@ export default function DashboardPage() {
   const firstName = user?.firstName || "Student";
 
   return (
-    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-[color:var(--text)] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
-      <div className="mx-auto flex max-w-4xl flex-col gap-8">
+    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-prism-text transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8 font-sans bg-prism-base">
+      <div className="mx-auto flex max-w-4xl flex-col gap-8 animate-focus-lens">
         
         {/* Header Bar */}
-        <header className="glass-card flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300">
+        <header className="glass-prism flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300">
           <div className="flex items-center gap-2 pl-12 lg:pl-0">
             <BrandMark />
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-3xs font-extrabold uppercase tracking-widest text-[color:var(--muted)]">
+            <span className="text-3xs font-extrabold uppercase tracking-widest text-prism-muted font-mono">
               Welcome, {firstName}
             </span>
             <ThemeToggle />
@@ -100,12 +100,12 @@ export default function DashboardPage() {
         </header>
 
         {/* Welcome Section */}
-        <div className="glass-card rounded-3xl p-6 shadow-sm sm:p-8 relative overflow-hidden">
-          <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-gradient-to-l from-blue-500/5 to-transparent pointer-events-none" />
-          <h1 className="text-2xl font-black sm:text-3xl lg:text-4xl">
-            Welcome Back, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400">{firstName}</span>!
+        <div className="glass-prism rounded-3xl p-6 shadow-sm sm:p-8 relative overflow-hidden">
+          <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-gradient-to-l from-prism-accent/5 to-transparent pointer-events-none" />
+          <h1 className="text-2xl font-black sm:text-3xl lg:text-4xl font-display">
+            Welcome Back, <span className="bg-gradient-to-r from-prism-accent to-blue-400 bg-clip-text text-transparent">{firstName}</span>!
           </h1>
-          <p className="mt-2 text-xs font-semibold text-[color:var(--muted)] max-w-lg leading-relaxed">
+          <p className="mt-2 text-xs font-semibold text-prism-muted max-w-lg leading-relaxed">
             Construct optimal study paths, check memory retention with recall assessments, and consult your step-by-step doubt-solving AI tutor.
           </p>
         </div>
@@ -116,16 +116,16 @@ export default function DashboardPage() {
           {/* Quick Action: New Syllabus Path */}
           <Link
             href="/upload"
-            className="glass-card glass-card-hover rounded-2xl p-5 shadow-sm border border-[color:var(--border)]/40 flex flex-col justify-between"
+            className="glass-prism rounded-2xl p-5 shadow-sm border border-prism-border flex flex-col justify-between hover:border-prism-accent/40 hover:shadow-lg transition duration-300 hover:-translate-y-0.5"
           >
             <div>
               <span className="text-xl">📚</span>
-              <h3 className="text-sm font-black mt-3">Personalized Roadmap</h3>
-              <p className="text-[10px] font-semibold text-[color:var(--muted)] leading-relaxed mt-1">
+              <h3 className="text-sm font-black mt-3 font-display">Personalized Roadmap</h3>
+              <p className="text-[10px] font-semibold text-prism-muted leading-relaxed mt-1">
                 Convert book outlines, syllabus snaps, or lecture texts into step study paths.
               </p>
             </div>
-            <span className="text-blue-500 font-extrabold text-[10px] uppercase tracking-wider mt-4 block">
+            <span className="text-prism-accent font-extrabold text-[10px] uppercase tracking-wider mt-4 block font-mono">
               Decompose Syllabus →
             </span>
           </Link>
@@ -133,16 +133,16 @@ export default function DashboardPage() {
           {/* Quick Action: Doubt Solver */}
           <Link
             href="/doubt-solver"
-            className="glass-card glass-card-hover rounded-2xl p-5 shadow-sm border border-[color:var(--border)]/40 flex flex-col justify-between"
+            className="glass-prism rounded-2xl p-5 shadow-sm border border-prism-border flex flex-col justify-between hover:border-prism-accent/40 hover:shadow-lg transition duration-300 hover:-translate-y-0.5"
           >
             <div>
               <span className="text-xl">💬</span>
-              <h3 className="text-sm font-black mt-3">Doubt Solving Tutor</h3>
-              <p className="text-[10px] font-semibold text-[color:var(--muted)] leading-relaxed mt-1">
+              <h3 className="text-sm font-black mt-3 font-display">Doubt Solving Tutor</h3>
+              <p className="text-[10px] font-semibold text-prism-muted leading-relaxed mt-1">
                 Submit raw questions, equations, or images to get detailed step-by-step guidance.
               </p>
             </div>
-            <span className="text-purple-500 font-extrabold text-[10px] uppercase tracking-wider mt-4 block">
+            <span className="text-indigo-400 font-extrabold text-[10px] uppercase tracking-wider mt-4 block font-mono">
               Consult AI Tutor →
             </span>
           </Link>
@@ -150,16 +150,16 @@ export default function DashboardPage() {
           {/* Quick Action: Plan details */}
           <Link
             href="/pricing"
-            className="glass-card glass-card-hover rounded-2xl p-5 shadow-sm border border-[color:var(--border)]/40 flex flex-col justify-between"
+            className="glass-prism rounded-2xl p-5 shadow-sm border border-prism-border flex flex-col justify-between hover:border-prism-accent/40 hover:shadow-lg transition duration-300 hover:-translate-y-0.5"
           >
             <div>
               <span className="text-xl">💎</span>
-              <h3 className="text-sm font-black mt-3">Plan Subscription</h3>
-              <p className="text-[10px] font-semibold text-[color:var(--muted)] leading-relaxed mt-1">
+              <h3 className="text-sm font-black mt-3 font-display">Plan Subscription</h3>
+              <p className="text-[10px] font-semibold text-prism-muted leading-relaxed mt-1">
                 Upgrade to the Titan tier to remove daily API limits and unlock prior Vision scanning.
               </p>
             </div>
-            <span className="text-emerald-500 font-extrabold text-[10px] uppercase tracking-wider mt-4 block">
+            <span className="text-prism-warm font-extrabold text-[10px] uppercase tracking-wider mt-4 block font-mono">
               View Pricing Tier →
             </span>
           </Link>
@@ -169,8 +169,8 @@ export default function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-12">
           
           {/* Usage Limit Tracker Widgets */}
-          <div className="md:col-span-5 glass-card rounded-3xl p-5 shadow-sm space-y-4">
-            <h2 className="text-xs font-black uppercase tracking-widest text-[color:var(--muted)] border-b border-[color:var(--border)]/35 pb-2">
+          <div className="md:col-span-5 glass-prism rounded-3xl p-5 shadow-sm space-y-4">
+            <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
               Today's Usage Quotas
             </h2>
 
@@ -178,13 +178,13 @@ export default function DashboardPage() {
               <div className="space-y-4 pt-1">
                 {/* 1. Paths Tracker */}
                 <div>
-                  <div className="flex justify-between text-4xs font-black text-[color:var(--muted)] mb-1 uppercase tracking-wider">
+                  <div className="flex justify-between text-4xs font-black text-prism-muted mb-1 uppercase tracking-wider font-mono">
                     <span>Syllabus Paths</span>
                     <span>{usage.usage.learning_path.current} / {usage.usage.learning_path.limit}</span>
                   </div>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-800/80 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                      className="h-full bg-prism-accent rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(100, (usage.usage.learning_path.current / usage.usage.learning_path.limit) * 100)}%` }}
                     />
                   </div>
@@ -192,13 +192,13 @@ export default function DashboardPage() {
 
                 {/* 2. Doubt Solves Tracker */}
                 <div>
-                  <div className="flex justify-between text-4xs font-black text-[color:var(--muted)] mb-1 uppercase tracking-wider">
+                  <div className="flex justify-between text-4xs font-black text-prism-muted mb-1 uppercase tracking-wider font-mono">
                     <span>AI Chat Queries</span>
                     <span>{usage.usage.doubt_message.current} / {usage.usage.doubt_message.limit}</span>
                   </div>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-800/80 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-purple-500 rounded-full transition-all duration-300"
+                      className="h-full bg-indigo-400 rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(100, (usage.usage.doubt_message.current / usage.usage.doubt_message.limit) * 100)}%` }}
                     />
                   </div>
@@ -206,26 +206,26 @@ export default function DashboardPage() {
 
                 {/* 3. Quiz Tracker */}
                 <div>
-                  <div className="flex justify-between text-4xs font-black text-[color:var(--muted)] mb-1 uppercase tracking-wider">
+                  <div className="flex justify-between text-4xs font-black text-prism-muted mb-1 uppercase tracking-wider font-mono">
                     <span>Practice Quizzes</span>
                     <span>{usage.usage.quiz.current} / {usage.usage.quiz.limit}</span>
                   </div>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-800/80 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                      className="h-full bg-prism-warm rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(100, (usage.usage.quiz.current / usage.usage.quiz.limit) * 100)}%` }}
                     />
                   </div>
                 </div>
 
                 <div className="text-center pt-2">
-                  <p className="text-4xs font-semibold text-[color:var(--muted)] uppercase tracking-wider leading-relaxed">
-                    Active Plan Tier: <span className="text-[color:var(--text)] font-extrabold">{usage.plan.toUpperCase()}</span>
+                  <p className="text-4xs font-semibold text-prism-muted uppercase tracking-wider leading-relaxed font-mono">
+                    Active Plan Tier: <span className="text-prism-text font-extrabold">{usage.plan.toUpperCase()}</span>
                   </p>
                   {usage.plan === "free" && (
                     <Link
                       href="/pricing"
-                      className="text-4xs font-bold text-blue-500 hover:text-blue-600 block mt-1 hover:underline uppercase tracking-wider"
+                      className="text-4xs font-bold text-prism-accent hover:text-prism-accent/80 block mt-1 hover:underline uppercase tracking-wider font-mono"
                     >
                       Upgrade to Pro for Unlimited usage →
                     </Link>
@@ -233,31 +233,31 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8 text-2xs text-[color:var(--muted)] animate-pulse">
+              <div className="text-center py-8 text-2xs text-prism-muted animate-pulse font-mono">
                 Loading usage parameters...
               </div>
             )}
           </div>
 
           {/* Recent History Widget */}
-          <div className="md:col-span-7 glass-card rounded-3xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="md:col-span-7 glass-prism rounded-3xl p-5 shadow-sm flex flex-col justify-between">
             <div>
-              <h2 className="text-xs font-black uppercase tracking-widest text-[color:var(--muted)] border-b border-[color:var(--border)]/35 pb-2">
+              <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
                 Recent Activity Logs
               </h2>
               
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <span className="h-5 w-5 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
+                  <span className="h-5 w-5 rounded-full border-2 border-t-prism-accent border-r-transparent animate-spin"></span>
                 </div>
               ) : history.length === 0 ? (
-                <div className="text-center py-12 text-[color:var(--muted)]">
+                <div className="text-center py-12 text-prism-muted">
                   <span className="text-2xl block mb-2">🔭</span>
-                  <p className="text-2xs font-bold uppercase tracking-wider">Workspace is empty</p>
+                  <p className="text-2xs font-bold uppercase tracking-wider font-mono">Workspace is empty</p>
                   <p className="text-4xs font-semibold mt-1">Start by constructing a learning path outline.</p>
                 </div>
               ) : (
-                <div className="divide-y divide-[color:var(--border)]/30 max-h-[220px] overflow-y-auto pr-1 mt-1">
+                <div className="divide-y divide-prism-border/40 max-h-[220px] overflow-y-auto pr-1 mt-1">
                   {history.slice(0, 5).map((item) => {
                     const isPath = item.type === "path";
                     const url = isPath
@@ -268,21 +268,21 @@ export default function DashboardPage() {
                       <Link
                         key={item.id}
                         href={url}
-                        className="flex items-center justify-between py-3 hover:bg-[color:var(--surface-soft)]/20 px-2 rounded-xl transition duration-150 group"
+                        className="flex items-center justify-between py-3 hover:bg-white/5 px-2 rounded-xl transition duration-150 group"
                       >
                         <div className="flex items-center gap-2 min-w-0 pr-3">
                           <span className="shrink-0">
                             {isPath ? (
-                              <PathProgressIcon size={14} className="text-blue-500" />
+                              <PathProgressIcon size={14} className="text-prism-accent" />
                             ) : (
-                              <ChatSparkIcon size={14} className="text-purple-500" />
+                              <ChatSparkIcon size={14} className="text-indigo-400" />
                             )}
                           </span>
-                          <span className="text-2xs font-bold truncate group-hover:text-blue-500 transition">
+                          <span className="text-2xs font-bold truncate group-hover:text-prism-accent transition">
                             {item.title}
                           </span>
                         </div>
-                        <span className="text-4xs font-bold text-[color:var(--muted)] uppercase tracking-wider shrink-0">
+                        <span className="text-4xs font-bold text-prism-muted uppercase tracking-wider shrink-0 font-mono">
                           {formatDate(item.date)}
                         </span>
                       </Link>
@@ -293,8 +293,8 @@ export default function DashboardPage() {
             </div>
 
             {history.length > 5 && (
-              <div className="text-center pt-3 border-t border-[color:var(--border)]/30">
-                <span className="text-4xs font-bold text-[color:var(--muted)] uppercase tracking-widest">
+              <div className="text-center pt-3 border-t border-prism-border/40">
+                <span className="text-4xs font-bold text-prism-muted uppercase tracking-widest font-mono">
                   View remaining history in the side navigation menu
                 </span>
               </div>
@@ -303,19 +303,19 @@ export default function DashboardPage() {
         </div>
 
         {/* Analytics & Mastery Dashboard */}
-        <div className="glass-card rounded-3xl p-6 shadow-sm border border-[color:var(--border)]/40">
-          <h2 className="text-xs font-black uppercase tracking-widest text-[color:var(--muted)] border-b border-[color:var(--border)]/35 pb-2">
+        <div className="glass-prism rounded-3xl p-6 shadow-sm border border-prism-border">
+          <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
             🧠 Spaced Repetition & Topic Mastery Dashboard
           </h2>
 
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <span className="h-5 w-5 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
+              <span className="h-5 w-5 rounded-full border-2 border-t-prism-accent border-r-transparent animate-spin"></span>
             </div>
           ) : masteryData.length === 0 ? (
-            <div className="text-center py-10 text-[color:var(--muted)]">
+            <div className="text-center py-10 text-prism-muted">
               <span className="text-2xl block mb-2">🎓</span>
-              <p className="text-2xs font-bold uppercase tracking-wider">No mastery data available yet</p>
+              <p className="text-2xs font-bold uppercase tracking-wider font-mono">No mastery data available yet</p>
               <p className="text-4xs font-semibold mt-1">Generate a flashcard deck and review cards to see your topic mastery grow!</p>
             </div>
           ) : (
@@ -324,31 +324,37 @@ export default function DashboardPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 {masteryData.map((t, idx) => {
                   const getMasteryColor = (pct: number) => {
+                    if (pct < 40) return "text-red-400 bg-red-500/10 border-red-500/20";
+                    if (pct < 75) return "text-prism-warm bg-prism-warm/10 border-prism-warm/20";
+                    return "text-prism-accent bg-prism-accent/10 border-prism-accent/20";
+                  };
+
+                  const getMasteryBarColor = (pct: number) => {
                     if (pct < 40) return "bg-red-500";
-                    if (pct < 75) return "bg-amber-500";
-                    return "bg-emerald-500";
+                    if (pct < 75) return "bg-prism-warm";
+                    return "bg-prism-accent";
                   };
 
                   return (
-                    <div key={idx} className="glass-card p-4 rounded-xl border border-[color:var(--border)]/20 flex flex-col justify-between">
+                    <div key={idx} className="glass-prism p-4 rounded-xl border border-prism-border flex flex-col justify-between hover:border-prism-accent/30 transition">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <span className="text-[9px] font-bold text-blue-500 uppercase tracking-wide truncate block">{t.subject}</span>
-                          <h4 className="text-2xs font-black mt-1 leading-snug truncate">{t.topic}</h4>
+                          <span className="text-[9px] font-bold text-prism-accent uppercase tracking-wide truncate block font-mono">{t.subject}</span>
+                          <h4 className="text-2xs font-black mt-1 leading-snug truncate font-display">{t.topic}</h4>
                         </div>
-                        <span className={`text-4xs font-extrabold px-2 py-0.5 rounded-full text-white shrink-0 ${getMasteryColor(t.mastery)}`}>
+                        <span className={`text-4xs font-extrabold px-2 py-0.5 rounded-full border shrink-0 font-mono ${getMasteryColor(t.mastery)}`}>
                           {t.mastery}%
                         </span>
                       </div>
                       
                       <div className="mt-4">
-                        <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-slate-800/80 rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all duration-500 ${getMasteryColor(t.mastery)}`}
+                            className={`h-full rounded-full transition-all duration-500 ${getMasteryBarColor(t.mastery)}`}
                             style={{ width: `${t.mastery}%` }}
                           />
                         </div>
-                        <div className="flex justify-between items-center mt-2 text-[8px] font-semibold text-[color:var(--muted)]">
+                        <div className="flex justify-between items-center mt-2 text-[8px] font-semibold text-prism-muted font-mono">
                           <span>{t.totalCards} Flashcards</span>
                           <span>
                             {t.nextReview ? `Next: ${new Date(t.nextReview).toLocaleDateString()}` : "Completed"}
@@ -365,10 +371,10 @@ export default function DashboardPage() {
                 <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/5 flex items-start gap-3">
                   <span className="text-base shrink-0">⚠️</span>
                   <div>
-                    <h4 className="text-3xs font-black text-red-500 uppercase tracking-wide">Attention: Weak Topics Found</h4>
-                    <p className="text-[10px] font-medium text-[color:var(--muted)] mt-0.5 leading-relaxed">
+                    <h4 className="text-3xs font-black text-red-500 uppercase tracking-wide font-display">Attention: Weak Topics Found</h4>
+                    <p className="text-[10px] font-medium text-prism-muted mt-0.5 leading-relaxed">
                       Your mastery score in some topics is below 60%. We recommend generating more quiz questions or reviewing flashcards for:{" "}
-                      <span className="font-bold text-[color:var(--text)]">
+                      <span className="font-bold text-prism-text font-mono">
                         {masteryData.filter(t => t.mastery < 60).map(t => t.topic).join(", ")}
                       </span>.
                     </p>

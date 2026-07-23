@@ -1,57 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  color-scheme: light;
-  --bg: #f8fafc;
-  --surface: #ffffff;
+  color-scheme: dark; /* Force dark-preferred coloring for Prism base */
+  --bg: #0B0D14;      /* Near-black base */
+  --surface: rgba(255, 255, 255, 0.06); /* Prism surface glass */
   --surface-rgb: 255, 255, 255;
-  --surface-soft: #f1f5f9;
-  --text: #0f172a;
-  --muted: #475569;
-  --border: #e2e8f0;
-  --border-rgb: 226, 232, 240;
-  --accent: #2563eb;
-  --accent-rgb: 37, 99, 235;
-  --accent-strong: #1d4ed8;
-  --glow-color: rgba(37, 99, 235, 0.08);
+  --surface-soft: rgba(255, 255, 255, 0.09);
+  --text: #EDEFF5;     /* Slate-white text */
+  --muted: #8E939E;    /* Cool grey muted text */
+  --border: rgba(255, 255, 255, 0.12); /* Hairline edge */
+  --border-rgb: 255, 255, 255;
+  --accent: #6EE7D8;   /* Cyan-teal clarity accent */
+  --accent-rgb: 110, 231, 216;
+  --accent-strong: #4fd1c5;
+  --glow-color: rgba(110, 231, 216, 0.1);
 
-  /* Unified Sidebar & Layout Design Tokens */
-  --sidebar-bg: #ffffff;
-  --sidebar-border: #e2e8f0;
-  --sidebar-text: #0f172a;
-  --sidebar-muted: #64748b;
-  --sidebar-hover: #f1f5f9;
-  --sidebar-active: #f1f5f9;
-  --sidebar-accent: #7c3aed; /* Purple-600 */
-  --sidebar-accent-hover: #6d28d9; /* Purple-700 */
+  /* Prism Tokens */
+  --prism-base: #0B0D14;
+  --prism-surface: rgba(255, 255, 255, 0.06);
+  --prism-border: rgba(255, 255, 255, 0.12);
+  --prism-accent: #6EE7D8;
+  --prism-warm: #F0A857;
+  --prism-text: #EDEFF5;
+  --prism-muted: #8E939E;
+
+  /* Unified Sidebar & Layout Design Tokens (re-mapped to Prism theme) */
+  --sidebar-bg: #0B0D14;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-text: #EDEFF5;
+  --sidebar-muted: #8E939E;
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-active: rgba(255, 255, 255, 0.08);
+  --sidebar-accent: #6EE7D8;
+  --sidebar-accent-hover: #4fd1c5;
 }
 
 html.dark {
+  /* Enforce Prism tokens on dark mode as well (Unified Prism visual mode) */
   color-scheme: dark;
-  --bg: #090d16;
-  --surface: #0e1320;
-  --surface-rgb: 14, 19, 32;
-  --surface-soft: #151c2e;
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --border: #1e293b;
-  --border-rgb: 30, 41, 59;
-  --accent: #3b82f6;
-  --accent-rgb: 59, 130, 246;
-  --accent-strong: #60a5fa;
-  --glow-color: rgba(59, 130, 246, 0.12);
+  --bg: #0B0D14;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-soft: rgba(255, 255, 255, 0.09);
+  --text: #EDEFF5;
+  --muted: #8E939E;
+  --border: rgba(255, 255, 255, 0.12);
+  --accent: #6EE7D8;
+  --glow-color: rgba(110, 231, 216, 0.12);
 
-  /* Unified Sidebar & Layout Design Tokens */
-  --sidebar-bg: #0b0f19;
-  --sidebar-border: #1e293b;
-  --sidebar-text: #f8fafc;
-  --sidebar-muted: #94a3b8;
-  --sidebar-hover: #151c2e;
-  --sidebar-active: #151c2e;
-  --sidebar-accent: #8b5cf6; /* Purple-500 */
-  --sidebar-accent-hover: #7c3aed; /* Purple-600 */
+  --sidebar-bg: #0B0D14;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-text: #EDEFF5;
+  --sidebar-muted: #8E939E;
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-active: rgba(255, 255, 255, 0.08);
+  --sidebar-accent: #6EE7D8;
+  --sidebar-accent-hover: #4fd1c5;
 }
 
 * {
@@ -200,9 +206,21 @@ body {
               inset 0 0 25px rgba(255, 255, 255, 0.3);
 }
 
-@theme inline {
+@theme {
   --color-background: var(--bg);
   --color-foreground: var(--text);
+
+  --color-prism-base: var(--prism-base);
+  --color-prism-surface: var(--prism-surface);
+  --color-prism-border: var(--prism-border);
+  --color-prism-accent: var(--prism-accent);
+  --color-prism-warm: var(--prism-warm);
+  --color-prism-text: var(--prism-text);
+  --color-prism-muted: var(--prism-muted);
+
+  --font-display: "Fraunces", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 @keyframes pulseGlowEmerald {
@@ -229,7 +247,7 @@ body {
   content: "▊";
   display: inline-block;
   margin-left: 4px;
-  color: #a855f7; /* purple-500 */
+  color: #6EE7D8; /* prism-accent */
   animation: cursorBlink 0.8s step-end infinite;
   vertical-align: middle;
 }
@@ -242,3 +260,66 @@ body {
 .animate-spin-slow {
   animation: spin 10s linear infinite;
 }
+
+/* Glassmorphism Prism styling */
+.glass-prism {
+  background: var(--prism-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--prism-border);
+  color: var(--prism-text);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Camera Focus Lens Animation */
+@keyframes focusLens {
+  0% {
+    filter: blur(16px);
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-focus-lens {
+  animation: focusLens 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-focus-lens {
+    animation: none;
+    filter: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Premium iOS ambient pulse animation */
+@keyframes pulseSlow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.08);
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 16s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-pulse-slow-delay {
+  animation: pulseSlow 20s ease-in-out infinite;
+  animation-delay: 5s;
+  will-change: transform, opacity;
+}
+
+

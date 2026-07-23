@@ -172,25 +172,25 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
     : 0;
 
   return (
-    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-[color:var(--text)] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
-      <div className="mx-auto flex max-w-2xl flex-col gap-6 h-full min-h-[80vh] justify-between">
+    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-prism-text transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8 bg-prism-base font-sans">
+      <div className="mx-auto flex max-w-2xl flex-col gap-6 h-full min-h-[80vh] justify-between animate-focus-lens">
         
         {/* Header Section */}
         <div className="space-y-4">
-          <header className="glass-card flex shrink-0 items-center justify-between px-4 py-3 rounded-2xl shadow-sm z-10">
+          <header className="glass-prism flex shrink-0 items-center justify-between px-4 py-3 rounded-2xl shadow-sm z-10">
             <div className="flex items-center gap-2 pl-12 lg:pl-0">
               <Logo size={24} />
               <div className="min-w-0">
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-blue-600 truncate max-w-[120px]">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-prism-accent truncate max-w-[120px] font-mono">
                   {deck?.subject}
                 </p>
-                <p className="text-[9px] text-[color:var(--muted)] font-bold uppercase tracking-wider">Flashcard Study</p>
+                <p className="text-[9px] text-prism-muted font-bold uppercase tracking-wider font-mono">Flashcard Study</p>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
               <Link
                 href="/flashcards"
-                className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] p-2 text-[color:var(--text)] hover:bg-[color:var(--surface-soft)] active:scale-95 transition"
+                className="rounded-full border border-prism-border bg-prism-surface p-2 text-prism-text hover:bg-white/5 active:scale-95 transition"
                 title="Back to library"
               >
                 <ArrowLeft size={14} />
@@ -202,7 +202,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
           {/* Session Progress Bar */}
           {!sessionFinished && studySessionCards.length > 0 && (
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[color:var(--muted)]">
+              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-prism-muted font-mono">
                 <span>
                   Studying: {onlyDue ? "Due reviews only" : "All cards"}
                 </span>
@@ -210,9 +210,9 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                   {currentIndex + 1} / {studySessionCards.length} Cards
                 </span>
               </div>
-              <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-slate-800/80 rounded-full overflow-hidden">
                 <motion.div 
-                  className="h-full bg-blue-500 rounded-full" 
+                  className="h-full bg-prism-accent rounded-full" 
                   initial={{ width: 0 }}
                   animate={{ width: `${progressPercent}%` }}
                   transition={{ duration: 0.3 }}
@@ -227,31 +227,31 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
           {sessionFinished ? (
             /* Session Completed Screen */
             <motion.div 
-              className="glass-card rounded-3xl p-8 shadow-lg text-center space-y-6"
+              className="glass-prism rounded-3xl p-8 shadow-lg text-center space-y-6"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4 }}
             >
-              <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-prism-accent/10 text-prism-accent rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 size={32} />
               </div>
               
               <div className="space-y-2">
-                <h2 className="text-xl font-black text-[color:var(--text)]">Session Completed!</h2>
-                <p className="text-2xs font-semibold text-[color:var(--muted)] uppercase tracking-wider">
+                <h2 className="text-xl font-black text-prism-text font-display">Session Completed!</h2>
+                <p className="text-2xs font-semibold text-prism-muted uppercase tracking-wider font-mono">
                   You reviewed {reviewsDone} flashcards on "{deck?.topic}"
                 </p>
               </div>
 
               {/* Session Stats Breakdown */}
-              <div className="grid grid-cols-4 gap-2 bg-[color:var(--surface-soft)]/50 rounded-2xl p-4 border border-[color:var(--border)]/30">
+              <div className="grid grid-cols-4 gap-2 bg-white/5 rounded-2xl p-4 border border-prism-border">
                 {[
-                  { label: "Again", count: sessionStats.again, color: "text-red-500 bg-red-500/5 border-red-500/15" },
-                  { label: "Hard", count: sessionStats.hard, color: "text-amber-500 bg-amber-500/5 border-amber-500/15" },
-                  { label: "Good", count: sessionStats.good, color: "text-blue-500 bg-blue-500/5 border-blue-500/15" },
-                  { label: "Easy", count: sessionStats.easy, color: "text-emerald-500 bg-emerald-500/5 border-emerald-500/15" },
+                  { label: "Again", count: sessionStats.again, color: "text-red-400 bg-red-500/5 border-red-500/15" },
+                  { label: "Hard", count: sessionStats.hard, color: "text-prism-warm bg-prism-warm/5 border-prism-warm/15" },
+                  { label: "Good", count: sessionStats.good, color: "text-blue-400 bg-blue-500/5 border-blue-500/15" },
+                  { label: "Easy", count: sessionStats.easy, color: "text-prism-accent bg-prism-accent/5 border-prism-accent/15" },
                 ].map((stat, i) => (
-                  <div key={i} className={`flex flex-col items-center justify-center p-2 rounded-xl border ${stat.color}`}>
+                  <div key={i} className={`flex flex-col items-center justify-center p-2 rounded-xl border font-mono ${stat.color}`}>
                     <span className="text-[9px] font-black uppercase tracking-wider">{stat.label}</span>
                     <span className="text-lg font-black mt-1">{stat.count}</span>
                   </div>
@@ -261,13 +261,13 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
               <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
                 <button
                   onClick={handleRestart}
-                  className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-6 py-3.5 text-xs font-bold text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
+                  className="rounded-full border border-prism-border bg-prism-surface px-6 py-3.5 text-xs font-bold text-prism-text transition hover:bg-white/5 active:scale-95 flex items-center justify-center gap-1.5 font-mono"
                 >
                   <RefreshCw size={12} /> Restart Session
                 </button>
                 <Link
                   href="/flashcards"
-                  className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 text-xs font-bold text-white shadow-md hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg transition duration-200 text-center"
+                  className="rounded-full bg-gradient-to-r from-prism-accent to-blue-500 px-6 py-3.5 text-xs font-bold text-prism-base shadow-md hover:shadow-lg transition duration-200 text-center font-mono"
                 >
                   Back to Library
                 </Link>
@@ -275,15 +275,15 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
             </motion.div>
           ) : studySessionCards.length === 0 ? (
             /* No Cards Available */
-            <div className="glass-card rounded-3xl p-8 text-center space-y-4">
-              <SpacedRepetitionIcon size={36} className="mx-auto text-blue-500" />
-              <h2 className="text-lg font-bold">No cards due for review</h2>
-              <p className="text-xs text-[color:var(--muted)]">
+            <div className="glass-prism rounded-3xl p-8 text-center space-y-4">
+              <SpacedRepetitionIcon size={36} className="mx-auto text-prism-accent" />
+              <h2 className="text-lg font-bold font-display">No cards due for review</h2>
+              <p className="text-xs text-prism-muted">
                 Congratulations! You are all caught up on reviews for this deck. Would you like to study all cards to preview or cram them?
               </p>
               <button
                 onClick={handleModeToggle}
-                className="rounded-full bg-blue-600 px-6 py-3 text-xs font-bold text-white transition hover:bg-blue-700 active:scale-95"
+                className="rounded-full bg-prism-accent text-prism-base px-6 py-3 text-xs font-bold transition hover:bg-prism-accent/80 active:scale-95 font-mono"
               >
                 Study All Cards
               </button>
@@ -302,8 +302,8 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                   }`}
                 >
                   {/* Front Side */}
-                  <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between border-2 border-[color:var(--border)] shadow-md">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-blue-500/70 border-b border-[color:var(--border)]/20 pb-2 shrink-0 select-none">
+                  <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] glass-prism rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between border-prism-border shadow-md">
+                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-prism-accent/70 border-b border-prism-border pb-2 shrink-0 select-none font-mono">
                       <span>Concept Question</span>
                       <span className="flex items-center gap-1">
                         <HelpCircle size={10} /> Active Recall
@@ -315,21 +315,21 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                         remarkPlugins={[remarkMath]} 
                         rehypePlugins={[rehypeKatex]}
                         components={{
-                          p: ({ children }) => <p className="text-sm font-extrabold sm:text-base leading-relaxed text-[color:var(--text)]">{children}</p>
+                          p: ({ children }) => <p className="text-sm font-extrabold sm:text-base leading-relaxed text-prism-text font-display">{children}</p>
                         }}
                       >
                         {activeCard.front}
                       </ReactMarkdown>
                     </div>
 
-                    <div className="flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-[color:var(--muted)] shrink-0 select-none">
+                    <div className="flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-prism-muted shrink-0 select-none font-mono">
                       <Eye size={11} /> Tap Card or Spacebar to reveal answer
                     </div>
                   </div>
 
                   {/* Back Side */}
-                  <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between border-2 border-blue-500/35 bg-blue-500/[0.01] shadow-lg">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-indigo-500/70 border-b border-[color:var(--border)]/20 pb-2 shrink-0 select-none">
+                  <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] glass-prism rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between border-prism-accent/30 bg-prism-accent/[0.01] shadow-lg">
+                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-indigo-300/75 border-b border-prism-border pb-2 shrink-0 select-none font-mono">
                       <span>Detailed Answer</span>
                       <span className="flex items-center gap-1">
                         <CheckCircle2 size={10} /> Explaining Logic
@@ -341,14 +341,14 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                         remarkPlugins={[remarkMath]} 
                         rehypePlugins={[rehypeKatex]}
                         components={{
-                          p: ({ children }) => <p className="text-2xs font-semibold sm:text-xs leading-relaxed text-[color:var(--text)]">{children}</p>
+                          p: ({ children }) => <p className="text-2xs font-semibold sm:text-xs leading-relaxed text-prism-text">{children}</p>
                         }}
                       >
                         {activeCard.back}
                       </ReactMarkdown>
                     </div>
 
-                    <div className="text-[9px] font-black uppercase tracking-wider text-[color:var(--muted)] shrink-0 select-none text-center">
+                    <div className="text-[9px] font-black uppercase tracking-wider text-prism-muted shrink-0 select-none text-center font-mono">
                       Evaluate your recall confidence below:
                     </div>
                   </div>
@@ -358,7 +358,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
               {/* Mode switch helper below card */}
               <button
                 onClick={handleModeToggle}
-                className="text-[10px] font-extrabold uppercase tracking-widest text-[color:var(--muted)] hover:text-blue-500 transition hover:underline"
+                className="text-[10px] font-extrabold uppercase tracking-widest text-prism-muted hover:text-prism-accent transition hover:underline font-mono"
               >
                 {onlyDue ? "Switch to study all cards" : "Filter due reviews only"}
               </button>
@@ -375,7 +375,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                 <motion.button
                   key="reveal"
                   onClick={() => setIsFlipped(true)}
-                  className="w-full max-w-xs rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-xs font-bold text-white shadow-lg shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 transition-all duration-200 active:scale-97 flex items-center justify-center gap-1.5"
+                  className="w-full max-w-xs rounded-full bg-gradient-to-r from-prism-accent to-blue-500 py-3.5 text-xs font-bold text-prism-base shadow-lg hover:shadow-xl transition-all duration-200 active:scale-97 flex items-center justify-center gap-1.5 font-mono"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -386,7 +386,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                 /* Rating buttons (SM-2 confidence grades) */
                 <motion.div
                   key="ratings"
-                  className="grid grid-cols-4 gap-2 w-full"
+                  className="grid grid-cols-4 gap-2 w-full font-mono"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -396,25 +396,25 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                       label: "Again",
                       desc: "Forgot",
                       rating: "again" as const,
-                      className: "bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white border-red-500/30",
+                      className: "bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border-red-500/30",
                     },
                     {
                       label: "Hard",
                       desc: "Hesitant",
                       rating: "hard" as const,
-                      className: "bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white border-amber-500/30",
+                      className: "bg-prism-warm/10 hover:bg-prism-warm text-prism-warm hover:text-prism-base border-prism-warm/30",
                     },
                     {
                       label: "Good",
                       desc: "Correct",
                       rating: "good" as const,
-                      className: "bg-blue-500/10 hover:bg-blue-500 text-blue-600 hover:text-white border-blue-500/30",
+                      className: "bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white border-blue-500/30",
                     },
                     {
                       label: "Easy",
                       desc: "Perfect",
                       rating: "easy" as const,
-                      className: "bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white border-emerald-500/30",
+                      className: "bg-prism-accent/10 hover:bg-prism-accent text-prism-accent hover:text-prism-base border-prism-accent/30",
                     },
                   ].map((btn) => (
                     <button

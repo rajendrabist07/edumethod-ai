@@ -15,6 +15,7 @@ const requestSchema = z.object({
   imageBase64: z.string().optional(),
   mimeType: z.string().optional(),
   regenerate: z.boolean().optional(),
+  socratic: z.boolean().optional(),
 });
 
 const SYSTEM_PROMPT = `You are a patient, encouraging tutor. Solve questions step-by-step, explaining reasoning at each step.
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate } = parseResult.data;
+    const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate, socratic } = parseResult.data;
 
     let finalSessionId = sessionId;
     let session = null;
@@ -105,6 +106,12 @@ export async function POST(req: NextRequest) {
 
     // RAG Similarity Match
     let finalSystemPrompt = SYSTEM_PROMPT;
+    if (socratic) {
+      finalSystemPrompt = `You are a patient Socratic tutor. Do NOT give direct answers or solutions. Instead:
+1. Break down the problem and ask prompting, scaffolding questions.
+2. Guide the student step-by-step so they discover the errors or formulas themselves.
+3. Be encouraging and use standard LaTeX formatting for math expressions.`;
+    }
     let chunksMatched: any[] = [];
     try {
       let targetLearningPathId = learningPathId || null;

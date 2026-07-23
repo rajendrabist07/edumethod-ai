@@ -257,6 +257,31 @@ export function SidebarAside() {
             <span>🗂️</span> Cards
           </Link>
         </div>
+
+        <div className="grid grid-cols-2 gap-1.5">
+          <Link
+            href="/textbook-chat"
+            className={`flex items-center justify-center p-2 rounded-xl border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] transition text-[10px] font-bold gap-1 ${
+              pathname === "/textbook-chat"
+                ? "bg-[color:var(--sidebar-active)] text-[color:var(--sidebar-text)]"
+                : "text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)]"
+            }`}
+            onClick={handleLinkClick}
+          >
+            <span>📖</span> RAG Chat
+          </Link>
+          <Link
+            href="/feynman"
+            className={`flex items-center justify-center p-2 rounded-xl border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] transition text-[10px] font-bold gap-1 ${
+              pathname === "/feynman"
+                ? "bg-[color:var(--sidebar-active)] text-[color:var(--sidebar-text)]"
+                : "text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)]"
+            }`}
+            onClick={handleLinkClick}
+          >
+            <span>💡</span> Feynman
+          </Link>
+        </div>
       </div>
 
       {/* 3. History Scroll Pane */}
