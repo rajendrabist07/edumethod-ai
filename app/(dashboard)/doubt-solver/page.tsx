@@ -233,6 +233,15 @@ export default function DoubtSolverPage() {
     });
   }
 
+  const handleDownloadImage = (url: string, filename: string = "download.jpg") => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   // Message Send & Stream response logic
   async function handleSend(forcedInput?: string, isRegenerate = false) {
     const textToSend = forcedInput !== undefined ? forcedInput : input;
@@ -560,11 +569,11 @@ export default function DoubtSolverPage() {
                     >
                       {/* AI Header */}
                       {!isUser && (
-                        <div className="flex items-center gap-2 mb-2 px-1">
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow-sm text-white">
-                            <ChatSparkIcon size={14} />
+                        <div className="flex items-center gap-2.5 mb-2.5 px-1">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center shadow-md text-white border border-white/10">
+                            <ChatSparkIcon size={13} />
                           </div>
-                          <span className="text-[11px] font-bold tracking-wide text-[color:var(--text)]">AI Tutor</span>
+                          <span className="text-[11px] font-black tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-indigo-500">AI Tutor</span>
                         </div>
                       )}
                       
@@ -573,7 +582,12 @@ export default function DoubtSolverPage() {
                         {/* If User Image exists, render it elegantly like the first image */}
                         {isUser && m.imageUrl && (
                           <div className="flex justify-end gap-2 mb-1">
-                            <img src={m.imageUrl} alt="Uploaded attachment" className="h-32 w-auto max-w-[200px] object-cover rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm" />
+                            <img 
+                              src={m.imageUrl} 
+                              alt="Uploaded attachment" 
+                              onClick={() => handleDownloadImage(m.imageUrl as string, "edumethod_image.jpg")}
+                              className="h-36 w-auto max-w-[220px] object-cover rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm cursor-pointer hover:opacity-90 hover:shadow-md transition active:scale-95" 
+                            />
                           </div>
                         )}
                         
@@ -598,29 +612,61 @@ export default function DoubtSolverPage() {
                                   code({ className, children, ...props }: any) {
                                     const inline = !className;
                                     return !inline ? (
-                                      <pre className="bg-slate-50 dark:bg-[#0d0d0d] border border-slate-200 dark:border-white/10 rounded-xl p-3 my-3 overflow-x-auto text-[11px] font-mono leading-normal shadow-inner">
+                                      <pre className="bg-slate-50 dark:bg-[#0d0d0d] border border-slate-200 dark:border-white/10 rounded-xl p-3.5 my-3 overflow-x-auto text-[11px] font-mono leading-normal shadow-inner">
                                         <code className={className} {...props}>
                                           {children}
                                         </code>
                                       </pre>
                                     ) : (
-                                      <code className="bg-slate-100 dark:bg-white/10 border border-slate-200/60 dark:border-white/10 rounded px-1.5 py-0.5 text-[11px] font-mono" {...props}>
+                                      <code className="bg-slate-100 dark:bg-white/10 border border-slate-200/60 dark:border-white/10 rounded px-1.5 py-0.5 text-[11px] font-mono tracking-tight" {...props}>
                                         {children}
                                       </code>
                                     );
                                   },
                                   ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1.5 marker:text-purple-500">{children}</ul>,
                                   ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1.5 marker:text-purple-500 marker:font-bold">{children}</ol>,
-                                  li: ({ children }) => <li className="text-[13.5px] font-medium text-[color:var(--text)] leading-relaxed">{children}</li>,
-                                  p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed text-[13.5px]">{children}</p>,
-                                  h1: ({ children }) => <h1 className="text-base font-bold mt-4 mb-2 text-slate-900 dark:text-slate-100">{children}</h1>,
-                                  h2: ({ children }) => <h2 className="text-sm font-bold mt-3.5 mb-2 text-slate-800 dark:text-slate-200">{children}</h2>,
-                                  h3: ({ children }) => <h3 className="text-[13.5px] font-bold mt-3 mb-1 text-slate-700 dark:text-slate-300">{children}</h3>,
+                                  li: ({ children }) => <li className="text-[14px] font-medium text-[color:var(--text)] leading-relaxed tracking-tight">{children}</li>,
+                                  p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed text-[14px] tracking-tight">{children}</p>,
+                                  h1: ({ children }) => <h1 className="text-base font-extrabold mt-5 mb-2.5 uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">{children}</h1>,
+                                  h2: ({ children }) => <h2 className="text-[14px] font-bold mt-4 mb-2 uppercase tracking-widest text-indigo-600 dark:text-indigo-400">{children}</h2>,
+                                  h3: ({ children }) => <h3 className="text-[13px] font-bold mt-3 mb-1 uppercase tracking-widest text-purple-600 dark:text-purple-400">{children}</h3>,
                                 }}
                               >
                                 {m.content}
                               </ReactMarkdown>
                             )}
+                          </div>
+                        )}
+                        
+                        {/* Copy & Edit tools for User Bubble */}
+                        {isUser && m.content && (
+                          <div className="flex items-center justify-end gap-1 mt-0.5 px-1 opacity-60 hover:opacity-100 transition-opacity duration-200 select-none">
+                            <button
+                              onClick={() => handleCopyMessage(i, m.content)}
+                              className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition active:scale-95"
+                              title="Copy"
+                            >
+                              {copiedIndex === i ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-4 h-4 text-green-500">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="w-3.5 h-3.5">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.875V18a2.25 2.25 0 002.25 2.25h5.25a2.25 2.25 0 002.25-2.25V7.875a2.25 2.25 0 00-2.25-2.25H9a2.25 2.25 0 00-2.25 2.25z" />
+                                </svg>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setInput(m.content);
+                              }}
+                              className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition active:scale-95"
+                              title="Edit"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="w-3.5 h-3.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.89 1.12l-2.827.94a.75.75 0 01-.95-.95l.94-2.827a4.5 4.5 0 011.12-1.89l13.637-13.637zM16.862 4.487L19.5 7.125" />
+                              </svg>
+                            </button>
                           </div>
                         )}
                       </div>

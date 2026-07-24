@@ -406,14 +406,24 @@ export function HistorySidebar() {
         )}
 
         {/* User Account Controls Footer */}
-        <div className="px-4 py-3.5 border-t border-slate-200/50 dark:border-[#1c1d20]/50 bg-slate-50 dark:bg-[#0d0d0e] shrink-0 flex items-center justify-between gap-3 z-30 relative select-none">
-          <div className="flex items-center gap-2.5 min-w-0 flex-1">
-            <UserButton />
-            <div className="min-w-0 flex flex-col flex-1">
-              <span className="text-[10px] font-bold truncate text-[color:var(--text)] leading-snug">
+        <div className="px-4 py-4 border-t border-slate-200/60 dark:border-[#1c1d20] bg-white dark:bg-[#0a0a0a] shrink-0 flex items-center justify-between gap-3 z-30 relative select-none shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-3 min-w-0 flex-1 hover:opacity-80 transition cursor-pointer">
+            <div className="relative shrink-0 flex items-center justify-center p-[2px] rounded-full bg-gradient-to-tr from-purple-500 via-indigo-500 to-cyan-500 shadow-sm transition-transform active:scale-95">
+              <div className="bg-white dark:bg-[#0a0a0a] rounded-full overflow-hidden flex items-center justify-center">
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: "w-[34px] h-[34px] rounded-full"
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <div className="min-w-0 flex flex-col flex-1 justify-center gap-1">
+              <span className="text-[13px] font-extrabold truncate text-slate-800 dark:text-slate-200 leading-none tracking-tight">
                 {user?.fullName || "My Workspace"}
               </span>
-              <span className="text-4xs font-semibold text-[color:var(--muted)] uppercase tracking-wider">
+              <span className="text-[9.5px] font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-400 to-slate-500 dark:from-slate-500 dark:to-slate-400 uppercase tracking-[0.2em] leading-none">
                 Settings & Billing
               </span>
             </div>
