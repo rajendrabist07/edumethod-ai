@@ -15,6 +15,8 @@ import { useUser } from "@clerk/nextjs";
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+  imageUrl?: string;
+  timestamp?: string;
   feedback?: "up" | "down";
   feedbackText?: string;
 }
@@ -240,11 +242,14 @@ export default function DoubtSolverPage() {
     setError("");
     setVoiceState("thinking");
 
-    const displayContent = imageFile 
-      ? `[Image Attached: ${imageFile.name}]\n\n${textToSend}`
-      : textToSend;
+    const displayContent = textToSend;
 
-    const userMessage: ChatMessage = { role: "user", content: displayContent };
+    const userMessage: ChatMessage = { 
+      role: "user", 
+      content: displayContent,
+      imageUrl: imageFile ? URL.createObjectURL(imageFile) : undefined,
+      timestamp: new Date().toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+    };
     setMessages((prev) => [...prev, userMessage]);
     
     setInput("");
@@ -537,74 +542,88 @@ export default function DoubtSolverPage() {
               {messages.map((m, i) => {
                 const isUser = m.role === "user";
                 return (
-                  <div
-                    key={i}
-                    className={`flex flex-col max-w-[85%] sm:max-w-[80%] ${
-                      isUser ? "self-end items-end ml-auto" : "self-start items-start mr-auto"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1.5 px-1">
-                      {isUser ? (
-                        <>
-                          <span className="text-[10px] font-black uppercase tracking-wider text-[color:var(--text)]">{user?.firstName || "You"}</span>
-                          {user?.imageUrl ? (
-                            <img src={user.imageUrl} alt="Profile" className="w-5 h-5 rounded-full object-cover shadow-sm" />
-                          ) : (
-                            <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-[10px] text-white font-bold">U</div>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-5 h-5 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center shadow-sm text-white">
-                            <ChatSparkIcon size={12} />
-                          </div>
-                          <span className="text-[10px] font-black uppercase tracking-wider text-[color:var(--text)]">AI Tutor</span>
-                        </>
-                      )}
-                    </div>
+                  <div key={i} className="flex flex-col w-full mb-1">
+                    
+                    {/* Timestamp Center like first image */}
+                    {m.timestamp && (
+                      <div className="w-full flex justify-center mt-6 mb-4">
+                        <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium tracking-wide">
+                          {m.timestamp}
+                        </span>
+                      </div>
+                    )}
+                    
                     <div
-                      className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed transition-all duration-300 shadow-xs ${
-                        isUser
-                          ? "bg-purple-600/10 dark:bg-purple-500/10 border border-purple-500/15 text-[color:var(--text)] rounded-tr-none"
-                          : `bg-[color:var(--surface)] border border-[color:var(--border)]/50 text-[color:var(--text)] rounded-tl-none max-w-none text-xs ${
-                              loading && i === messages.length - 1 ? "chat-streaming" : ""
-                            }`
+                      className={`flex flex-col max-w-[85%] sm:max-w-[75%] ${
+                        isUser ? "self-end items-end ml-auto" : "self-start items-start mr-auto"
                       }`}
                     >
-                      {isUser ? (
-                        m.content
-                      ) : (
-                        <ReactMarkdown
-                          remarkPlugins={[remarkMath]}
-                          rehypePlugins={[rehypeKatex]}
-                          components={{
-                            code({ className, children, ...props }: any) {
-                              const inline = !className;
-                              return !inline ? (
-                                <pre className="bg-[color:var(--surface-soft)] border border-[color:var(--border)]/35 rounded-xl p-3 my-2 overflow-x-auto text-[10px] font-mono leading-normal">
-                                  <code className={className} {...props}>
-                                    {children}
-                                  </code>
-                                </pre>
-                              ) : (
-                                <code className="bg-[color:var(--surface-soft)] border border-[color:var(--border)]/30 rounded px-1.5 py-0.5 text-[10px] font-mono" {...props}>
-                                  {children}
-                                </code>
-                              );
-                            },
-                            ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1">{children}</ul>,
-                            ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1">{children}</ol>,
-                            li: ({ children }) => <li className="text-2xs font-semibold text-[color:var(--text)] leading-relaxed">{children}</li>,
-                            p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                            h1: ({ children }) => <h1 className="text-sm font-black mt-3 mb-1 uppercase tracking-wider text-blue-500">{children}</h1>,
-                            h2: ({ children }) => <h2 className="text-xs font-black mt-2.5 mb-1 uppercase tracking-wider text-indigo-500">{children}</h2>,
-                            h3: ({ children }) => <h3 className="text-2xs font-extrabold mt-2 mb-0.5 uppercase tracking-wider text-purple-500">{children}</h3>,
-                          }}
-                        >
-                          {m.content}
-                        </ReactMarkdown>
+                      {/* AI Header */}
+                      {!isUser && (
+                        <div className="flex items-center gap-2 mb-2 px-1">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow-sm text-white">
+                            <ChatSparkIcon size={14} />
+                          </div>
+                          <span className="text-[11px] font-bold tracking-wide text-[color:var(--text)]">AI Tutor</span>
+                        </div>
                       )}
-                    </div>
+                      
+                      {/* Message Bubble Container */}
+                      <div className="flex flex-col gap-2 w-full">
+                        {/* If User Image exists, render it elegantly like the first image */}
+                        {isUser && m.imageUrl && (
+                          <div className="flex justify-end gap-2 mb-1">
+                            <img src={m.imageUrl} alt="Uploaded attachment" className="h-32 w-auto max-w-[200px] object-cover rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm" />
+                          </div>
+                        )}
+                        
+                        {/* Text Bubble */}
+                        {m.content && (
+                          <div
+                            className={`p-4 text-[13px] font-medium leading-relaxed transition-all duration-300 shadow-sm ${
+                              isUser
+                                ? "bg-slate-800 dark:bg-[#262626] text-white rounded-3xl rounded-br-sm border border-transparent dark:border-white/5"
+                                : `bg-white dark:bg-[#121212] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-sm text-[13.5px] ${
+                                    loading && i === messages.length - 1 ? "chat-streaming" : ""
+                                  }`
+                            }`}
+                          >
+                            {isUser ? (
+                              m.content
+                            ) : (
+                              <ReactMarkdown
+                                remarkPlugins={[remarkMath]}
+                                rehypePlugins={[rehypeKatex]}
+                                components={{
+                                  code({ className, children, ...props }: any) {
+                                    const inline = !className;
+                                    return !inline ? (
+                                      <pre className="bg-slate-50 dark:bg-[#0d0d0d] border border-slate-200 dark:border-white/10 rounded-xl p-3 my-3 overflow-x-auto text-[11px] font-mono leading-normal shadow-inner">
+                                        <code className={className} {...props}>
+                                          {children}
+                                        </code>
+                                      </pre>
+                                    ) : (
+                                      <code className="bg-slate-100 dark:bg-white/10 border border-slate-200/60 dark:border-white/10 rounded px-1.5 py-0.5 text-[11px] font-mono" {...props}>
+                                        {children}
+                                      </code>
+                                    );
+                                  },
+                                  ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1.5 marker:text-purple-500">{children}</ul>,
+                                  ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1.5 marker:text-purple-500 marker:font-bold">{children}</ol>,
+                                  li: ({ children }) => <li className="text-[13.5px] font-medium text-[color:var(--text)] leading-relaxed">{children}</li>,
+                                  p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed text-[13.5px]">{children}</p>,
+                                  h1: ({ children }) => <h1 className="text-base font-bold mt-4 mb-2 text-slate-900 dark:text-slate-100">{children}</h1>,
+                                  h2: ({ children }) => <h2 className="text-sm font-bold mt-3.5 mb-2 text-slate-800 dark:text-slate-200">{children}</h2>,
+                                  h3: ({ children }) => <h3 className="text-[13.5px] font-bold mt-3 mb-1 text-slate-700 dark:text-slate-300">{children}</h3>,
+                                }}
+                              >
+                                {m.content}
+                              </ReactMarkdown>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     {/* Thumbs up/down feedback tools under AI bubble */}
                     {!isUser && (
                       <div className="flex items-center gap-1 mt-1 px-1 text-[color:var(--muted)] relative select-none">
@@ -682,7 +701,16 @@ export default function DoubtSolverPage() {
                                 className="fixed inset-0 z-10"
                                 onClick={() => setActiveDropdownIndex(null)}
                               />
-                              <div className="absolute left-0 mt-1 w-32 glass-card rounded-xl shadow-xl z-20 border border-[color:var(--border)]/45 bg-[color:var(--surface)] p-1.5 flex flex-col gap-1 text-[10px] font-bold">
+                              <div className="absolute left-0 mt-1 w-36 glass-card rounded-xl shadow-xl z-20 border border-[color:var(--border)]/45 bg-[color:var(--surface)] p-1.5 flex flex-col gap-1 text-[11px] font-bold">
+                                <button
+                                  onClick={() => {
+                                    speakResponse(m.content);
+                                    setActiveDropdownIndex(null);
+                                  }}
+                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] text-[color:var(--text)] transition flex items-center gap-1.5"
+                                >
+                                  🔊 Read Aloud
+                                </button>
                                 <button
                                   onClick={() => {
                                     handleReportClick(i);
@@ -708,6 +736,7 @@ export default function DoubtSolverPage() {
                       </div>
                     )}
                   </div>
+                </div>
                 );
               })}
             </div>
@@ -866,7 +895,7 @@ export default function DoubtSolverPage() {
                 rows={1}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask anything"
+                placeholder={imageFile ? "Image details..." : "Ask your doubt..."}
                 className="flex-1 bg-transparent border-none outline-none resize-none min-h-[40px] py-2.5 text-[color:var(--text)] placeholder-slate-500/80 text-sm font-medium"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
