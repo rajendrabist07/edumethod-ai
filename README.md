@@ -188,12 +188,34 @@ npm run build
 
 ## 🧠 Premium Smart Learning Features (v2)
 
-EduMethod AI introduces next-generation cognitive features built on Top-Tier learning science:
+EduMethod AI introduces next-generation cognitive features built on top-tier learning science:
 
-* **Socratic Dialogue Tutor**: Accessible in the RAG Chat interface. When toggled, the AI shifts from direct answer generation to active Socratic guiding prompts to encourage self-directed discovery.
-* **AI Feynman Evaluator**: Tests student comprehension by prompting them to explain a complex concept as if they were teaching a 5-year-old child. The evaluator compares their input against matching pgvector textbook segments and grades simplicity.
-* **Cognitive Readability Diagnostics**: Dynamically calculates vocabulary complexity indexes and reading difficulty levels on uploaded syllabus contents to formulate study attention budgets.
-* **Prism Liquid Glass UI/UX Theme**: Full theme management supporting beautiful frosted white layouts (light mode) and deep obsidian glass overlays (dark mode), integrated with hardware-accelerated ambient glows.
+### 1. RAG-Cited Textbook Chat (Vector Search Pipeline)
+The textbook chat integrates a robust Retrieval-Augmented Generation (RAG) system:
+* **Vector Chunking & Storage**: Uploaded syllabus and textbook documents are segmented, parsed, and embedded using pgvector.
+* **Semantic Retrieval**: User queries trigger a cosine similarity similarity match against syllabus chunks using the database-level `match_syllabus_chunks` RPC.
+* **Source Citations**: The model dynamically references specific context sections, providing verified quotes alongside AI answers to guarantee source reliability.
+
+### 2. Socratic Mode (Active Recall Prompting)
+When Socratic Mode is active, the AI tutor transitions from a standard Q&A assistant to an inquisitive dialogue partner:
+* **Guided Discovery**: Instead of providing direct answers, the tutor uses scaffolding techniques to guide students step-by-step.
+* **Cognitive Load Optimization**: Breaks down complex conceptual hurdles into smaller, digestible micro-prompts.
+
+### 3. Feynman Technique Evaluator (Simplicity Evaluator)
+Named after Nobel physicist Richard Feynman, this module tests conceptual depth by asking students to explain topics in simple terms:
+* **Simplicity Grading**: Evaluates readability and simplicity (graded on a scale of 0-100) based on vocabulary complexity, jargon density, and syllable count.
+* **Logical Gap Detection**: Cross-references user explanations against matching pgvector reference chunks in the syllabus to identify missing key ideas.
+* **Actionable Suggestions**: Provides specific guidelines on what parts need conceptual reinforcement.
+
+### 4. Cognitive Readability Diagnostics (Load Analyzer)
+Analyzes study material complexity to optimize learning budgets:
+* **Metrics Computed**: Word count, unique term density, syllable density, and reading grade level estimation.
+* **Study Recommendations**: Recommends attention block lengths (e.g. 25-minute Pomodoro for high density text vs. 50-minute for lighter materials).
+
+### 5. Prism Liquid Glass UI/UX Theme
+A custom designed visual system featuring:
+* **Frosted Glass Aesthetics**: Translucent backings (`backdrop-blur(24px)`) and subtle gradient highlights that look premium in both Light and Dark mode.
+* **Ambient Glows**: Hardware-accelerated radial glows that pulse slowly using custom CSS keyframes.
 
 ---
 

@@ -473,7 +473,7 @@ export default function DoubtSolverPage() {
               {/* Pulsing neural cognition graphics icon */}
               <div className="mb-8 relative">
                 <div className="absolute inset-0 bg-purple-500/10 rounded-full blur-2xl animate-pulse" />
-                <div className="relative p-5 rounded-3xl bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#1c1d20]/80 shadow-md text-purple-600 dark:text-purple-400">
+                <div className="relative p-5 rounded-3xl bg-[color:var(--surface)] border border-[color:var(--border)] shadow-md text-purple-600 dark:text-purple-400">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" className="w-10 h-10 animate-spin-slow">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.467 5.99 5.99 0 0 0-1.925 3.546 5.974 5.974 0 0 1-2.133-1A3.75 3.75 0 0 0 12 18Z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75a3.75 3.75 0 1 1 0-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -510,7 +510,7 @@ export default function DoubtSolverPage() {
                   <button
                     key={idx}
                     onClick={() => setInput(action.prompt)}
-                    className="p-3.5 rounded-2xl border border-slate-200 dark:border-[#1c1d20]/80 bg-white dark:bg-[#121214] hover:bg-slate-50 dark:hover:bg-[#1c1d20]/40 text-left transition hover:border-purple-500/30 hover:shadow-sm active:scale-98 cursor-pointer"
+                    className="p-3.5 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] hover:bg-[color:var(--surface-soft)] text-left transition hover:border-purple-500/30 hover:shadow-sm active:scale-98 cursor-pointer"
                   >
                     <p className="text-3xs font-extrabold text-[color:var(--text)] uppercase tracking-wide mb-1">{action.title}</p>
                     <p className="text-4xs font-medium text-[color:var(--muted)] leading-normal">{action.desc}</p>
@@ -536,7 +536,7 @@ export default function DoubtSolverPage() {
                       className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed transition-all duration-300 shadow-xs ${
                         isUser
                           ? "bg-purple-600/10 dark:bg-purple-500/10 border border-purple-500/15 text-[color:var(--text)] rounded-tr-none"
-                          : `bg-slate-50 dark:bg-[#121214] border border-slate-200/50 dark:border-[#1c1d20]/50 text-[color:var(--text)] rounded-tl-none max-w-none text-xs ${
+                          : `bg-[color:var(--surface)] border border-[color:var(--border)]/50 text-[color:var(--text)] rounded-tl-none max-w-none text-xs ${
                               loading && i === messages.length - 1 ? "chat-streaming" : ""
                             }`
                       }`}
@@ -811,7 +811,7 @@ export default function DoubtSolverPage() {
           )}
 
           {/* Unified Input Pill Container */}
-          <div className="relative flex items-center bg-white dark:bg-[#121214] border border-slate-200 dark:border-[#1c1d20]/80 rounded-2xl p-1.5 pl-3 shadow-lg focus-within:border-purple-500/40 focus-within:ring-4 focus-within:ring-purple-500/5 transition duration-200">
+          <div className="relative flex items-center bg-[color:var(--surface)] border border-[color:var(--border)] rounded-2xl p-1.5 pl-3 shadow-lg focus-within:border-purple-500/40 focus-within:ring-4 focus-within:ring-purple-500/5 transition duration-200">
             
             {/* Image attachment trigger */}
             <button

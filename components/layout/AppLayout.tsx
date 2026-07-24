@@ -71,8 +71,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       
       {/* Premium floating radial ambient glow (iOS 27 style concept visual depth) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-prism-accent/5 filter blur-[120px] mix-blend-screen animate-pulse-slow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-prism-warm/4 filter blur-[120px] mix-blend-screen animate-pulse-slow-delay" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-prism-accent/8 dark:bg-prism-accent/5 filter blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse-slow" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-prism-warm/6 dark:bg-prism-warm/4 filter blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse-slow-delay" />
       </div>
       
       {/* ========================================================================= */}

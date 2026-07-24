@@ -186,13 +186,13 @@ export default function TextbookChatPage() {
               onChange={(e) => setSelectedPathId(e.target.value)}
               className="w-full sm:w-64 px-4 py-2 rounded-xl bg-prism-surface border border-prism-border text-prism-text text-2xs font-bold outline-none cursor-pointer focus:border-prism-accent/50"
             >
-              <option value="" disabled>-- Select a study roadmap --</option>
+              <option value="" disabled className="bg-white text-slate-900 dark:bg-[#0B0D14] dark:text-[#EDEFF5]">-- Select a study roadmap --</option>
               {paths.map((p) => (
-                <option key={p.id} value={p.id}>{p.subject}</option>
+                <option key={p.id} value={p.id} className="bg-white text-slate-900 dark:bg-[#0B0D14] dark:text-[#EDEFF5]">{p.subject}</option>
               ))}
             </select>
           </div>
-          <div className="sm:col-span-4 flex justify-end">
+          <div className="sm:col-span-4 flex justify-start sm:justify-end">
             {/* Socratic Mode Toggle */}
             <button
               onClick={() => setSocratic(!socratic)}

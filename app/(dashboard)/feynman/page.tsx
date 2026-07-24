@@ -135,9 +135,9 @@ export default function FeynmanPlaygroundPage() {
                   onChange={(e) => setSelectedPathId(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-prism-surface border border-prism-border text-prism-text text-3xs font-bold outline-none cursor-pointer focus:border-prism-accent/50"
                 >
-                  <option value="" disabled>-- Select textbook --</option>
+                  <option value="" disabled className="bg-white text-slate-900 dark:bg-[#0B0D14] dark:text-[#EDEFF5]">-- Select textbook --</option>
                   {paths.map((p) => (
-                    <option key={p.id} value={p.id}>{p.subject}</option>
+                    <option key={p.id} value={p.id} className="bg-white text-slate-900 dark:bg-[#0B0D14] dark:text-[#EDEFF5]">{p.subject}</option>
                   ))}
                 </select>
               </div>
