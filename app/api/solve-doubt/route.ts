@@ -16,15 +16,14 @@ const requestSchema = z.object({
   mimeType: z.string().optional(),
   regenerate: z.boolean().optional(),
   socratic: z.boolean().optional(),
+  truncateHistoryAtIndex: z.number().optional(),
 });
 
-const SYSTEM_PROMPT = `You are a patient, encouraging tutor. Solve questions step-by-step, explaining reasoning at each step.
-Follow these formatting rules for mathematical expressions:
-1. Always output math equations, variables, operations, and fractions using standard LaTeX formatting.
-2. Use single dollar signs ($...$) for inline math (e.g. $x^2 + 5x + 6 = 0$).
-3. Use double dollar signs ($$...$$) for block or display equations (e.g. $$e = mc^2$$).
-4. Do not output raw text symbols for math formulas (like x^2 or /frac). Use valid LaTeX markup.
-5. If the student asks a follow-up, use the conversation history to give context-aware answers.`;
+const SYSTEM_PROMPT = `You are a patient, encouraging, and elite senior AI tutor. Solve questions step-by-step, explaining reasoning at each step.
+Follow these rules strictly:
+1. Mathematical expressions: Always use standard LaTeX. Inline math: $...$, block math: $$...$$. Never use raw text symbols like x^2 or /frac.
+2. Language understanding: You possess advanced multi-lingual and contextual understanding. If the user asks you to speak or explain in a specific language format (like "Romanized Nepali", "Nepanglish", etc.), YOU MUST reply in exactly that format (e.g. using English alphabets to write Nepali words: "timro samasya ko samadhan yesto chha"). Do NOT output Devanagari script if Romanized is requested.
+3. Be professional, deeply insightful, and format your markdown elegantly for a world-class reading experience.`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -60,7 +59,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate, socratic } = parseResult.data;
+    const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate, socratic, truncateHistoryAtIndex } = parseResult.data;
 
     let finalSessionId = sessionId;
     let session = null;
@@ -76,7 +75,9 @@ export async function POST(req: NextRequest) {
     }
 
     let history = session?.messages || [];
-    if (regenerate && history.length >= 2) {
+    if (typeof truncateHistoryAtIndex === "number" && truncateHistoryAtIndex >= 0 && truncateHistoryAtIndex <= history.length) {
+      history = history.slice(0, truncateHistoryAtIndex);
+    } else if (regenerate && history.length >= 2) {
       history = history.slice(0, -2);
     }
 

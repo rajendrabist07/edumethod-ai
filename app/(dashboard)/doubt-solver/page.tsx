@@ -48,6 +48,10 @@ export default function DoubtSolverPage() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [activeDropdownIndex, setActiveDropdownIndex] = useState<number | null>(null);
 
+  // Edit Message states
+  const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
+  const [editingText, setEditingText] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -243,7 +247,7 @@ export default function DoubtSolverPage() {
   };
 
   // Message Send & Stream response logic
-  async function handleSend(forcedInput?: string, isRegenerate = false) {
+  async function handleSend(forcedInput?: string, isRegenerate = false, truncateHistoryAtIndex?: number) {
     const textToSend = forcedInput !== undefined ? forcedInput : input;
     if (!textToSend.trim() && !imageFile) return;
 
@@ -259,7 +263,13 @@ export default function DoubtSolverPage() {
       imageUrl: imageFile ? URL.createObjectURL(imageFile) : undefined,
       timestamp: new Date().toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
     };
-    setMessages((prev) => [...prev, userMessage]);
+    
+    setMessages((prev) => {
+      if (truncateHistoryAtIndex !== undefined) {
+        return [...prev.slice(0, truncateHistoryAtIndex), userMessage];
+      }
+      return [...prev, userMessage];
+    });
     
     setInput("");
 
@@ -270,10 +280,12 @@ export default function DoubtSolverPage() {
         imageBase64?: string;
         mimeType?: string;
         regenerate?: boolean;
+        truncateHistoryAtIndex?: number;
       } = { message: textToSend || "Analyze the attached image." };
 
       if (sessionId) payload.sessionId = sessionId;
       if (isRegenerate) payload.regenerate = true;
+      if (truncateHistoryAtIndex !== undefined) payload.truncateHistoryAtIndex = truncateHistoryAtIndex;
 
       if (imageFile) {
         payload.imageBase64 = await fileToBase64(imageFile);
@@ -591,8 +603,39 @@ export default function DoubtSolverPage() {
                           </div>
                         )}
                         
-                        {/* Text Bubble */}
-                        {m.content && (
+                        {/* Text Bubble & Edit Inline Input */}
+                        {editingMessageIndex === i ? (
+                          <div className="flex flex-col gap-3 w-full bg-slate-800 dark:bg-[#262626] rounded-3xl p-4 border border-white/10 shadow-sm mt-1">
+                            <textarea
+                              value={editingText}
+                              onChange={(e) => setEditingText(e.target.value)}
+                              className="w-full bg-transparent text-white resize-none outline-none text-[13.5px] font-medium placeholder-slate-400"
+                              rows={3}
+                              autoFocus
+                            />
+                            <div className="flex justify-end gap-2.5 mt-1">
+                              <button 
+                                onClick={() => setEditingMessageIndex(null)}
+                                className="px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold tracking-wide transition active:scale-95"
+                              >
+                                Cancel
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  if (editingText.trim() === m.content.trim()) {
+                                    setEditingMessageIndex(null);
+                                    return;
+                                  }
+                                  setEditingMessageIndex(null);
+                                  handleSend(editingText, false, i);
+                                }}
+                                className="px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] font-bold tracking-wide transition shadow-sm active:scale-95"
+                              >
+                                Save & Submit
+                              </button>
+                            </div>
+                          </div>
+                        ) : m.content ? (
                           <div
                             className={`p-4 text-[13px] font-medium leading-relaxed transition-all duration-300 shadow-sm ${
                               isUser
@@ -636,7 +679,7 @@ export default function DoubtSolverPage() {
                               </ReactMarkdown>
                             )}
                           </div>
-                        )}
+                        ) : null}
                         
                         {/* Copy & Edit tools for User Bubble */}
                         {isUser && m.content && (
@@ -658,7 +701,8 @@ export default function DoubtSolverPage() {
                             </button>
                             <button
                               onClick={() => {
-                                setInput(m.content);
+                                setEditingMessageIndex(i);
+                                setEditingText(m.content);
                               }}
                               className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition active:scale-95"
                               title="Edit"
