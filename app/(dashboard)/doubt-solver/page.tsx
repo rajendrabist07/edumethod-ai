@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { useUser } from "@clerk/nextjs";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -19,6 +20,7 @@ interface ChatMessage {
 }
 
 export default function DoubtSolverPage() {
+  const { user } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionIdParam = searchParams.get("sessionId");
@@ -27,6 +29,7 @@ export default function DoubtSolverPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -54,6 +57,17 @@ export default function DoubtSolverPage() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading, voiceState]);
+
+  // Handle image preview URL
+  useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  }, [imageFile]);
 
   // Check speech support
   useEffect(() => {
@@ -529,9 +543,25 @@ export default function DoubtSolverPage() {
                       isUser ? "self-end items-end ml-auto" : "self-start items-start mr-auto"
                     }`}
                   >
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[color:var(--muted)]/50 mb-1 px-1">
-                      {isUser ? "You" : "AI Tutor"}
-                    </span>
+                    <div className="flex items-center gap-2 mb-1.5 px-1">
+                      {isUser ? (
+                        <>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[color:var(--text)]">{user?.firstName || "You"}</span>
+                          {user?.imageUrl ? (
+                            <img src={user.imageUrl} alt="Profile" className="w-5 h-5 rounded-full object-cover shadow-sm" />
+                          ) : (
+                            <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-[10px] text-white font-bold">U</div>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-5 h-5 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center shadow-sm text-white">
+                            <ChatSparkIcon size={12} />
+                          </div>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[color:var(--text)]">AI Tutor</span>
+                        </>
+                      )}
+                    </div>
                     <div
                       className={`p-4 rounded-2xl text-xs font-semibold leading-relaxed transition-all duration-300 shadow-xs ${
                         isUser
@@ -786,9 +816,8 @@ export default function DoubtSolverPage() {
           </div>
         )}
 
-        {/* Floating Input Pill Area */}
-        <div className="shrink-0 w-full max-w-2xl sm:max-w-3xl mx-auto px-4 pb-6 bg-transparent flex flex-col gap-3 z-10 relative">
-          
+        {/* Floating Input Area (ChatGPT Style) */}
+        <div className="shrink-0 w-full max-w-2xl sm:max-w-3xl mx-auto px-4 pb-6 bg-transparent z-10 relative">
           <input
             type="file"
             accept="image/*"
@@ -797,77 +826,90 @@ export default function DoubtSolverPage() {
             className="hidden"
           />
 
-          {imageFile && (
-            <div className="flex items-center justify-between rounded-xl bg-blue-50/70 border border-blue-200 px-4 py-2 text-2xs font-bold text-blue-700 dark:bg-blue-950/20 dark:border-blue-900/30">
-              <span className="truncate max-w-[80%]">📎 File: {imageFile.name}</span>
-              <button
-                type="button"
-                onClick={() => setImageFile(null)}
-                className="text-red-500 hover:text-red-700 font-extrabold active:scale-90"
-              >
-                ✕ Remove
-              </button>
-            </div>
-          )}
-
-          {/* Unified Input Pill Container */}
-          <div className="relative flex items-center bg-[color:var(--surface)] border border-[color:var(--border)] rounded-2xl p-1.5 pl-3 shadow-lg focus-within:border-purple-500/40 focus-within:ring-4 focus-within:ring-purple-500/5 transition duration-200">
+          <div className="relative flex flex-col bg-slate-100 dark:bg-[#2f2f2f] border border-transparent focus-within:border-slate-300 dark:focus-within:border-slate-600 rounded-3xl shadow-lg transition duration-200 overflow-hidden p-2">
             
-            {/* Image attachment trigger */}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className={`flex shrink-0 h-9 w-9 items-center justify-center rounded-xl transition duration-200 active:scale-95 ${
-                imageFile 
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-950/65 dark:text-blue-300"
-                  : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-purple-600"
-              }`}
-              title="Attach homework or syllabus image"
-            >
-              <CameraScanIcon size={16} />
-            </button>
-
-            {/* Voice Conversation Activation microphone trigger */}
-            {voiceSupported && (
-              <button
-                type="button"
-                onClick={toggleVoiceMode}
-                className={`flex shrink-0 h-9 w-9 items-center justify-center rounded-xl transition duration-200 active:scale-95 ${
-                  voiceMode 
-                    ? "bg-purple-100 text-purple-700 animate-pulse dark:bg-purple-950/65 dark:text-purple-300"
-                    : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-purple-600"
-                }`}
-                title="Speak live using voice conversation"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5 w-4.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
-                </svg>
-              </button>
+            {/* Image Preview Area */}
+            {previewUrl && (
+              <div className="px-3 pt-3 pb-1">
+                <div className="relative inline-block group">
+                  <img src={previewUrl} alt="Upload preview" className="h-16 w-16 object-cover rounded-2xl shadow-sm border border-slate-200/50 dark:border-white/10" />
+                  <button
+                    onClick={() => setImageFile(null)}
+                    className="absolute -top-2 -right-2 bg-slate-800 text-white rounded-full p-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow hover:bg-slate-700"
+                    title="Remove image"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             )}
 
-            {/* Input field */}
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={imageFile ? "Image details..." : "Ask your step-by-step doubt..."}
-              className="flex-1 bg-transparent text-2xs sm:text-xs text-[color:var(--text)] outline-none border-none px-3.5 py-2.5 placeholder-slate-450/80"
-              onKeyDown={(e) =>
-                e.key === "Enter" && !loading && handleSend()
-              }
-            />
+            {/* Input & Actions */}
+            <div className="flex items-end gap-2 px-1 pb-1">
+              
+              {/* Attachment Button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 mb-0.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition shrink-0 rounded-full hover:bg-slate-200 dark:hover:bg-white/10"
+                title="Attach image"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </button>
 
-            {/* Send button (rounded circle like ChatGPT) */}
-            <button
-              onClick={() => handleSend()}
-              disabled={loading || (!input.trim() && !imageFile)}
-              className="h-9 w-9 rounded-full bg-purple-600 text-white flex items-center justify-center hover:bg-purple-700 disabled:opacity-30 disabled:hover:bg-purple-600 transition active:scale-95 shrink-0 shadow-sm"
-              title="Send question"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-4 w-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
-              </svg>
-            </button>
+              {/* Text Input */}
+              <textarea
+                rows={1}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask anything"
+                className="flex-1 bg-transparent border-none outline-none resize-none min-h-[40px] py-2.5 text-[color:var(--text)] placeholder-slate-500/80 text-sm font-medium"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!loading && (input.trim() || imageFile)) {
+                      handleSend();
+                    }
+                  }
+                }}
+              />
+
+              {/* Right Actions: Mic and Send */}
+              <div className="flex items-center gap-1.5 mb-1 shrink-0">
+                {voiceSupported && (
+                  <button
+                    type="button"
+                    onClick={toggleVoiceMode}
+                    className={`p-2 transition rounded-full shrink-0 ${
+                      voiceMode 
+                        ? "text-red-500 bg-red-100 dark:bg-red-900/30" 
+                        : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/10"
+                    }`}
+                    title="Voice Mode"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+                    </svg>
+                  </button>
+                )}
+
+                {/* Send Button */}
+                <button
+                  onClick={() => handleSend()}
+                  disabled={loading || (!input.trim() && !imageFile)}
+                  className="h-8 w-8 mr-1 flex items-center justify-center rounded-full transition disabled:opacity-30 disabled:cursor-not-allowed bg-black text-white dark:bg-white dark:text-black hover:opacity-80 shadow-sm"
+                  title="Send message"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
