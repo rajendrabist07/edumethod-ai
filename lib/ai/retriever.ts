@@ -64,7 +64,7 @@ export async function runRetriever(
         // Infer topic from the best matched chunk
         const chunkWithTopic = ragChunks.find(c => c.topic);
         if (chunkWithTopic) {
-          identifiedTopic = chunkWithTopic.topic;
+          identifiedTopic = chunkWithTopic.topic ?? null;
         }
       }
     } catch (e) {
