@@ -35,10 +35,13 @@ export default function DoubtSolverPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Voice Interaction Mode states
   const [voiceMode, setVoiceMode] = useState(false);
   const [voiceState, setVoiceState] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
   const [voiceSupported, setVoiceSupported] = useState(false);
+  
+  // Voice Selection states
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>("");
 
   // Feedback Modal states
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -75,7 +78,7 @@ export default function DoubtSolverPage() {
     }
   }, [imageFile]);
 
-  // Check speech support
+  // Check speech support and load voices
   useEffect(() => {
     if (typeof window !== "undefined") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,6 +86,29 @@ export default function DoubtSolverPage() {
       const speechSupported = !!SpeechRecognition && !!window.speechSynthesis;
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setVoiceSupported(speechSupported);
+
+      if (speechSupported) {
+        const loadVoices = () => {
+          const voices = window.speechSynthesis.getVoices();
+          if (voices.length > 0) {
+            // Filter for high-quality voices (English, Nepali, Hindi, or premium Apple/Google voices)
+            const goodVoices = voices.filter(v => v.lang.startsWith("en") || v.lang.startsWith("hi") || v.lang.startsWith("ne"));
+            setAvailableVoices(goodVoices);
+            
+            // Set default to a premium voice if available, otherwise first
+            setSelectedVoiceURI((prev) => {
+              if (prev) return prev;
+              const premium = goodVoices.find(v => v.name.includes("Samantha") || v.name.includes("Alex") || v.name.includes("Google US English"));
+              return premium ? premium.voiceURI : goodVoices[0]?.voiceURI || "";
+            });
+          }
+        };
+        
+        loadVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+          window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+      }
     }
   }, []);
 
@@ -132,10 +158,15 @@ export default function DoubtSolverPage() {
     router.push("/doubt-solver");
   }
 
-  // Voice recognition activation logic
+  // Voice recognition activation logic (with interruption handling)
   function startVoiceListening() {
     if (!voiceSupported) return;
-    window.speechSynthesis.cancel();
+    
+    // Explicitly cancel any ongoing speech to allow interruption
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+    setVoiceState("idle");
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -186,7 +217,14 @@ export default function DoubtSolverPage() {
       .replace(/[*_#\-]/g, " ");
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = "en-US";
+    
+    if (selectedVoiceURI) {
+      const voice = availableVoices.find(v => v.voiceURI === selectedVoiceURI);
+      if (voice) utterance.voice = voice;
+    } else {
+      utterance.lang = "en-US";
+    }
+    
     utterance.rate = 1.05;
 
     utterance.onstart = () => {
@@ -281,11 +319,13 @@ export default function DoubtSolverPage() {
         mimeType?: string;
         regenerate?: boolean;
         truncateHistoryAtIndex?: number;
+        isVoiceMode?: boolean;
       } = { message: textToSend || "Analyze the attached image." };
 
       if (sessionId) payload.sessionId = sessionId;
       if (isRegenerate) payload.regenerate = true;
       if (truncateHistoryAtIndex !== undefined) payload.truncateHistoryAtIndex = truncateHistoryAtIndex;
+      if (voiceMode) payload.isVoiceMode = true;
 
       if (imageFile) {
         payload.imageBase64 = await fileToBase64(imageFile);
@@ -869,20 +909,35 @@ export default function DoubtSolverPage() {
         {voiceMode && (
           <div className="fixed inset-0 bg-slate-950/85 dark:bg-slate-950/90 backdrop-blur-2xl flex flex-col items-center justify-between p-6 sm:p-8 z-50 animate-fade-in text-white select-none">
             
-            {/* Header */}
+            {/* Header with Voice Selection */}
             <div className="w-full flex items-center justify-between max-w-lg">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></span>
-                <span className="text-[10px] font-extrabold tracking-widest uppercase text-purple-400">Tutor Session Active</span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></span>
+                  <span className="text-[10px] font-extrabold tracking-widest uppercase text-purple-400">Tutor Active</span>
+                </div>
+                {availableVoices.length > 0 && (
+                  <select
+                    value={selectedVoiceURI}
+                    onChange={(e) => setSelectedVoiceURI(e.target.value)}
+                    className="bg-white/10 border border-white/20 text-white text-[10px] font-bold rounded-full px-3 py-1.5 outline-none focus:border-purple-500/50 appearance-none cursor-pointer hover:bg-white/15 transition max-w-[150px] truncate"
+                  >
+                    {availableVoices.map((v) => (
+                      <option key={v.voiceURI} value={v.voiceURI} className="text-black">
+                        {v.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
               <button
                 onClick={toggleVoiceMode}
-                className="p-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 active:scale-95 transition text-xs font-bold flex items-center gap-1.5"
+                className="p-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 active:scale-95 transition text-xs font-bold flex items-center gap-1.5 shrink-0"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-                <span>Exit Voice</span>
+                <span className="hidden sm:inline">Exit Voice</span>
               </button>
             </div>
 

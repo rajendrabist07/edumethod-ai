@@ -17,6 +17,7 @@ const requestSchema = z.object({
   regenerate: z.boolean().optional(),
   socratic: z.boolean().optional(),
   truncateHistoryAtIndex: z.number().optional(),
+  isVoiceMode: z.boolean().optional(),
 });
 
 const SYSTEM_PROMPT = `You are a patient, encouraging, and elite senior AI tutor. Solve questions step-by-step, explaining reasoning at each step.
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate, socratic, truncateHistoryAtIndex } = parseResult.data;
+    const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate, socratic, truncateHistoryAtIndex, isVoiceMode } = parseResult.data;
 
     let finalSessionId = sessionId;
     let session = null;
@@ -115,6 +116,13 @@ export async function POST(req: NextRequest) {
 1. Break down the problem and ask prompting, scaffolding questions.
 2. Guide the student step-by-step so they discover the errors or formulas themselves.
 3. Be encouraging and use standard LaTeX formatting for math expressions.`;
+    } else if (isVoiceMode) {
+      finalSystemPrompt = `You are a world-class, elite senior strategist and AI tutor with a 15+ years experience perspective.
+Follow these rules strictly for VOICE MODE:
+1. Speak concisely, highly intelligently, and with a mature, engaging tone. Give shorter, punchy, conversational answers.
+2. Do NOT output heavy markdown, code blocks, or complex LaTeX formulas. Use plain text formatting that reads naturally out loud.
+3. If the user speaks in Romanized Nepali or mixes languages, you MUST reply smoothly in exactly that same format (using English alphabets for Nepali words).
+4. Be extremely fast and direct.`;
     }
     let chunksMatched: any[] = [];
     try {
