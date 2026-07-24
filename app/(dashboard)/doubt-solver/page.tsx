@@ -467,13 +467,21 @@ export default function DoubtSolverPage() {
   }
 
   return (
-    <main className="grid-bg min-h-screen flex text-[color:var(--text)] transition-colors duration-300">
+    <main className="relative min-h-screen flex flex-col text-[color:var(--text)] overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
+      {/* Cool Ambient Background Orbs */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/15 dark:bg-purple-600/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse [animation-duration:8s]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-indigo-500/15 dark:bg-indigo-500/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse [animation-duration:10s] [animation-delay:2s]"></div>
+        <div className="absolute top-[30%] left-[50%] w-[30%] h-[30%] rounded-full bg-cyan-400/10 dark:bg-cyan-400/10 blur-[100px] mix-blend-multiply dark:mix-blend-screen animate-pulse [animation-duration:12s] [animation-delay:4s]"></div>
+        {/* Subtle noise overlay */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay"></div>
+      </div>
       
       {/* Main Chat Panel Area */}
-      <div className="flex-1 flex flex-col h-screen min-w-0 relative">
+      <div className="flex-1 flex flex-col h-screen min-w-0 relative z-10">
         
         {/* Navigation Header */}
-        <header className="glass-card flex shrink-0 items-center justify-between px-4 py-3.5 shadow-sm z-10 sm:px-6">
+        <header className="flex shrink-0 items-center justify-between px-5 py-4 backdrop-blur-xl bg-white/40 dark:bg-black/40 border-b border-slate-200/50 dark:border-white/5 z-20 transition-colors">
           <div className="flex items-center gap-3">
             {/* Logo and title */}
             <div className="flex items-center gap-2 pl-12 lg:pl-0">
@@ -637,10 +645,10 @@ export default function DoubtSolverPage() {
                           </div>
                         ) : m.content ? (
                           <div
-                            className={`p-4 text-[13px] font-medium leading-relaxed transition-all duration-300 shadow-sm ${
+                            className={`p-4.5 text-[13.5px] font-medium leading-relaxed transition-all duration-300 shadow-sm ${
                               isUser
-                                ? "bg-slate-800 dark:bg-[#262626] text-white rounded-3xl rounded-br-sm border border-transparent dark:border-white/5"
-                                : `bg-white dark:bg-[#121212] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-sm text-[13.5px] ${
+                                ? "bg-gradient-to-br from-slate-800 to-slate-900 dark:from-[#2a2a2a] dark:to-[#1f1f1f] text-white rounded-[24px] rounded-br-sm shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-700/50 dark:border-white/5"
+                                : `bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 text-slate-800 dark:text-slate-200 rounded-[24px] rounded-tl-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] ${
                                     loading && i === messages.length - 1 ? "chat-streaming" : ""
                                   }`
                             }`}
@@ -936,7 +944,7 @@ export default function DoubtSolverPage() {
         )}
 
         {/* Floating Input Area (ChatGPT Style) */}
-        <div className="shrink-0 w-full max-w-2xl sm:max-w-3xl mx-auto px-4 pb-6 bg-transparent z-10 relative">
+        <div className="shrink-0 w-full max-w-2xl sm:max-w-3xl mx-auto px-4 pb-6 bg-transparent z-20 relative">
           <input
             type="file"
             accept="image/*"
@@ -945,7 +953,7 @@ export default function DoubtSolverPage() {
             className="hidden"
           />
 
-          <div className="relative flex flex-col bg-slate-100 dark:bg-[#2f2f2f] border border-transparent focus-within:border-slate-300 dark:focus-within:border-slate-600 rounded-3xl shadow-lg transition duration-200 overflow-hidden p-2">
+          <div className="relative flex flex-col bg-white/70 dark:bg-[#1a1a1a]/70 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 focus-within:border-purple-500/40 dark:focus-within:border-purple-500/40 focus-within:shadow-[0_0_40px_rgba(168,85,247,0.15)] rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden p-2.5">
             
             {/* Image Preview Area */}
             {previewUrl && (

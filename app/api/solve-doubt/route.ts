@@ -81,7 +81,10 @@ export async function POST(req: NextRequest) {
       history = history.slice(0, -2);
     }
 
-    const userMessage = { role: "user" as const, content: message };
+    const userMessage: any = { role: "user" as const, content: message };
+    if (imageBase64 && mimeType) {
+      userMessage.imageUrl = `data:${mimeType};base64,${imageBase64}`;
+    }
     const updatedMessagesWithUser = [...history, userMessage];
 
     // Save user message to DB first
@@ -170,10 +173,13 @@ export async function POST(req: NextRequest) {
                 message: messageWithContext,
                 imageBase64,
                 mimeType,
-                history: history.map((m: any) => ({
-                  role: m.role as "user" | "assistant" | "system",
-                  content: m.content,
-                })),
+                history: [
+                  { role: "system", content: finalSystemPrompt },
+                  ...history.map((m: any) => ({
+                    role: m.role as "user" | "assistant" | "system",
+                    content: m.content,
+                  }))
+                ],
               },
               (chunk) => {
                 fullResponseText += chunk;
