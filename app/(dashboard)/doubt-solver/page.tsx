@@ -145,11 +145,11 @@ export default function DoubtSolverPage() {
   }
 
   // Helper to guess voice gender
-  function getVoiceGender(voice: SpeechSynthesisVoice): "male" | "female" {
+  function getVoiceGender(voice: SpeechSynthesisVoice): "male" | "female" | "unknown" {
     const name = voice.name.toLowerCase();
-    if (name.includes("female") || name.includes("samantha") || name.includes("karen") || name.includes("veena") || name.includes("lekha") || name.includes("zira") || name.includes("victoria")) return "female";
-    if (name.includes("male") || name.includes("alex") || name.includes("daniel") || name.includes("rishi") || name.includes("david") || name.includes("george")) return "male";
-    return "female"; // Default fallback
+    if (/(female|samantha|karen|veena|lekha|zira|victoria|kalpana|swara|aditi|raveena|moira|tessa|monica|melina|ava|susan)/i.test(name)) return "female";
+    if (/(male|alex|daniel|rishi|david|george|hemant|madhur|amit|neil|brian|arthur|aaron|mark)/i.test(name)) return "male";
+    return "unknown"; 
   }
 
   // Start a new chat session
@@ -230,14 +230,20 @@ export default function DoubtSolverPage() {
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
     // Dynamic Language Detection & Tone Matching
+    // If the text contains Hindi/Nepali characters, we MUST use a hi/ne voice.
     const isDevanagari = /[\u0900-\u097F]/.test(cleanText);
     const targetLangPattern = isDevanagari ? /^(hi|ne)/ : /^en/;
 
     // 1. Try exact match: Language + Gender
     let bestVoice = availableVoices.find(v => targetLangPattern.test(v.lang) && getVoiceGender(v) === preferredGender);
-    // 2. Fallback: Any voice matching Language
+    
+    // 2. Try partial match: Language + Unknown Gender (Better to have correct language than wrong language with right gender)
+    if (!bestVoice) bestVoice = availableVoices.find(v => targetLangPattern.test(v.lang) && getVoiceGender(v) === "unknown");
+    
+    // 3. Try partial match: Any voice matching Language
     if (!bestVoice) bestVoice = availableVoices.find(v => targetLangPattern.test(v.lang));
-    // 3. Fallback: Any voice matching Gender (ignoring language, e.g. for Romanized Nepali)
+    
+    // 4. Fallback: If no language matched, just match gender
     if (!bestVoice) bestVoice = availableVoices.find(v => getVoiceGender(v) === preferredGender);
 
     if (bestVoice) {

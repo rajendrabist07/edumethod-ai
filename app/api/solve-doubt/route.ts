@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
 Follow these rules strictly for VOICE MODE:
 1. Speak concisely, highly intelligently, and with a mature, engaging tone. Give shorter, punchy, conversational answers.
 2. Do NOT output heavy markdown, code blocks, or complex LaTeX formulas. Use plain text formatting that reads naturally out loud.
-3. If the user speaks in Romanized Nepali or mixes languages, you MUST reply smoothly in exactly that same format (using English alphabets for Nepali words).
+3. CRITICAL LANGUAGE RULE: If the user speaks in Nepali or Hindi (even if they use Romanized English alphabets), you MUST reply using native Devanagari script (Nepali/Hindi characters). This is absolutely required so the Text-to-Speech engine can pronounce it with the correct native accent and tone. Do NOT output Romanized Nepali/Hindi.
 4. Be extremely fast and direct.`;
     }
     let chunksMatched: any[] = [];
