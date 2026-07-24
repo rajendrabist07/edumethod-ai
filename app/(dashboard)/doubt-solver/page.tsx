@@ -41,7 +41,7 @@ export default function DoubtSolverPage() {
   
   // Voice Selection states
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>("");
+  const [preferredGender, setPreferredGender] = useState<"male" | "female">("female");
 
   // Feedback Modal states
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -91,16 +91,8 @@ export default function DoubtSolverPage() {
         const loadVoices = () => {
           const voices = window.speechSynthesis.getVoices();
           if (voices.length > 0) {
-            // Filter for high-quality voices (English, Nepali, Hindi, or premium Apple/Google voices)
             const goodVoices = voices.filter(v => v.lang.startsWith("en") || v.lang.startsWith("hi") || v.lang.startsWith("ne"));
             setAvailableVoices(goodVoices);
-            
-            // Set default to a premium voice if available, otherwise first
-            setSelectedVoiceURI((prev) => {
-              if (prev) return prev;
-              const premium = goodVoices.find(v => v.name.includes("Samantha") || v.name.includes("Alex") || v.name.includes("Google US English"));
-              return premium ? premium.voiceURI : goodVoices[0]?.voiceURI || "";
-            });
           }
         };
         
@@ -150,6 +142,14 @@ export default function DoubtSolverPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  // Helper to guess voice gender
+  function getVoiceGender(voice: SpeechSynthesisVoice): "male" | "female" {
+    const name = voice.name.toLowerCase();
+    if (name.includes("female") || name.includes("samantha") || name.includes("karen") || name.includes("veena") || name.includes("lekha") || name.includes("zira") || name.includes("victoria")) return "female";
+    if (name.includes("male") || name.includes("alex") || name.includes("daniel") || name.includes("rishi") || name.includes("david") || name.includes("george")) return "male";
+    return "female"; // Default fallback
   }
 
   // Start a new chat session
@@ -205,24 +205,45 @@ export default function DoubtSolverPage() {
   }
 
   // Speak response out loud
-  function speakResponse(text: string) {
+  function speakResponse(text: string, isStreamingChunk = false, isLastChunk = false) {
     if (!voiceSupported || !window.speechSynthesis) return;
 
-    window.speechSynthesis.cancel();
+    // Only cancel if this is a standalone explicit command, not part of a stream queue
+    if (!isStreamingChunk) {
+      window.speechSynthesis.cancel();
+    }
 
-    // Clean text: strip markdown symbols, code blocks, etc. for cleaner speech
+    // Clean text
     const cleanText = text
-      .replace(/```[\s\S]*?```/g, "[Code snippet omitted]")
-      .replace(/`([^`]+)`/g, "$1")
-      .replace(/[*_#\-]/g, " ");
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/[*_#\-]/g, "")
+      .trim();
+
+    if (!cleanText) {
+      if (isLastChunk) {
+        setVoiceState("idle");
+        if (voiceMode) setTimeout(() => startVoiceListening(), 400);
+      }
+      return;
+    }
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
-    if (selectedVoiceURI) {
-      const voice = availableVoices.find(v => v.voiceURI === selectedVoiceURI);
-      if (voice) utterance.voice = voice;
+    // Dynamic Language Detection & Tone Matching
+    const isDevanagari = /[\u0900-\u097F]/.test(cleanText);
+    const targetLangPattern = isDevanagari ? /^(hi|ne)/ : /^en/;
+
+    // 1. Try exact match: Language + Gender
+    let bestVoice = availableVoices.find(v => targetLangPattern.test(v.lang) && getVoiceGender(v) === preferredGender);
+    // 2. Fallback: Any voice matching Language
+    if (!bestVoice) bestVoice = availableVoices.find(v => targetLangPattern.test(v.lang));
+    // 3. Fallback: Any voice matching Gender (ignoring language, e.g. for Romanized Nepali)
+    if (!bestVoice) bestVoice = availableVoices.find(v => getVoiceGender(v) === preferredGender);
+
+    if (bestVoice) {
+      utterance.voice = bestVoice;
     } else {
-      utterance.lang = "en-US";
+      utterance.lang = isDevanagari ? "hi-IN" : "en-US";
     }
     
     utterance.rate = 1.05;
@@ -232,16 +253,19 @@ export default function DoubtSolverPage() {
     };
 
     utterance.onend = () => {
-      setVoiceState("idle");
-      // Loop back: auto listen again for true voice conversation mode
-      if (voiceMode) {
-        setTimeout(() => startVoiceListening(), 500);
+      if (!isStreamingChunk || isLastChunk) {
+        setVoiceState("idle");
+        if (voiceMode) {
+          setTimeout(() => startVoiceListening(), 400);
+        }
       }
     };
 
     utterance.onerror = (e) => {
       console.error("Speech synthesis error:", e);
-      setVoiceState("idle");
+      if (!isStreamingChunk || isLastChunk) {
+        setVoiceState("idle");
+      }
     };
 
     speechUtteranceRef.current = utterance;
@@ -369,12 +393,38 @@ export default function DoubtSolverPage() {
       }
 
       let accumulatedText = "";
+      let ttsBuffer = "";
+
       while (true) {
         const { value, done } = await reader.read();
-        if (done) break;
+        
+        if (done) {
+          // Speak remainder if any
+          if (voiceMode && ttsBuffer.trim()) {
+            speakResponse(ttsBuffer, true, true);
+          } else if (voiceMode) {
+            // Trigger loopback if we just finished streaming and buffer was empty
+            speakResponse("", true, true);
+          }
+          break;
+        }
 
         const chunk = decoder.decode(value, { stream: true });
         accumulatedText += chunk;
+
+        if (voiceMode) {
+          ttsBuffer += chunk;
+          // Split by punctuation or newline to dispatch sentences
+          if (/[.?!]\s|\n/.test(ttsBuffer)) {
+            const sentences = ttsBuffer.split(/(?<=[.?!]\s|\n)/);
+            for (let i = 0; i < sentences.length - 1; i++) {
+              if (sentences[i].trim()) {
+                speakResponse(sentences[i], true, false);
+              }
+            }
+            ttsBuffer = sentences[sentences.length - 1]; // keep remainder
+          }
+        }
 
         setMessages((prev) => {
           const lastMsg = prev[prev.length - 1];
@@ -391,10 +441,7 @@ export default function DoubtSolverPage() {
         });
       }
 
-      // Speak final streamed result if voice mode is on
-      if (voiceMode) {
-        speakResponse(accumulatedText);
-      } else {
+      if (!voiceMode) {
         setVoiceState("idle");
       }
 
@@ -916,19 +963,28 @@ export default function DoubtSolverPage() {
                   <span className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></span>
                   <span className="text-[10px] font-extrabold tracking-widest uppercase text-purple-400">Tutor Active</span>
                 </div>
-                {availableVoices.length > 0 && (
-                  <select
-                    value={selectedVoiceURI}
-                    onChange={(e) => setSelectedVoiceURI(e.target.value)}
-                    className="bg-white/10 border border-white/20 text-white text-[10px] font-bold rounded-full px-3 py-1.5 outline-none focus:border-purple-500/50 appearance-none cursor-pointer hover:bg-white/15 transition max-w-[150px] truncate"
+                <div className="flex items-center bg-white/5 border border-white/10 rounded-full p-1 shadow-inner overflow-hidden">
+                  <button
+                    onClick={() => setPreferredGender("male")}
+                    className={`px-3 py-1.5 text-[10px] font-bold rounded-full transition-all duration-300 ${
+                      preferredGender === "male" 
+                        ? "bg-purple-500 text-white shadow-md shadow-purple-500/20" 
+                        : "text-white/60 hover:text-white hover:bg-white/5"
+                    }`}
                   >
-                    {availableVoices.map((v) => (
-                      <option key={v.voiceURI} value={v.voiceURI} className="text-black">
-                        {v.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
+                    👨 Male
+                  </button>
+                  <button
+                    onClick={() => setPreferredGender("female")}
+                    className={`px-3 py-1.5 text-[10px] font-bold rounded-full transition-all duration-300 ${
+                      preferredGender === "female" 
+                        ? "bg-purple-500 text-white shadow-md shadow-purple-500/20" 
+                        : "text-white/60 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    👩 Female
+                  </button>
+                </div>
               </div>
               <button
                 onClick={toggleVoiceMode}
