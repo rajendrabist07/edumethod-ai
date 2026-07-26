@@ -15,7 +15,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     <LayoutProvider initialCollapsed={collapsed}>
       <AppLayout>
         <Suspense fallback={
-          <div className="flex-grow flex items-center justify-center h-screen bg-[color:var(--bg)]">
+          <div className="flex-grow flex items-center justify-center h-screen bg-prism-base">
             <span className="h-6 w-6 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
           </div>
         }>

@@ -57,7 +57,7 @@ export default function PricingPage() {
   }
 
   return (
-    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-[color:var(--text)] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
+    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-prism-text transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         
         {/* Header Bar */}
@@ -68,7 +68,7 @@ export default function PricingPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/dashboard"
-              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-2 text-xs font-bold text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
+              className="rounded-full border border-prism-border bg-prism-surface px-4 py-2 text-xs font-bold text-prism-text transition hover:bg-prism-surface/70 active:scale-95 flex items-center justify-center gap-1.5"
             >
               Dashboard
             </Link>
@@ -81,7 +81,7 @@ export default function PricingPage() {
           <h1 className="text-3xl font-black tracking-tight sm:text-4xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400">
             Flexible Plan Architecture
           </h1>
-          <p className="mt-3 text-xs font-semibold text-[color:var(--muted)] leading-relaxed uppercase tracking-wider">
+          <p className="mt-3 text-xs font-semibold text-prism-muted leading-relaxed uppercase tracking-wider">
             Select the tier that matches your cognitive pace.
           </p>
         </div>
@@ -91,7 +91,7 @@ export default function PricingPage() {
           
           {/* Free Tier Card */}
           <div className={`glass-card rounded-3xl p-6 shadow-md flex flex-col justify-between relative border transition-all duration-300 ${
-            currentPlan === "free" ? "border-blue-500/55 shadow-blue-500/5 ring-1 ring-blue-500/35" : "border-[color:var(--border)]/40"
+            currentPlan === "free" ? "border-blue-500/55 shadow-blue-500/5 ring-1 ring-blue-500/35" : "border-prism-border/40"
           }`}>
             {currentPlan === "free" && (
               <span className="absolute -top-3 right-6 rounded-full bg-blue-500 text-white px-3 py-0.5 text-4xs font-black uppercase tracking-wider shadow-sm">
@@ -99,18 +99,18 @@ export default function PricingPage() {
               </span>
             )}
             <div>
-              <div className="flex items-center justify-between border-b border-[color:var(--border)]/35 pb-4 mb-4">
+              <div className="flex items-center justify-between border-b border-prism-border/35 pb-4 mb-4">
                 <div>
                   <h2 className="text-lg font-bold">🌱 Seedling Tier</h2>
-                  <p className="text-4xs font-semibold text-[color:var(--muted)] uppercase tracking-wider">Free Plan</p>
+                  <p className="text-4xs font-semibold text-prism-muted uppercase tracking-wider">Free Plan</p>
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-black">$0</p>
-                  <p className="text-4xs font-semibold text-[color:var(--muted)]">FOREVER FREE</p>
+                  <p className="text-4xs font-semibold text-prism-muted">FOREVER FREE</p>
                 </div>
               </div>
               
-              <ul className="space-y-3.5 text-2xs font-semibold text-[color:var(--text)]">
+              <ul className="space-y-3.5 text-2xs font-semibold text-prism-text">
                 <li className="flex items-center gap-2">
                   <span className="text-blue-500">✓</span> 3 Syllabus Roadmaps per day
                 </li>
@@ -120,10 +120,10 @@ export default function PricingPage() {
                 <li className="flex items-center gap-2">
                   <span className="text-blue-500">✓</span> 3 Concept check quizzes per day
                 </li>
-                <li className="flex items-center gap-2 text-[color:var(--muted)] line-through">
+                <li className="flex items-center gap-2 text-prism-muted line-through">
                   <span>✕</span> Direct priority GPU streaming
                 </li>
-                <li className="flex items-center gap-2 text-[color:var(--muted)] line-through">
+                <li className="flex items-center gap-2 text-prism-muted line-through">
                   <span>✕</span> Multimodal high-resolution scanning
                 </li>
               </ul>
@@ -135,8 +135,8 @@ export default function PricingPage() {
                 onClick={() => handlePlanUpgrade("free")}
                 className={`w-full rounded-full py-3.5 text-xs font-bold transition duration-300 ${
                   currentPlan === "free"
-                    ? "bg-[color:var(--surface-soft)] text-[color:var(--muted)] border border-[color:var(--border)]/50 cursor-default"
-                    : "bg-[color:var(--surface)] text-[color:var(--text)] border border-[color:var(--border)] hover:bg-[color:var(--surface-soft)] active:scale-97"
+                    ? "bg-prism-surface/70 text-prism-muted border border-prism-border/50 cursor-default"
+                    : "bg-prism-surface text-prism-text border border-prism-border hover:bg-prism-surface/70 active:scale-97"
                 }`}
               >
                 {currentPlan === "free" ? "Default Plan Active" : "Downgrade to Free"}
@@ -146,7 +146,7 @@ export default function PricingPage() {
 
           {/* Pro Tier Card */}
           <div className={`glass-card rounded-3xl p-6 shadow-md flex flex-col justify-between relative border transition-all duration-300 ${
-            currentPlan === "pro" ? "border-purple-500/55 shadow-purple-500/5 ring-1 ring-purple-500/35" : "border-[color:var(--border)]/45"
+            currentPlan === "pro" ? "border-purple-500/55 shadow-purple-500/5 ring-1 ring-purple-500/35" : "border-prism-border/45"
           }`}>
             {currentPlan === "pro" && (
               <span className="absolute -top-3 right-6 rounded-full bg-purple-500 text-white px-3 py-0.5 text-4xs font-black uppercase tracking-wider shadow-sm">
@@ -154,18 +154,18 @@ export default function PricingPage() {
               </span>
             )}
             <div>
-              <div className="flex items-center justify-between border-b border-[color:var(--border)]/35 pb-4 mb-4">
+              <div className="flex items-center justify-between border-b border-prism-border/35 pb-4 mb-4">
                 <div>
                   <h2 className="text-lg font-bold">💎 Cognitive Titan</h2>
-                  <p className="text-4xs font-semibold text-[color:var(--muted)] uppercase tracking-wider">Pro Plan</p>
+                  <p className="text-4xs font-semibold text-prism-muted uppercase tracking-wider">Pro Plan</p>
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-black">$19</p>
-                  <p className="text-4xs font-semibold text-[color:var(--muted)]">MONTHLY</p>
+                  <p className="text-4xs font-semibold text-prism-muted">MONTHLY</p>
                 </div>
               </div>
               
-              <ul className="space-y-3.5 text-2xs font-semibold text-[color:var(--text)]">
+              <ul className="space-y-3.5 text-2xs font-semibold text-prism-text">
                 <li className="flex items-center gap-2">
                   <span className="text-purple-500">✓</span> 50 Syllabus Roadmaps per day
                 </li>
@@ -190,7 +190,7 @@ export default function PricingPage() {
                 onClick={() => handlePlanUpgrade("pro")}
                 className={`w-full rounded-full py-3.5 text-xs font-bold transition duration-300 ${
                   currentPlan === "pro"
-                    ? "bg-[color:var(--surface-soft)] text-[color:var(--muted)] border border-[color:var(--border)]/50 cursor-default"
+                    ? "bg-prism-surface/70 text-prism-muted border border-prism-border/50 cursor-default"
                     : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/10 hover:from-purple-700 hover:to-indigo-700 hover:shadow-lg active:scale-97"
                 }`}
               >
@@ -201,7 +201,7 @@ export default function PricingPage() {
         </div>
 
         {/* Pricing Footer Disclaimer */}
-        <p className="text-center text-4xs font-semibold text-[color:var(--muted)] uppercase tracking-widest leading-relaxed max-w-md mx-auto">
+        <p className="text-center text-4xs font-semibold text-prism-muted uppercase tracking-widest leading-relaxed max-w-md mx-auto">
           ⚠️ This is a portfolio preview build. Upgrades update your database profile state instantly. Stripe gateway integration is marked as TODO.
         </p>
       </div>

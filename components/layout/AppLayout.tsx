@@ -136,13 +136,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
         
         {/* Sticky Header for Mobile / Tablet Viewports */}
-        <header className="flex lg:hidden shrink-0 items-center justify-between px-4 py-3 bg-[color:var(--surface)] border-b border-[color:var(--border)] shadow-xs z-10">
+        <header className="flex lg:hidden shrink-0 items-center justify-between px-4 py-3 bg-prism-surface border-b border-prism-border shadow-xs z-10">
           <div className="flex items-center gap-3">
             <button
               ref={mobileToggleRef}
               onClick={() => setMobileOpen(true)}
               aria-expanded={mobileOpen}
-              className="p-2 rounded-xl border border-[color:var(--border)] hover:bg-[color:var(--surface-soft)] text-[color:var(--text)] transition active:scale-95 cursor-pointer"
+              className="p-2 rounded-xl border border-prism-border hover:bg-prism-surface/70 text-prism-text transition active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent"
               aria-label="Open Workspace Navigation Drawer"
             >
               <svg
@@ -158,7 +158,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </button>
             <div className="flex items-center gap-2">
               <Logo size={22} />
-              <span className="text-[11px] font-black uppercase tracking-wider text-[color:var(--sidebar-accent)]">
+              <span className="text-[11px] font-black uppercase tracking-wider text-prism-accent">
                 EduMethod AI
               </span>
             </div>
@@ -169,7 +169,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {collapsed && (
           <button
             onClick={() => setCollapsed(false)}
-            className="hidden lg:flex fixed top-4 left-4 z-30 p-2.5 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]/90 backdrop-blur-xs text-[color:var(--text)] shadow-sm hover:border-[color:var(--sidebar-accent)]/40 hover:bg-[color:var(--surface-soft)] active:scale-95 transition cursor-pointer"
+            className="hidden lg:flex fixed top-4 left-4 z-30 p-2.5 rounded-xl border border-prism-border bg-prism-surface/90 backdrop-blur-xs text-prism-text shadow-sm hover:border-prism-accent/40 hover:bg-prism-surface/70 active:scale-95 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent"
             title="Expand Sidebar (Ctrl + \)"
             aria-label="Expand Workspace Sidebar"
           >
@@ -179,7 +179,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               viewBox="0 0 24 24"
               strokeWidth="2.5"
               stroke="currentColor"
-              className="w-4 h-4 text-[color:var(--text)]"
+              className="w-4 h-4 text-prism-text"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>

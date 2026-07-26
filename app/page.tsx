@@ -5,6 +5,9 @@ import { DocumentPasteIcon } from "@/components/icons/DocumentPasteIcon";
 import { QuizTargetIcon } from "@/components/icons/QuizTargetIcon";
 import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
+import { GlassCard } from "./components/ui/GlassCard";
+import { GlassButton } from "./components/ui/GlassButton";
+import { StatBadge } from "./components/ui/StatBadge";
 
 const features = [
   {
@@ -23,7 +26,7 @@ const features = [
 
 export default function Home() {
   return (
-    <main className="grid-bg min-h-screen text-[color:var(--text)] transition-colors duration-300">
+    <main className="grid-bg min-h-screen text-prism-text transition-colors duration-300">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -49,21 +52,15 @@ export default function Home() {
       <section className="mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         
         {/* Navigation Header */}
-        <header className="glass-card mb-12 flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300 hover:border-blue-500/30">
+        <header className="glass-card mb-12 flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300 hover:border-prism-accent/30 focus-within:ring-2 focus-within:ring-prism-accent">
           <BrandMark />
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link
-              href="/doubt-solver"
-              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)]/50 px-4 py-2 text-xs sm:text-sm font-semibold text-[color:var(--text)] transition hover:text-blue-600 active:scale-95"
-            >
+            <GlassButton href="/doubt-solver" variant="secondary" className="px-4 py-2 text-xs sm:text-sm hidden sm:inline-flex">
               Try Doubt Solver
-            </Link>
-            <Link
-              href="/upload"
-              className="rounded-full bg-blue-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-600/10 transition duration-300 hover:bg-blue-700 hover:shadow-lg active:scale-95"
-            >
+            </GlassButton>
+            <GlassButton href="/upload" variant="primary" className="px-4 py-2 text-xs sm:text-sm">
               Get Started
-            </Link>
+            </GlassButton>
             <ThemeToggle />
           </div>
         </header>
@@ -75,40 +72,28 @@ export default function Home() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500"></span>
               AI-Powered Learning Platform
             </span>
-            <h1 className="bg-gradient-to-r from-[color:var(--text)] via-blue-600 to-indigo-600 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent sm:text-5xl lg:text-6xl">
+            <h1 className="bg-gradient-to-r from-prism-text via-prism-accent to-indigo-600 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent sm:text-5xl lg:text-6xl font-display">
               Turn any syllabus into a clearer study path.
             </h1>
-            <p className="mx-auto max-w-2xl text-sm leading-7 text-[color:var(--muted)] sm:text-base lg:mx-0">
+            <p className="mx-auto max-w-2xl text-sm leading-7 text-prism-muted sm:text-base lg:mx-0">
               EduMethod AI helps students and teachers break down chapters into
               structured topics, estimate study times, and generate interactive,
               spaced-repetition study roadmaps instantly.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-3 lg:justify-start w-full sm:w-auto">
-              <Link
-                href="/upload"
-                className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 hover:translate-y-[-1px] active:scale-95 text-center min-h-[44px] flex items-center justify-center"
-              >
+              <GlassButton href="/upload" variant="primary" className="px-6 py-3.5 min-h-[44px]">
                 Analyze Your Syllabus
-              </Link>
-              <a
-                href="#features"
-                className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)]/50 px-6 py-3.5 text-sm font-bold text-[color:var(--text)] backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-[color:var(--surface)] hover:text-blue-600 active:scale-95 text-center min-h-[44px] flex items-center justify-center"
-              >
+              </GlassButton>
+              <GlassButton href="#features" variant="secondary" className="px-6 py-3.5 min-h-[44px]">
                 Explore Features
-              </a>
+              </GlassButton>
             </div>
 
             {/* Social Proof badges */}
             <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-2.5">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 text-3xs font-black uppercase tracking-wider text-[color:var(--muted)]">
-                ⚡ Powered by Groq + Gemini
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 text-3xs font-black uppercase tracking-wider text-[color:var(--muted)]">
-                📅 7-Day Adaptive Plans
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 text-3xs font-black uppercase tracking-wider text-[color:var(--muted)]">
-                👁️ Multimodal Input
-              </span>
+              <StatBadge label="⚡ Powered by Groq + Gemini" value="" />
+              <StatBadge label="📅 7-Day Adaptive Plans" value="" />
+              <StatBadge label="👁️ Multimodal Input" value="" />
             </div>
           </div>
 
@@ -118,48 +103,42 @@ export default function Home() {
             <div className="glass-card relative rounded-[2rem] p-6 shadow-2xl dark:shadow-slate-950/40">
               
               {/* Window Controls */}
-              <div className="mb-6 flex items-center justify-between border-b border-[color:var(--border)]/50 pb-4">
+              <div className="mb-6 flex items-center justify-between border-b border-prism-border/50 pb-4">
                 <div className="flex gap-2">
                   <div className="h-3 w-3 rounded-full bg-red-400"></div>
                   <div className="h-3 w-3 rounded-full bg-yellow-400"></div>
                   <div className="h-3 w-3 rounded-full bg-green-400"></div>
                 </div>
-                <div className="rounded-full border border-blue-200/50 bg-blue-50/50 px-3 py-1 text-2xs font-semibold text-blue-600 dark:border-sky-900/50 dark:bg-slate-900/60 dark:text-blue-400">
-                  ⚡ Live AI Preview
-                </div>
+                <StatBadge label="⚡ Live AI Preview" value="" variant="accent" />
               </div>
 
               {/* Mock Content */}
-              <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-soft)]/50 p-4">
+              <div className="rounded-2xl border border-prism-border bg-prism-surface p-4">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="text-2xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">Subject</p>
-                    <p className="text-lg font-bold text-[color:var(--text)]">Quantum Physics</p>
+                    <p className="text-2xs font-semibold uppercase tracking-[0.2em] text-prism-muted">Subject</p>
+                    <p className="text-lg font-bold text-prism-text">Quantum Physics</p>
                   </div>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-prism-accent text-white shadow-md">
                     <ChatSparkIcon size={18} />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="rounded-xl border border-[color:var(--border)]/50 bg-[color:var(--surface)] p-3.5 shadow-sm transition-all duration-300 hover:border-emerald-400/30 animate-pulse-emerald">
-                    <div className="flex items-center justify-between text-xs text-[color:var(--muted)]">
+                  <div className="rounded-xl border border-prism-border/50 bg-prism-surface p-3.5 shadow-sm transition-all duration-300 hover:border-emerald-400/30 animate-pulse-emerald">
+                    <div className="flex items-center justify-between text-xs text-prism-muted">
                       <span>Topic 1</span>
-                      <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
-                        Easy
-                      </span>
+                      <StatBadge label="Easy" value="" variant="success" className="py-0.5 px-2" />
                     </div>
-                    <p className="mt-1.5 font-semibold text-[color:var(--text)]">Wave-Particle Duality</p>
+                    <p className="mt-1.5 font-semibold text-prism-text">Wave-Particle Duality</p>
                   </div>
 
-                  <div className="rounded-xl border border-[color:var(--border)]/50 bg-[color:var(--surface)] p-3.5 shadow-sm transition-all duration-300 hover:border-amber-400/30 animate-pulse-amber">
-                    <div className="flex items-center justify-between text-xs text-[color:var(--muted)]">
+                  <div className="rounded-xl border border-prism-border/50 bg-prism-surface p-3.5 shadow-sm transition-all duration-300 hover:border-amber-400/30 animate-pulse-amber">
+                    <div className="flex items-center justify-between text-xs text-prism-muted">
                       <span>Topic 2</span>
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
-                        Medium
-                      </span>
+                      <StatBadge label="Medium" value="" variant="warning" className="py-0.5 px-2" />
                     </div>
-                    <p className="mt-1.5 font-semibold text-[color:var(--text)]">Schrödinger Equation</p>
+                    <p className="mt-1.5 font-semibold text-prism-text">Schrödinger Equation</p>
                   </div>
                 </div>
               </div>
@@ -169,64 +148,63 @@ export default function Home() {
         </div>
 
         {/* How It Works Section */}
-        <div className="mt-20 border-t border-[color:var(--border)]/20 pt-16">
+        <div className="mt-20 border-t border-prism-border/20 pt-16">
           <div className="text-center max-w-lg mx-auto mb-10">
-            <span className="rounded-full bg-blue-50 dark:bg-blue-950/40 px-3.5 py-1 text-4xs font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">
-              Cognitive Progression Path
-            </span>
-            <h2 className="text-xl font-black mt-3 sm:text-2xl">How EduMethod AI Works</h2>
-            <p className="text-2xs font-semibold text-[color:var(--muted)] leading-relaxed mt-1 uppercase tracking-wider">
+            <StatBadge label="Cognitive Progression Path" value="" variant="accent" className="mx-auto w-max" />
+            <h2 className="text-xl font-display font-black mt-3 sm:text-2xl text-prism-text">How EduMethod AI Works</h2>
+            <p className="text-2xs font-semibold text-prism-muted leading-relaxed mt-1 uppercase tracking-wider">
               Three steps to structured academic mastery.
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
             {/* Step 1 */}
-            <div className="glass-card rounded-2xl p-6 relative">
-              <span className="absolute top-4 right-6 text-3xl font-black text-blue-600/10 dark:text-blue-500/5 select-none">01</span>
-              <div className="mb-4 inline-flex rounded-xl bg-blue-50 p-2.5 text-blue-600 dark:bg-blue-950/40">
+            <GlassCard hoverEffect className="rounded-2xl p-6 relative">
+              <span className="absolute top-4 right-6 text-3xl font-black text-prism-text/5 select-none">01</span>
+              <div className="mb-4 inline-flex rounded-xl bg-prism-accent/10 p-2.5 text-prism-accent">
                 <DocumentPasteIcon size={20} />
               </div>
-              <h3 className="text-sm font-bold text-[color:var(--text)] uppercase tracking-wider">1. Input Syllabus</h3>
-              <p className="mt-2 text-2xs leading-relaxed text-[color:var(--muted)]">
+              <h3 className="text-sm font-bold text-prism-text uppercase tracking-wider">1. Input Syllabus</h3>
+              <p className="mt-2 text-2xs leading-relaxed text-prism-muted">
                 Paste raw lecture schedules, syllabus topics, outline notes, or upload structural snapshots.
               </p>
-            </div>
+            </GlassCard>
 
             {/* Step 2 */}
-            <div className="glass-card rounded-2xl p-6 relative">
-              <span className="absolute top-4 right-6 text-3xl font-black text-purple-600/10 dark:text-purple-500/5 select-none">02</span>
-              <div className="mb-4 inline-flex rounded-xl bg-purple-50 p-2.5 text-purple-600 dark:bg-purple-950/40">
+            <GlassCard hoverEffect className="rounded-2xl p-6 relative">
+              <span className="absolute top-4 right-6 text-3xl font-black text-prism-text/5 select-none">02</span>
+              <div className="mb-4 inline-flex rounded-xl bg-prism-accent/10 p-2.5 text-prism-accent">
                 <ChatSparkIcon size={20} />
               </div>
-              <h3 className="text-sm font-bold text-[color:var(--text)] uppercase tracking-wider">2. AI Decomposition</h3>
-              <p className="mt-2 text-2xs leading-relaxed text-[color:var(--muted)]">
+              <h3 className="text-sm font-bold text-prism-text uppercase tracking-wider">2. AI Decomposition</h3>
+              <p className="mt-2 text-2xs leading-relaxed text-prism-muted">
                 AI analyzes topics, partitions them into modules, and assigns estimated hours and difficulty.
               </p>
-            </div>
+            </GlassCard>
 
             {/* Step 3 */}
-            <div className="glass-card rounded-2xl p-6 relative">
-              <span className="absolute top-4 right-6 text-3xl font-black text-emerald-600/10 dark:text-emerald-500/5 select-none">03</span>
-              <div className="mb-4 inline-flex rounded-xl bg-emerald-50 p-2.5 text-emerald-600 dark:bg-emerald-950/40">
+            <GlassCard hoverEffect className="rounded-2xl p-6 relative">
+              <span className="absolute top-4 right-6 text-3xl font-black text-prism-text/5 select-none">03</span>
+              <div className="mb-4 inline-flex rounded-xl bg-prism-accent/10 p-2.5 text-prism-accent">
                 <PathProgressIcon size={20} />
               </div>
-              <h3 className="text-sm font-bold text-[color:var(--text)] uppercase tracking-wider">3. Spaced Study Path</h3>
-              <p className="mt-2 text-2xs leading-relaxed text-[color:var(--muted)]">
+              <h3 className="text-sm font-bold text-prism-text uppercase tracking-wider">3. Spaced Study Path</h3>
+              <p className="mt-2 text-2xs leading-relaxed text-prism-muted">
                 Follow your structured 7-day adaptive plan and test recall weaknesses with active quizzes.
               </p>
-            </div>
+            </GlassCard>
           </div>
         </div>
 
         {/* Feature Cards Grid */}
         <div id="features" className="mt-20 grid gap-6 sm:grid-cols-3">
           {features.map((feature) => (
-            <div
+            <GlassCard
               key={feature.title}
-              className="glass-card glass-card-hover rounded-2xl p-6"
+              hoverEffect
+              className="rounded-2xl p-6"
             >
-              <div className="mb-4 inline-flex rounded-xl bg-blue-50 p-3 text-blue-600 dark:bg-blue-950/40">
+              <div className="mb-4 inline-flex rounded-xl bg-prism-accent/10 p-3 text-prism-accent">
                 {feature.title.includes("Extraction") ? (
                   <DocumentPasteIcon size={20} />
                 ) : feature.title.includes("Difficulty") ? (
@@ -235,18 +213,18 @@ export default function Home() {
                   <PathProgressIcon size={20} />
                 )}
               </div>
-              <h2 className="text-base font-bold text-[color:var(--text)] sm:text-lg">
+              <h2 className="text-base font-bold text-prism-text sm:text-lg">
                 {feature.title}
               </h2>
-              <p className="mt-2 text-xs leading-6 text-[color:var(--muted)] sm:text-sm">
+              <p className="mt-2 text-xs leading-6 text-prism-muted sm:text-sm">
                 {feature.description}
               </p>
-            </div>
+            </GlassCard>
           ))}
         </div>
 
         {/* Footer */}
-        <footer className="mt-16 border-t border-[color:var(--border)]/30 pt-8 text-center text-xs text-[color:var(--muted)]">
+        <footer className="mt-16 border-t border-prism-border/30 pt-8 text-center text-xs text-prism-muted">
           <p>© {new Date().getFullYear()} EduMethod AI. Designed for visual and educational excellence.</p>
         </footer>
 

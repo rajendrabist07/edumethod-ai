@@ -60,7 +60,7 @@ function TimelineSkeleton() {
             <div className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
           </div>
           <div className="glass-card rounded-2xl p-5">
-            <div className="flex items-center justify-between border-b border-[color:var(--border)]/30 pb-2 mb-2.5">
+            <div className="flex items-center justify-between border-b border-prism-border/30 pb-2 mb-2.5">
               <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-16"></div>
               <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-20"></div>
             </div>
@@ -347,7 +347,7 @@ export default function UploadPage() {
   }
 
   return (
-    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-[color:var(--text)] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
+    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-prism-text transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         
         {/* Header Bar */}
@@ -358,7 +358,7 @@ export default function UploadPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/dashboard"
-              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-2 text-xs font-bold text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
+              className="rounded-full border border-prism-border bg-prism-surface px-4 py-2 text-xs font-bold text-prism-text transition hover:bg-prism-surface/70 active:scale-95 flex items-center justify-center gap-1.5"
             >
               Dashboard
             </Link>
@@ -374,7 +374,7 @@ export default function UploadPage() {
           <h1 className="mt-3 text-2xl font-black sm:text-3xl lg:text-4xl">
             Build your personalized learning roadmap.
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[color:var(--muted)] sm:text-base">
+          <p className="mt-2 text-sm leading-6 text-prism-muted sm:text-base">
             Paste your syllabus, chapters, or textbook outline. The AI will decompose it, map the conceptual difficulty, estimate times, and create a structured study routine.
           </p>
         </div>
@@ -386,7 +386,7 @@ export default function UploadPage() {
         >
           <div className="space-y-5">
             <div>
-              <label htmlFor="subject" className="block text-xs font-bold uppercase tracking-wider text-[color:var(--muted)] mb-2">
+              <label htmlFor="subject" className="block text-xs font-bold uppercase tracking-wider text-prism-muted mb-2">
                 Subject
               </label>
               <input
@@ -395,13 +395,13 @@ export default function UploadPage() {
                 placeholder="e.g. Organic Chemistry, Quantum Mechanics, World History"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-soft)]/50 px-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:bg-[color:var(--surface)] focus:ring-4 focus:ring-blue-500/10"
+                className="w-full rounded-xl border border-prism-border bg-prism-surface/70/50 px-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:bg-prism-surface focus:ring-4 focus:ring-blue-500/10"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="rawText" className="block text-xs font-bold uppercase tracking-wider text-[color:var(--muted)] mb-2">
+              <label htmlFor="rawText" className="block text-xs font-bold uppercase tracking-wider text-prism-muted mb-2">
                 Syllabus Outline or Chapter Text
               </label>
               <textarea
@@ -409,7 +409,7 @@ export default function UploadPage() {
                 placeholder="Paste the raw text of your topics, subtopics, notes or chapters here..."
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
-                className="h-48 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-soft)]/50 px-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:bg-[color:var(--surface)] focus:ring-4 focus:ring-blue-500/10 resize-y"
+                className="h-48 w-full rounded-xl border border-prism-border bg-prism-surface/70/50 px-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:bg-prism-surface focus:ring-4 focus:ring-blue-500/10 resize-y"
                 required
               />
             </div>
@@ -440,12 +440,12 @@ export default function UploadPage() {
 
         {/* Empty State before syllabus upload */}
         {topics.length === 0 && !loading && (
-          <div className="glass-card rounded-3xl p-8 text-center text-[color:var(--muted)] flex flex-col items-center gap-4 justify-center">
+          <div className="glass-card rounded-3xl p-8 text-center text-prism-muted flex flex-col items-center gap-4 justify-center">
             <div className="p-4 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <PathProgressIcon size={32} />
             </div>
             <div>
-              <h3 className="font-extrabold text-sm text-[color:var(--text)]">Your Learning Roadmap Awaits</h3>
+              <h3 className="font-extrabold text-sm text-prism-text">Your Learning Roadmap Awaits</h3>
               <p className="text-2xs font-semibold leading-relaxed max-w-sm mt-1 mx-auto">
                 Submit your syllabus or outlined topics above. Our AI engine will partition concepts, map relative difficulty, and construct an optimal study schedule.
               </p>
@@ -464,8 +464,8 @@ export default function UploadPage() {
         {/* Extracted Topics */}
         {topics.length > 0 && !loading && (
           <div className="glass-card rounded-3xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4 border-b border-[color:var(--border)]/30 pb-3">
-              <h2 className="text-lg font-bold text-[color:var(--text)]">
+            <div className="flex items-center justify-between mb-4 border-b border-prism-border/30 pb-3">
+              <h2 className="text-lg font-bold text-prism-text">
                 Extracted Concept Map
               </h2>
               <span className="rounded-full bg-blue-100 px-3 py-1 text-2xs font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
@@ -483,7 +483,7 @@ export default function UploadPage() {
                   >
                     <div>
                       <div className="flex items-start justify-between gap-2">
-                        <p className="font-bold text-sm text-[color:var(--text)]">
+                        <p className="font-bold text-sm text-prism-text">
                           {topic.name}
                         </p>
                         <span className={`rounded-full px-2 py-0.5 text-3xs font-extrabold uppercase tracking-wide ${
@@ -496,12 +496,12 @@ export default function UploadPage() {
                           {topic.difficulty}
                         </span>
                       </div>
-                      <p className="mt-2 text-2xs text-[color:var(--muted)] flex items-center gap-1.5">
-                        <SpacedRepetitionIcon size={12} className="text-blue-500" /> Estimated time: <span className="font-bold text-[color:var(--text)]">{topic.estimatedHours} hours</span>
+                      <p className="mt-2 text-2xs text-prism-muted flex items-center gap-1.5">
+                        <SpacedRepetitionIcon size={12} className="text-blue-500" /> Estimated time: <span className="font-bold text-prism-text">{topic.estimatedHours} hours</span>
                       </p>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-[color:var(--border)]/20 flex items-center justify-between select-none">
+                    <div className="mt-4 pt-3 border-t border-prism-border/20 flex items-center justify-between select-none">
                       {existingDeck ? (
                         <Link
                           href={`/flashcards/${existingDeck.id}`}
@@ -548,7 +548,7 @@ export default function UploadPage() {
         {/* 7-Day Plan timeline */}
         {plan.length > 0 && (
           <div className="glass-card rounded-3xl p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-[color:var(--text)] border-b border-[color:var(--border)]/30 pb-3 mb-6 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-prism-text border-b border-prism-border/30 pb-3 mb-6 flex items-center gap-2">
               <PathProgressIcon size={18} className="text-blue-500" /> Your 7-Day Learning Roadmap
             </h2>
             
@@ -556,12 +556,12 @@ export default function UploadPage() {
               {plan.map((day) => (
                 <div key={day.day} className="relative group">
                   {/* Timeline Indicator Dot */}
-                  <div className="absolute -left-[31px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[color:var(--surface-soft)] border-2 border-blue-500 transition-all duration-300 group-hover:bg-blue-500">
+                  <div className="absolute -left-[31px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-prism-surface/70 border-2 border-blue-500 transition-all duration-300 group-hover:bg-blue-500">
                     <div className="h-1.5 w-1.5 rounded-full bg-blue-500 group-hover:bg-white"></div>
                   </div>
 
                   <div className="glass-card glass-card-hover rounded-2xl p-5">
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--border)]/30 pb-2 mb-2.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-prism-border/30 pb-2 mb-2.5">
                       <p className="font-extrabold text-sm text-blue-600 dark:text-blue-400">
                         Day {day.day}
                       </p>
@@ -572,12 +572,12 @@ export default function UploadPage() {
 
                     <div className="space-y-2 text-xs">
                       <div>
-                        <span className="font-semibold text-[color:var(--muted)]">Modules: </span>
-                        <span className="font-bold text-[color:var(--text)]">{day.topics.join(", ")}</span>
+                        <span className="font-semibold text-prism-muted">Modules: </span>
+                        <span className="font-bold text-prism-text">{day.topics.join(", ")}</span>
                       </div>
                       <div>
-                        <span className="font-semibold text-[color:var(--muted)]">Methodology: </span>
-                        <span className="font-medium text-[color:var(--text)]">{day.method}</span>
+                        <span className="font-semibold text-prism-muted">Methodology: </span>
+                        <span className="font-medium text-prism-text">{day.method}</span>
                       </div>
                       <div className="mt-3 rounded-xl bg-blue-50/60 p-3 text-xs italic text-blue-800 dark:bg-blue-950/20 dark:text-blue-300 border border-blue-100/50 dark:border-blue-900/20 flex items-start gap-1.5">
                         <ChatSparkIcon size={14} className="text-amber-500 shrink-0 mt-0.5" />
@@ -614,12 +614,12 @@ export default function UploadPage() {
         {/* Active Recall Quiz Panel */}
         {quizQuestions.length > 0 && !quizResult && (
           <div className="glass-card rounded-3xl p-6 shadow-md flex flex-col gap-6">
-            <div className="border-b border-[color:var(--border)]/30 pb-3">
+            <div className="border-b border-prism-border/30 pb-3">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-100 px-2.5 py-0.5 text-3xs font-extrabold uppercase tracking-wide text-purple-700 dark:bg-purple-950/50 dark:text-purple-300">
                 <QuizTargetIcon size={12} /> Active Recall
               </span>
-              <h2 className="text-xl font-bold mt-1 text-[color:var(--text)]">Concept Retention Quiz</h2>
-              <p className="text-xs text-[color:var(--muted)]">Answer all questions to analyze and detect your weaker topic areas.</p>
+              <h2 className="text-xl font-bold mt-1 text-prism-text">Concept Retention Quiz</h2>
+              <p className="text-xs text-prism-muted">Answer all questions to analyze and detect your weaker topic areas.</p>
             </div>
             
             <div className="space-y-6">
@@ -629,7 +629,7 @@ export default function UploadPage() {
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-100 text-3xs font-bold text-purple-700 dark:bg-purple-950 dark:text-purple-300">
                       {qi + 1}
                     </span>
-                    <p className="font-bold text-sm text-[color:var(--text)]">
+                    <p className="font-bold text-sm text-prism-text">
                       {q.question}
                     </p>
                   </div>
@@ -640,10 +640,10 @@ export default function UploadPage() {
                       return (
                         <label
                           key={oi}
-                          className={`flex items-center gap-3 border rounded-xl px-4 py-3 text-xs font-semibold cursor-pointer transition duration-300 hover:bg-[color:var(--surface-soft)]/50 ${
+                          className={`flex items-center gap-3 border rounded-xl px-4 py-3 text-xs font-semibold cursor-pointer transition duration-300 hover:bg-prism-surface/70/50 ${
                             isSelected 
                               ? "border-purple-500 bg-purple-500/10 text-purple-700 dark:text-purple-300"
-                              : "border-[color:var(--border)]/60 bg-transparent text-[color:var(--text)]"
+                              : "border-prism-border/60 bg-transparent text-prism-text"
                           }`}
                         >
                           <input
@@ -660,7 +660,7 @@ export default function UploadPage() {
                           <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
                             isSelected 
                               ? "border-purple-600 bg-purple-600" 
-                              : "border-[color:var(--muted)]/50"
+                              : "border-prism-muted/50"
                           }`}>
                             {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-white"></div>}
                           </span>
@@ -671,7 +671,7 @@ export default function UploadPage() {
                   </div>
                   
                   <div className="mt-3 text-right">
-                    <span className="inline-block rounded-full bg-[color:var(--surface-soft)] px-2.5 py-0.5 text-4xs font-bold uppercase tracking-wider text-[color:var(--muted)]">
+                    <span className="inline-block rounded-full bg-prism-surface/70 px-2.5 py-0.5 text-4xs font-bold uppercase tracking-wider text-prism-muted">
                       Concept: {q.topic}
                     </span>
                   </div>
@@ -691,18 +691,18 @@ export default function UploadPage() {
         {/* Quiz Result Report Card */}
         {quizResult && (
           <div className="glass-card rounded-3xl p-6 shadow-lg">
-            <h2 className="text-lg font-bold text-[color:var(--text)] border-b border-[color:var(--border)]/30 pb-3 mb-5 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-prism-text border-b border-prism-border/30 pb-3 mb-5 flex items-center gap-2">
               <QuizTargetIcon size={18} className="text-blue-500" /> Active Recall Assessment Report
             </h2>
 
             <div className="grid gap-6 sm:grid-cols-[1fr_2fr] items-center">
               {/* Score Display Ring */}
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-[color:var(--surface-soft)]/50 p-6 text-center">
-                <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--muted)]">Your Score</p>
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-prism-surface/70/50 p-6 text-center">
+                <p className="text-xs font-bold uppercase tracking-wider text-prism-muted">Your Score</p>
                 <div className="mt-2 text-5xl font-black text-blue-600 dark:text-blue-400">
-                  {quizResult.score} <span className="text-xl text-[color:var(--muted)]">/ {quizResult.totalQuestions}</span>
+                  {quizResult.score} <span className="text-xl text-prism-muted">/ {quizResult.totalQuestions}</span>
                 </div>
-                <p className="mt-2 text-2xs font-semibold text-[color:var(--muted)]">
+                <p className="mt-2 text-2xs font-semibold text-prism-muted">
                   {quizResult.score === quizResult.totalQuestions 
                     ? "🎉 Perfect! Excellent retention." 
                     : quizResult.score >= quizResult.totalQuestions * 0.7 
@@ -714,7 +714,7 @@ export default function UploadPage() {
               {/* Assessment details */}
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-xs font-extrabold uppercase tracking-wide text-[color:var(--muted)]">Topic Assessment</h3>
+                  <h3 className="text-xs font-extrabold uppercase tracking-wide text-prism-muted">Topic Assessment</h3>
                   {quizResult.weakTopics.length > 0 ? (
                     <div className="mt-2 space-y-2">
                       <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">
@@ -756,7 +756,7 @@ export default function UploadPage() {
                           );
                         })}
                       </div>
-                      <p className="text-2xs text-[color:var(--muted)] mt-1">
+                      <p className="text-2xs text-prism-muted mt-1">
                         Use the **Doubt Solver** chat to ask follow-up questions about these topics for step-by-step help.
                       </p>
                     </div>
@@ -770,7 +770,7 @@ export default function UploadPage() {
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={handleGenerateQuiz}
-                    className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-5 py-2.5 text-xs font-bold text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95"
+                    className="rounded-full border border-prism-border bg-prism-surface px-5 py-2.5 text-xs font-bold text-prism-text transition hover:bg-prism-surface/70 active:scale-95"
                   >
                     Retake Quiz
                   </button>

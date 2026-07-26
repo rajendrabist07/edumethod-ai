@@ -174,23 +174,23 @@ export function SidebarAside() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[color:var(--sidebar-bg)] border-r border-[color:var(--sidebar-border)] w-[260px] text-[color:var(--sidebar-text)] select-none">
+    <div className="flex flex-col h-full bg-prism-base border-r border-prism-border w-[260px] text-prism-text select-none">
       {/* 1. Header (Logo & Collapse toggle) */}
-      <div className="flex items-center justify-between px-4.5 py-4 border-b border-[color:var(--sidebar-border)]/50 shrink-0">
+      <div className="flex items-center justify-between px-4.5 py-4 border-b border-prism-border/50 shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2" onClick={handleLinkClick}>
           <Logo size={26} />
           <div className="flex flex-col">
-            <span className="text-2xs font-extrabold uppercase tracking-[0.18em] text-[color:var(--sidebar-accent)]">
+            <span className="text-2xs font-extrabold uppercase tracking-[0.18em] text-prism-accent">
               EduMethod AI
             </span>
-            <span className="text-[9px] font-bold text-[color:var(--sidebar-muted)] tracking-wider">
+            <span className="text-[9px] font-bold text-prism-muted tracking-wider">
               WORKSPACE
             </span>
           </div>
         </Link>
         <button
           onClick={() => setCollapsed(true)}
-          className="p-1.5 rounded-lg border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] hover:text-red-500 transition active:scale-95 cursor-pointer hidden lg:inline-flex"
+          className="p-1.5 rounded-lg border border-prism-border hover:bg-prism-accent/5 hover:text-red-500 transition active:scale-95 cursor-pointer hidden lg:inline-flex"
           title="Collapse Sidebar (Ctrl + \)"
           aria-label="Collapse Sidebar"
         >
@@ -208,10 +208,10 @@ export function SidebarAside() {
       </div>
 
       {/* 2. Action Links (New chat button + Quick Nav Grid) */}
-      <div className="p-3 border-b border-[color:var(--sidebar-border)]/50 shrink-0 flex flex-col gap-2">
+      <div className="p-3 border-b border-prism-border/50 shrink-0 flex flex-col gap-2">
         <Link
           href="/doubt-solver"
-          className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition duration-150 bg-[color:var(--sidebar-accent)] hover:bg-[color:var(--sidebar-accent-hover)] text-white shadow-xs active:scale-98 border border-white/5"
+          className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition duration-150 bg-prism-accent hover:bg-prism-accent/90 text-white shadow-xs active:scale-98 border border-white/5"
           onClick={handleLinkClick}
         >
           <span className="flex items-center gap-2">
@@ -225,10 +225,10 @@ export function SidebarAside() {
         <div className="grid grid-cols-3 gap-1.5">
           <Link
             href="/dashboard"
-            className={`flex items-center justify-center p-2 rounded-xl border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] transition text-[10px] font-bold gap-0.5 ${
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-0.5 ${
               pathname === "/dashboard"
-                ? "bg-[color:var(--sidebar-active)] text-[color:var(--sidebar-text)]"
-                : "text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)]"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
             }`}
             onClick={handleLinkClick}
           >
@@ -236,10 +236,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/upload"
-            className={`flex items-center justify-center p-2 rounded-xl border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] transition text-[10px] font-bold gap-0.5 ${
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-0.5 ${
               pathname === "/upload"
-                ? "bg-[color:var(--sidebar-active)] text-[color:var(--sidebar-text)]"
-                : "text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)]"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
             }`}
             onClick={handleLinkClick}
           >
@@ -247,10 +247,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/flashcards"
-            className={`flex items-center justify-center p-2 rounded-xl border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] transition text-[10px] font-bold gap-0.5 ${
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-0.5 ${
               pathname.startsWith("/flashcards")
-                ? "bg-[color:var(--sidebar-active)] text-[color:var(--sidebar-text)]"
-                : "text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)]"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
             }`}
             onClick={handleLinkClick}
           >
@@ -261,10 +261,10 @@ export function SidebarAside() {
         <div className="grid grid-cols-2 gap-1.5">
           <Link
             href="/textbook-chat"
-            className={`flex items-center justify-center p-2 rounded-xl border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] transition text-[10px] font-bold gap-1 ${
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
               pathname === "/textbook-chat"
-                ? "bg-[color:var(--sidebar-active)] text-[color:var(--sidebar-text)]"
-                : "text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)]"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
             }`}
             onClick={handleLinkClick}
           >
@@ -272,10 +272,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/feynman"
-            className={`flex items-center justify-center p-2 rounded-xl border border-[color:var(--sidebar-border)] hover:bg-[color:var(--sidebar-hover)] transition text-[10px] font-bold gap-1 ${
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
               pathname === "/feynman"
-                ? "bg-[color:var(--sidebar-active)] text-[color:var(--sidebar-text)]"
-                : "text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)]"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
             }`}
             onClick={handleLinkClick}
           >
@@ -300,10 +300,10 @@ export function SidebarAside() {
         ) : history.length === 0 ? (
           <div className="py-8 px-4 text-center">
             <span className="inline-block text-xl mb-2 text-slate-400">🔍</span>
-            <p className="text-[11px] font-extrabold text-[color:var(--sidebar-text)] uppercase tracking-wider">
+            <p className="text-[11px] font-extrabold text-prism-text uppercase tracking-wider">
               No history found
             </p>
-            <p className="text-4xs font-semibold text-[color:var(--sidebar-muted)] leading-relaxed mt-1">
+            <p className="text-4xs font-semibold text-prism-muted leading-relaxed mt-1">
               Create a study roadmap or start a conversation to view records here.
             </p>
           </div>
@@ -311,7 +311,7 @@ export function SidebarAside() {
           <div className="space-y-5">
             {groupedHistory.map((group) => (
               <div key={group.title} className="space-y-1">
-                <p className="text-[9px] font-black uppercase tracking-widest text-[color:var(--sidebar-muted)]/50 px-2.5 mb-1.5">
+                <p className="text-[9px] font-black uppercase tracking-widest text-prism-muted/50 px-2.5 mb-1.5">
                   {group.title}
                 </p>
                 <div className="space-y-0.5">
@@ -331,8 +331,8 @@ export function SidebarAside() {
                         href={itemUrl}
                         className={`group relative flex items-center justify-between px-3 py-2.5 rounded-xl transition duration-150 text-2xs font-semibold ${
                           isActive
-                            ? "bg-[color:var(--sidebar-hover)] text-[color:var(--sidebar-text)] font-bold border border-[color:var(--sidebar-border)]/50"
-                            : "hover:bg-[color:var(--sidebar-hover)]/70 text-[color:var(--sidebar-muted)] hover:text-[color:var(--sidebar-text)] border border-transparent"
+                            ? "bg-prism-accent/5 text-prism-text font-bold border border-prism-border/50"
+                            : "hover:bg-prism-accent/5/70 text-prism-muted hover:text-prism-text border border-transparent"
                         }`}
                         onClick={handleLinkClick}
                       >
@@ -343,7 +343,7 @@ export function SidebarAside() {
                         <button
                           onClick={(e) => handleDelete(item.id, e)}
                           disabled={deletingId === item.id}
-                          className="opacity-0 group-hover:opacity-100 flex items-center justify-center h-5 w-5 rounded-md text-[color:var(--sidebar-muted)] hover:text-red-500 hover:bg-red-500/10 transition shrink-0 cursor-pointer"
+                          className="opacity-0 group-hover:opacity-100 flex items-center justify-center h-5 w-5 rounded-md text-prism-muted hover:text-red-500 hover:bg-red-500/10 transition shrink-0 cursor-pointer"
                           title="Delete conversation history"
                           aria-label="Delete history entry"
                         >
@@ -384,9 +384,9 @@ export function SidebarAside() {
             onClick={() => setShowUsageModal(false)}
             role="presentation"
           />
-          <div className="mx-3 mb-2 p-4 rounded-xl border border-[color:var(--sidebar-border)] bg-[color:var(--sidebar-hover)] shadow-2xl flex flex-col gap-3.5 z-30 relative animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <div className="flex items-center justify-between border-b border-[color:var(--sidebar-border)]/50 pb-2">
-              <span className="text-3xs font-extrabold uppercase tracking-widest text-[color:var(--sidebar-muted)]">
+          <div className="mx-3 mb-2 p-4 rounded-xl border border-prism-border bg-prism-accent/5 shadow-2xl flex flex-col gap-3.5 z-30 relative animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <div className="flex items-center justify-between border-b border-prism-border/50 pb-2">
+              <span className="text-3xs font-extrabold uppercase tracking-widest text-prism-muted">
                 Usage Limits
               </span>
               <span
@@ -403,7 +403,7 @@ export function SidebarAside() {
             {usage.plan === "free" ? (
               <div className="space-y-2.5">
                 <div>
-                  <div className="flex justify-between text-4xs font-bold text-[color:var(--sidebar-muted)] mb-1 uppercase tracking-wider">
+                  <div className="flex justify-between text-4xs font-bold text-prism-muted mb-1 uppercase tracking-wider">
                     <span>Study Paths</span>
                     <span>
                       {usage.usage.learning_path.current} / {usage.usage.learning_path.limit}
@@ -422,7 +422,7 @@ export function SidebarAside() {
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-4xs font-bold text-[color:var(--sidebar-muted)] mb-1 uppercase tracking-wider">
+                  <div className="flex justify-between text-4xs font-bold text-prism-muted mb-1 uppercase tracking-wider">
                     <span>Doubt Solver</span>
                     <span>
                       {usage.usage.doubt_message.current} / {usage.usage.doubt_message.limit}
@@ -458,14 +458,14 @@ export function SidebarAside() {
       )}
 
       {/* 5. Footer Account Widgets */}
-      <div className="px-4.5 py-3.5 border-t border-[color:var(--sidebar-border)]/50 bg-[color:var(--sidebar-hover)]/30 shrink-0 flex items-center justify-between gap-3 z-30 relative select-none">
+      <div className="px-4.5 py-3.5 border-t border-prism-border/50 bg-prism-accent/5/30 shrink-0 flex items-center justify-between gap-3 z-30 relative select-none">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <UserButton />
           <div className="min-w-0 flex flex-col flex-1">
-            <span className="text-[10px] font-bold truncate text-[color:var(--sidebar-text)] leading-snug">
+            <span className="text-[10px] font-bold truncate text-prism-text leading-snug">
               {user?.fullName || "My Workspace"}
             </span>
-            <span className="text-4xs font-semibold text-[color:var(--sidebar-muted)] uppercase tracking-wider">
+            <span className="text-4xs font-semibold text-prism-muted uppercase tracking-wider">
               Settings & Billing
             </span>
           </div>

@@ -560,7 +560,7 @@ export default function DoubtSolverPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col text-[color:var(--text)] overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
+    <main className="relative min-h-screen flex flex-col text-prism-text overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
       {/* Cool Ambient Background Orbs */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/15 dark:bg-purple-600/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse [animation-duration:8s]"></div>
@@ -574,14 +574,14 @@ export default function DoubtSolverPage() {
       <div className="flex-1 flex flex-col h-screen min-w-0 relative z-10">
         
         {/* Navigation Header */}
-        <header className="flex shrink-0 items-center justify-between px-5 py-4 backdrop-blur-xl bg-white/40 dark:bg-black/40 border-b border-slate-200/50 dark:border-white/5 z-20 transition-colors">
+        <header className="flex shrink-0 items-center justify-between px-5 py-4 bg-prism-surface border-b border-prism-border z-20 transition-colors">
           <div className="flex items-center gap-3">
             {/* Logo and title */}
             <div className="flex items-center gap-2 pl-12 lg:pl-0">
               <Logo size={26} />
               <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-purple-600">Doubt Solver</p>
-                <p className="text-[10px] text-[color:var(--muted)] font-bold uppercase tracking-wider">Active Cognition</p>
+                <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-prism-accent">Doubt Solver</p>
+                <p className="text-[10px] text-prism-muted font-bold uppercase tracking-wider">Active Cognition</p>
               </div>
             </div>
           </div>
@@ -589,7 +589,7 @@ export default function DoubtSolverPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard"
-              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] p-2 sm:px-4.5 sm:py-2 text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
+              className="rounded-full border border-prism-border bg-prism-surface p-2 sm:px-4.5 sm:py-2 text-prism-text transition hover:bg-prism-surface/70 active:scale-95 flex items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent"
               title="Back to study dashboard"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
@@ -614,7 +614,7 @@ export default function DoubtSolverPage() {
               {/* Pulsing neural cognition graphics icon */}
               <div className="mb-8 relative">
                 <div className="absolute inset-0 bg-purple-500/10 rounded-full blur-2xl animate-pulse" />
-                <div className="relative p-5 rounded-3xl bg-[color:var(--surface)] border border-[color:var(--border)] shadow-md text-purple-600 dark:text-purple-400">
+                <div className="relative p-5 rounded-3xl bg-prism-surface border border-prism-border shadow-md text-purple-600 dark:text-purple-400">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" className="w-10 h-10 animate-spin-slow">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.467 5.99 5.99 0 0 0-1.925 3.546 5.974 5.974 0 0 1-2.133-1A3.75 3.75 0 0 0 12 18Z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75a3.75 3.75 0 1 1 0-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -622,10 +622,10 @@ export default function DoubtSolverPage() {
                 </div>
               </div>
               
-              <h2 className="font-black text-lg tracking-tight text-[color:var(--text)] mb-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
+              <h2 className="font-black text-lg tracking-tight text-prism-text mb-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
                 What can I help with?
               </h2>
-              <p className="text-2xs font-semibold text-[color:var(--muted)] leading-relaxed max-w-sm mb-8">
+              <p className="text-2xs font-semibold text-prism-muted leading-relaxed max-w-sm mb-8">
                 Submit homework equations, upload screenshots, or ask quick step-by-step calculus limits questions.
               </p>
 
@@ -651,10 +651,10 @@ export default function DoubtSolverPage() {
                   <button
                     key={idx}
                     onClick={() => setInput(action.prompt)}
-                    className="p-3.5 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] hover:bg-[color:var(--surface-soft)] text-left transition hover:border-purple-500/30 hover:shadow-sm active:scale-98 cursor-pointer"
+                    className="p-3.5 rounded-2xl border border-prism-border bg-prism-surface hover:bg-prism-surface/70 text-left transition hover:border-purple-500/30 hover:shadow-sm active:scale-98 cursor-pointer"
                   >
-                    <p className="text-3xs font-extrabold text-[color:var(--text)] uppercase tracking-wide mb-1">{action.title}</p>
-                    <p className="text-4xs font-medium text-[color:var(--muted)] leading-normal">{action.desc}</p>
+                    <p className="text-3xs font-extrabold text-prism-text uppercase tracking-wide mb-1">{action.title}</p>
+                    <p className="text-4xs font-medium text-prism-muted leading-normal">{action.desc}</p>
                   </button>
                 ))}
               </div>
@@ -741,7 +741,7 @@ export default function DoubtSolverPage() {
                             className={`p-4.5 text-[13.5px] font-medium leading-relaxed transition-all duration-300 shadow-sm ${
                               isUser
                                 ? "bg-gradient-to-br from-slate-800 to-slate-900 dark:from-[#2a2a2a] dark:to-[#1f1f1f] text-white rounded-[24px] rounded-br-sm shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-700/50 dark:border-white/5"
-                                : `bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 text-slate-800 dark:text-slate-200 rounded-[24px] rounded-tl-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] ${
+                                : `bg-prism-surface backdrop-blur border border-prism-border text-prism-text rounded-[24px] rounded-tl-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] ${
                                     loading && i === messages.length - 1 ? "chat-streaming" : ""
                                   }`
                             }`}
@@ -769,7 +769,7 @@ export default function DoubtSolverPage() {
                                   },
                                   ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1.5 marker:text-purple-500">{children}</ul>,
                                   ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1.5 marker:text-purple-500 marker:font-bold">{children}</ol>,
-                                  li: ({ children }) => <li className="text-[14px] font-medium text-[color:var(--text)] leading-relaxed tracking-tight">{children}</li>,
+                                  li: ({ children }) => <li className="text-[14px] font-medium text-prism-text leading-relaxed tracking-tight">{children}</li>,
                                   p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed text-[14px] tracking-tight">{children}</p>,
                                   h1: ({ children }) => <h1 className="text-base font-extrabold mt-5 mb-2.5 uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">{children}</h1>,
                                   h2: ({ children }) => <h2 className="text-[14px] font-bold mt-4 mb-2 uppercase tracking-widest text-indigo-600 dark:text-indigo-400">{children}</h2>,
@@ -817,12 +817,12 @@ export default function DoubtSolverPage() {
                       </div>
                     {/* Thumbs up/down feedback tools under AI bubble */}
                     {!isUser && (
-                      <div className="flex items-center gap-1 mt-1 px-1 text-[color:var(--muted)] relative select-none">
+                      <div className="flex items-center gap-1 mt-1 px-1 text-prism-muted relative select-none">
                         
                         {/* 1. Like rating */}
                         <button
                           onClick={() => submitFeedback(i, "up")}
-                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-green-500 transition duration-150 active:scale-90 ${
+                          className={`p-1 rounded-lg hover:bg-prism-surface/70 hover:text-green-500 transition duration-150 active:scale-90 ${
                             m.feedback === "up" ? "text-green-500 bg-green-500/10" : ""
                           }`}
                           title="Correct/Helpful explanation"
@@ -835,7 +835,7 @@ export default function DoubtSolverPage() {
                         {/* 2. Dislike rating */}
                         <button
                           onClick={() => submitFeedback(i, "down")}
-                          className={`p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-red-500 transition duration-150 active:scale-90 ${
+                          className={`p-1 rounded-lg hover:bg-prism-surface/70 hover:text-red-500 transition duration-150 active:scale-90 ${
                             m.feedback === "down" ? "text-red-500 bg-red-500/10" : ""
                           }`}
                           title="Incorrect/Bad explanation"
@@ -848,7 +848,7 @@ export default function DoubtSolverPage() {
                         {/* 3. Regenerate button */}
                         <button
                           onClick={() => handleRegenerateMessage(i)}
-                          className="p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-purple-500 transition duration-150 active:scale-90"
+                          className="p-1 rounded-lg hover:bg-prism-surface/70 hover:text-purple-500 transition duration-150 active:scale-90"
                           title="Regenerate reply"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-3.5 w-3.5">
@@ -859,7 +859,7 @@ export default function DoubtSolverPage() {
                         {/* 4. Copy Message */}
                         <button
                           onClick={() => handleCopyMessage(i, m.content)}
-                          className="p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-purple-500 transition duration-150 active:scale-90"
+                          className="p-1 rounded-lg hover:bg-prism-surface/70 hover:text-purple-500 transition duration-150 active:scale-90"
                           title="Copy explanation"
                         >
                           {copiedIndex === i ? (
@@ -877,7 +877,7 @@ export default function DoubtSolverPage() {
                         <div className="relative inline-block">
                           <button
                             onClick={() => setActiveDropdownIndex(activeDropdownIndex === i ? null : i)}
-                            className="p-1 rounded-lg hover:bg-[color:var(--surface-soft)] hover:text-purple-500 transition duration-150 active:scale-90"
+                            className="p-1 rounded-lg hover:bg-prism-surface/70 hover:text-purple-500 transition duration-150 active:scale-90"
                             title="More options"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
@@ -892,13 +892,13 @@ export default function DoubtSolverPage() {
                                 className="fixed inset-0 z-10"
                                 onClick={() => setActiveDropdownIndex(null)}
                               />
-                              <div className="absolute left-0 mt-1 w-36 glass-card rounded-xl shadow-xl z-20 border border-[color:var(--border)]/45 bg-[color:var(--surface)] p-1.5 flex flex-col gap-1 text-[11px] font-bold">
+                              <div className="absolute left-0 mt-1 w-36 glass-card rounded-xl shadow-xl z-20 border border-prism-border/45 bg-prism-surface p-1.5 flex flex-col gap-1 text-[11px] font-bold">
                                 <button
                                   onClick={() => {
                                     speakResponse(m.content);
                                     setActiveDropdownIndex(null);
                                   }}
-                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] text-[color:var(--text)] transition flex items-center gap-1.5"
+                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-prism-surface/70 text-prism-text transition flex items-center gap-1.5"
                                 >
                                   🔊 Read Aloud
                                 </button>
@@ -907,7 +907,7 @@ export default function DoubtSolverPage() {
                                     handleReportClick(i);
                                     setActiveDropdownIndex(null);
                                   }}
-                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] text-red-500 hover:text-red-600 transition flex items-center gap-1.5"
+                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-prism-surface/70 text-red-500 hover:text-red-600 transition flex items-center gap-1.5"
                                 >
                                   ⚠️ Report Issue
                                 </button>
@@ -916,7 +916,7 @@ export default function DoubtSolverPage() {
                                     handleShareMessage(i, m.content);
                                     setActiveDropdownIndex(null);
                                   }}
-                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[color:var(--surface-soft)] text-[color:var(--text)] transition flex items-center gap-1.5"
+                                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-prism-surface/70 text-prism-text transition flex items-center gap-1.5"
                                 >
                                   🔗 Share Link
                                 </button>
@@ -936,7 +936,7 @@ export default function DoubtSolverPage() {
           {/* Real-time Waiting for response state */}
           {loading && messages.length > 0 && messages[messages.length - 1].role === "user" && (
             <div className="self-start flex flex-col items-start max-w-[85%] sm:max-w-[80%] shrink-0 animate-pulse">
-              <span className="text-[9px] font-black uppercase tracking-wider text-[color:var(--muted)] mb-1 px-1">
+              <span className="text-[9px] font-black uppercase tracking-wider text-prism-muted mb-1 px-1">
                 AI Tutor
               </span>
               <div className="glass-card p-4 rounded-2xl rounded-tl-none flex items-center gap-1.5">
@@ -1070,7 +1070,7 @@ export default function DoubtSolverPage() {
             className="hidden"
           />
 
-          <div className="relative flex flex-col bg-white/70 dark:bg-[#1a1a1a]/70 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 focus-within:border-purple-500/40 dark:focus-within:border-purple-500/40 focus-within:shadow-[0_0_40px_rgba(168,85,247,0.15)] rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden p-2.5">
+          <div className="relative flex flex-col bg-prism-surface backdrop-blur-xl border border-prism-border focus-within:border-prism-accent/40 focus-within:ring-2 focus-within:ring-prism-accent/20 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden p-2.5">
             
             {/* Image Preview Area */}
             {previewUrl && (
@@ -1111,7 +1111,7 @@ export default function DoubtSolverPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={imageFile ? "Image details..." : "Ask your doubt..."}
-                className="flex-1 bg-transparent border-none outline-none resize-none min-h-[40px] py-2.5 text-[color:var(--text)] placeholder-slate-500/80 text-sm font-medium"
+                className="flex-1 bg-transparent border-none outline-none resize-none min-h-[40px] py-2.5 text-prism-text placeholder-slate-500/80 text-sm font-medium"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -1164,21 +1164,21 @@ export default function DoubtSolverPage() {
         <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
           <div className="glass-card rounded-2xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-4">
             <div>
-              <h3 className="font-extrabold text-sm text-[color:var(--text)]">Report an Issue</h3>
-              <p className="text-[10px] text-[color:var(--muted)] mt-1">Help improve the AI tutor. Tell us what is incorrect or could be improved about this explanation.</p>
+              <h3 className="font-extrabold text-sm text-prism-text">Report an Issue</h3>
+              <p className="text-[10px] text-prism-muted mt-1">Help improve the AI tutor. Tell us what is incorrect or could be improved about this explanation.</p>
             </div>
             
             <textarea
               placeholder="e.g. Typo in the math equation, incorrect step calculation, formatting is broken..."
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
-              className="w-full h-24 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-soft)]/50 px-3 py-2 text-xs outline-none focus:border-purple-500 focus:bg-[color:var(--surface)]"
+              className="w-full h-24 rounded-xl border border-prism-border bg-prism-surface/70/50 px-3 py-2 text-xs outline-none focus:border-purple-500 focus:bg-prism-surface"
             />
 
             <div className="flex gap-2 justify-end text-xs">
               <button
                 onClick={() => setFeedbackModalOpen(false)}
-                className="rounded-full border border-[color:var(--border)] px-4 py-1.5 font-bold hover:bg-[color:var(--surface-soft)]"
+                className="rounded-full border border-prism-border px-4 py-1.5 font-bold hover:bg-prism-surface/70"
               >
                 Cancel
               </button>

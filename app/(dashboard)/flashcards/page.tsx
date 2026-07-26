@@ -83,7 +83,7 @@ export default function FlashcardsDashboardPage() {
   const totalDue = decks.reduce((acc, curr) => acc + curr.dueCards, 0);
 
   return (
-    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-[color:var(--text)] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
+    <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-prism-text transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         
         {/* Header Bar */}
@@ -94,7 +94,7 @@ export default function FlashcardsDashboardPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/dashboard"
-              className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-2 text-xs font-bold text-[color:var(--text)] transition hover:bg-[color:var(--surface-soft)] active:scale-95 flex items-center justify-center gap-1.5"
+              className="rounded-full border border-prism-border bg-prism-surface px-4 py-2 text-xs font-bold text-prism-text transition hover:bg-prism-surface/70 active:scale-95 flex items-center justify-center gap-1.5"
             >
               Dashboard
             </Link>
@@ -118,7 +118,7 @@ export default function FlashcardsDashboardPage() {
           <h1 className="mt-3 text-2xl font-black sm:text-3xl lg:text-4xl">
             Study smart with active recall.
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[color:var(--muted)] sm:text-base max-w-2xl">
+          <p className="mt-2 text-sm leading-6 text-prism-muted sm:text-base max-w-2xl">
             Review conceptual flashcards powered by the SM-2 algorithm. The system schedules reviews at optimal mathematical intervals to double your memory retention.
           </p>
         </div>
@@ -126,13 +126,13 @@ export default function FlashcardsDashboardPage() {
         {/* Search and Filters */}
         {decks.length > 0 && (
           <div className="relative">
-            <Search className="absolute left-4 top-3.5 h-4 w-4 text-[color:var(--muted)]" />
+            <Search className="absolute left-4 top-3.5 h-4 w-4 text-prism-muted" />
             <input
               type="text"
               placeholder="Search your decks by subject or topic name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] pl-11 pr-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+              className="w-full rounded-2xl border border-prism-border bg-prism-surface pl-11 pr-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
           </div>
         )}
@@ -157,8 +157,8 @@ export default function FlashcardsDashboardPage() {
               <SpacedRepetitionIcon size={40} className="text-blue-500" />
             </div>
             <div>
-              <h3 className="font-extrabold text-base text-[color:var(--text)]">Your Flashcards Library is Empty</h3>
-              <p className="text-2xs font-semibold leading-relaxed max-w-sm mt-1 mx-auto text-[color:var(--muted)]">
+              <h3 className="font-extrabold text-base text-prism-text">Your Flashcards Library is Empty</h3>
+              <p className="text-2xs font-semibold leading-relaxed max-w-sm mt-1 mx-auto text-prism-muted">
                 You haven't generated any study decks yet. Head to your study roadmap and click "Generate Flashcards" on any topic or weak area to begin.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function FlashcardsDashboardPage() {
           </div>
         ) : filteredDecks.length === 0 ? (
           // Search Empty State
-          <div className="text-center py-12 text-[color:var(--muted)]">
+          <div className="text-center py-12 text-prism-muted">
             <AlertCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-xs font-bold">No matching decks found</p>
             <p className="text-2xs mt-1">Try adjusting your search criteria.</p>
@@ -182,7 +182,7 @@ export default function FlashcardsDashboardPage() {
             {filteredDecks.map((deck) => (
               <div
                 key={deck.id}
-                className="glass-card glass-card-hover rounded-3xl p-6 shadow-sm border border-[color:var(--border)]/40 flex flex-col justify-between h-48 relative group"
+                className="glass-card glass-card-hover rounded-3xl p-6 shadow-sm border border-prism-border/40 flex flex-col justify-between h-48 relative group"
               >
                 <div>
                   <div className="flex justify-between items-start gap-2">
@@ -201,14 +201,14 @@ export default function FlashcardsDashboardPage() {
                     )}
                   </div>
                   
-                  <h3 className="text-base font-black text-[color:var(--text)] mt-2 line-clamp-2 leading-snug">
+                  <h3 className="text-base font-black text-prism-text mt-2 line-clamp-2 leading-snug">
                     {deck.topic}
                   </h3>
                 </div>
 
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-[color:var(--border)]/30">
-                  <div className="flex items-center gap-1.5 text-xs text-[color:var(--muted)] font-semibold">
-                    <BookOpen size={13} className="text-[color:var(--muted)]" />
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-prism-border/30">
+                  <div className="flex items-center gap-1.5 text-xs text-prism-muted font-semibold">
+                    <BookOpen size={13} className="text-prism-muted" />
                     <span>{deck.totalCards} cards</span>
                   </div>
 
@@ -216,7 +216,7 @@ export default function FlashcardsDashboardPage() {
                     <button
                       onClick={(e) => handleDeleteDeck(deck.id, e)}
                       disabled={deletingId === deck.id}
-                      className="p-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] hover:text-red-500 hover:border-red-500/30 transition disabled:opacity-50"
+                      className="p-2 rounded-xl border border-prism-border bg-prism-surface hover:text-red-500 hover:border-red-500/30 transition disabled:opacity-50"
                       title="Delete deck"
                     >
                       <Trash2 size={14} />

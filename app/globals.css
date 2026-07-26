@@ -338,6 +338,21 @@ html.dark .glass-prism-hover:hover, html.dark .glass-card-hover:hover {
     opacity: 1;
     transform: none;
   }
+  
+  .animate-fade-in,
+  .animate-morph-blob,
+  .animate-spin-slow,
+  .animate-pulse-emerald,
+  .animate-pulse-amber,
+  .animate-pulse-slow,
+  .animate-pulse-slow-delay {
+    animation: none !important;
+  }
+  
+  /* Fallback static styles for blob when motion is reduced */
+  .animate-morph-blob {
+    border-radius: 50%;
+  }
 }
 
 /* Premium iOS ambient pulse animation */
