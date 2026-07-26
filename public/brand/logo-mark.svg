@@ -1,0 +1,33 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dark/Cool gradient for the spine -->
+    <linearGradient id="prism-cool" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/> <!-- blue-500 -->
+      <stop offset="100%" stop-color="#8b5cf6"/> <!-- purple-500 -->
+    </linearGradient>
+    
+    <!-- Warm gradient for the beams -->
+    <linearGradient id="prism-warm" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899"/> <!-- pink-500 -->
+      <stop offset="100%" stop-color="#8b5cf6"/> <!-- purple-500 -->
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Vertical Spine (Width: 80, Height: 320) -->
+  <polygon points="96,96 176,96 176,416 96,416" fill="url(#prism-cool)" />
+
+  <!-- 2. Top Refracted Beam (extends from spine to 416, cut at 45 deg) -->
+  <polygon points="176,96 416,96 336,176 176,176" fill="url(#prism-warm)" />
+  <!-- Top beam glass highlight (translucent overlay) -->
+  <polygon points="176,96 336,176 176,176" fill="white" opacity="0.2" />
+
+  <!-- 3. Middle Refracted Beam (shorter, width 180) -->
+  <polygon points="176,216 356,216 276,296 176,296" fill="url(#prism-cool)" />
+  <!-- Middle beam glass highlight -->
+  <polygon points="176,216 276,296 176,296" fill="white" opacity="0.25" />
+
+  <!-- 4. Bottom Refracted Beam (matches top length) -->
+  <polygon points="176,336 416,336 336,416 176,416" fill="url(#prism-warm)" />
+  <!-- Bottom beam glass highlight -->
+  <polygon points="176,336 336,416 176,416" fill="white" opacity="0.2" />
+</svg>

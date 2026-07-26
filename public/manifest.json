@@ -1,0 +1,27 @@
+{
+  "name": "EduMethod AI",
+  "short_name": "EduMethod",
+  "description": "Hyper-Accurate 7-Day Study Plans & AI Doubt Solver",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030409",
+  "theme_color": "#030409",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

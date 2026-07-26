@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BrandMark } from "./components/brand-mark";
 import { ThemeToggle } from "./components/theme-toggle";
@@ -24,6 +25,14 @@ const features = [
   },
 ];
 
+export const metadata: Metadata = {
+  title: "EduMethod AI — Hyper-Accurate 7-Day Study Plans & AI Doubt Solver",
+  description: "Transform raw syllabus text or snapshots into personalized study paths, adaptive quizzes, and step-by-step doubt-solving guides instantly.",
+  alternates: {
+    canonical: "/",
+  },
+};
+
 export default function Home() {
   return (
     <main className="grid-bg min-h-screen text-prism-text transition-colors duration-300">
@@ -36,6 +45,7 @@ export default function Home() {
             "name": "EduMethod AI",
             "operatingSystem": "All",
             "applicationCategory": "EducationalApplication",
+            "url": "https://edumethod-ai.vercel.app",
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -99,8 +109,8 @@ export default function Home() {
 
           {/* Premium UI Mockup Preview */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-blue-500 to-indigo-500 opacity-20 blur-xl dark:opacity-30"></div>
-            <div className="glass-card relative rounded-[2rem] p-6 shadow-2xl dark:shadow-slate-950/40">
+            {/* LCP Optimization: Heavy CSS blur removed in favor of faster shadow composition */}
+            <div className="glass-card relative rounded-[2rem] p-6 shadow-[0_0_60px_-15px_rgba(59,130,246,0.3)] dark:shadow-[0_0_60px_-15px_rgba(59,130,246,0.15)]">
               
               {/* Window Controls */}
               <div className="mb-6 flex items-center justify-between border-b border-prism-border/50 pb-4">

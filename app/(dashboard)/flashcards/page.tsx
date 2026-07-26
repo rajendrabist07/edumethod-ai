@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ThemeToggle } from "../../components/theme-toggle";
 import { BrandMark } from "../../components/brand-mark";
 import { SpacedRepetitionIcon } from "@/components/icons/SpacedRepetitionIcon";
-import { Trash2, Play, Sparkles, BookOpen, AlertCircle, Search } from "lucide-react";
+import { Trash2, Play, Sparkles, AlertCircle } from "lucide-react";
+import { SearchIcon, FlashcardsIcon } from "@/components/icons";
 import { toast } from "sonner";
 
 interface FlashcardDeck {
@@ -126,7 +127,7 @@ export default function FlashcardsDashboardPage() {
         {/* Search and Filters */}
         {decks.length > 0 && (
           <div className="relative">
-            <Search className="absolute left-4 top-3.5 h-4 w-4 text-prism-muted" />
+            <SearchIcon className="absolute left-4 top-3.5 h-4 w-4 text-prism-muted" />
             <input
               type="text"
               placeholder="Search your decks by subject or topic name..."
@@ -208,7 +209,7 @@ export default function FlashcardsDashboardPage() {
 
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-prism-border/30">
                   <div className="flex items-center gap-1.5 text-xs text-prism-muted font-semibold">
-                    <BookOpen size={13} className="text-prism-muted" />
+                    <FlashcardsIcon size={13} className="text-prism-muted" />
                     <span>{deck.totalCards} cards</span>
                   </div>
 

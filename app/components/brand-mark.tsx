@@ -15,10 +15,10 @@ export function BrandMark({ compact = false, className = "" }: BrandMarkProps) {
 
       {!compact ? (
         <div className="flex flex-col justify-center">
-          <p className="text-sm font-black uppercase tracking-[0.25em] bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
+          <p className="text-lg font-black tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400 font-serif">
             EduMethod AI
           </p>
-          <p className="text-[10px] font-bold tracking-wide text-[color:var(--muted)]">
+          <p className="text-[10px] font-bold tracking-widest text-[color:var(--muted)]">
             AI-POWERED COGNITION
           </p>
         </div>

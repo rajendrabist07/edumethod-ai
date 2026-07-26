@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+/* Fonts loaded via next/font in layout.tsx */
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -235,9 +235,9 @@ body {
   --color-prism-text: var(--prism-text);
   --color-prism-muted: var(--prism-muted);
 
-  --font-display: "Fraunces", serif;
-  --font-sans: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-display: var(--font-fraunces), serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
 }
 
 @keyframes pulseGlowEmerald {

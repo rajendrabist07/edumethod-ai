@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { ThemeToggle } from "../../components/theme-toggle";
 import { BrandMark } from "../../components/brand-mark";
-import { RefreshCw, CheckCircle2, ChevronRight, HelpCircle, Eye, GraduationCap, Award, Brain } from "lucide-react";
+import { RefreshCw, CheckCircle2, ChevronRight, HelpCircle, Eye } from "lucide-react";
+import { FlameIcon, TeacherIcon, AchievementIcon } from "@/components/icons";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -111,7 +112,7 @@ export default function FeynmanPlaygroundPage() {
         {/* Info Banner */}
         <div className="glass-prism rounded-3xl p-5 border border-prism-border space-y-2">
           <div className="flex items-center gap-2">
-            <Brain size={16} className="text-prism-accent" />
+            <FlameIcon size={16} className="text-prism-accent" />
             <h2 className="text-xs font-black uppercase tracking-widest font-display">The Feynman Technique</h2>
           </div>
           <p className="text-3xs font-semibold text-prism-muted leading-relaxed">
@@ -188,7 +189,7 @@ export default function FeynmanPlaygroundPage() {
                       </>
                     ) : (
                       <>
-                        <GraduationCap size={14} /> Submit Explanation
+                        <TeacherIcon size={14} /> Submit Explanation
                       </>
                     )}
                   </button>
@@ -270,7 +271,7 @@ export default function FeynmanPlaygroundPage() {
 
                 <div className="border-t border-prism-border/40 pt-3 mt-4 text-center">
                   <span className="text-4xs font-bold text-prism-muted uppercase tracking-widest font-mono flex items-center justify-center gap-1">
-                    <Award size={10} className="text-prism-accent" /> mastery score will update automatically
+                    <AchievementIcon size={10} className="text-prism-accent" /> mastery score will update automatically
                   </span>
                 </div>
               </motion.div>

@@ -1,0 +1,28 @@
+<svg width="1200" height="300" viewBox="0 0 1200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="prism-cool" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="prism-warm" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Scale and position the mark (256x256 inside 300x300 container) -->
+  <g transform="translate(22, 22) scale(0.5)">
+    <polygon points="96,96 176,96 176,416 96,416" fill="url(#prism-cool)" />
+    <polygon points="176,96 416,96 336,176 176,176" fill="url(#prism-warm)" />
+    <polygon points="176,96 336,176 176,176" fill="white" opacity="0.2" />
+    <polygon points="176,216 356,216 276,296 176,296" fill="url(#prism-cool)" />
+    <polygon points="176,216 276,296 176,296" fill="white" opacity="0.25" />
+    <polygon points="176,336 416,336 336,416 176,416" fill="url(#prism-warm)" />
+    <polygon points="176,336 336,416 176,416" fill="white" opacity="0.2" />
+  </g>
+
+  <!-- The Wordmark Text -->
+  <text x="320" y="195" font-family="Fraunces, Georgia, serif" font-weight="900" font-size="120" letter-spacing="-0.02em" fill="currentColor">
+    EduMethod AI
+  </text>
+</svg>

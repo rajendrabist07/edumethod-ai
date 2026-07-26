@@ -6,6 +6,14 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useLayout } from "./LayoutContext";
 import { Logo } from "@/components/ui/Logo";
+import {
+  TextbookChatIcon,
+  DashboardIcon,
+  MasteryMapIcon,
+  FlashcardsIcon,
+  StudyRoomsIcon,
+  FlameIcon
+} from "@/components/icons";
 
 interface HistoryItem {
   id: string;
@@ -215,7 +223,7 @@ export function SidebarAside() {
           onClick={handleLinkClick}
         >
           <span className="flex items-center gap-2">
-            <span>💬</span> New Doubt Solver
+            <TextbookChatIcon size={16} /> New Doubt Solver
           </span>
           <span className="text-[9px] opacity-75 uppercase tracking-wider bg-white/15 px-1.5 py-0.5 rounded font-mono">
             ⌘N
@@ -232,7 +240,7 @@ export function SidebarAside() {
             }`}
             onClick={handleLinkClick}
           >
-            <span>🏡</span> Home
+            <DashboardIcon size={14} className="mb-0.5" /> Home
           </Link>
           <Link
             href="/upload"
@@ -243,7 +251,7 @@ export function SidebarAside() {
             }`}
             onClick={handleLinkClick}
           >
-            <span>📚</span> Path
+            <MasteryMapIcon size={14} className="mb-0.5" /> Path
           </Link>
           <Link
             href="/flashcards"
@@ -254,7 +262,7 @@ export function SidebarAside() {
             }`}
             onClick={handleLinkClick}
           >
-            <span>🗂️</span> Cards
+            <FlashcardsIcon size={14} className="mb-0.5" /> Cards
           </Link>
         </div>
 
@@ -268,7 +276,7 @@ export function SidebarAside() {
             }`}
             onClick={handleLinkClick}
           >
-            <span>📖</span> RAG Chat
+            <TextbookChatIcon size={14} className="mb-0.5" /> RAG Chat
           </Link>
           <Link
             href="/feynman"
@@ -279,7 +287,7 @@ export function SidebarAside() {
             }`}
             onClick={handleLinkClick}
           >
-            <span>💡</span> Feynman
+            <FlameIcon size={14} className="mb-0.5" /> Feynman
           </Link>
         </div>
       </div>
