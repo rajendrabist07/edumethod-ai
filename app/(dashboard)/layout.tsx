@@ -12,7 +12,8 @@ interface DashboardLayoutProps {
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
   const { userId } = await auth();
   if (userId) {
-    const user = await clerkClient().users.getUser(userId);
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
     if (!user.publicMetadata?.onboarded) {
       redirect("/onboarding");
     }

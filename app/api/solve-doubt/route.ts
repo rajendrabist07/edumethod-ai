@@ -253,7 +253,7 @@ Follow these rules strictly for VOICE MODE:
             const pipelineResultText = await runCognitivePipeline({
               message,
               history,
-              context: typeof contextText !== "undefined" ? contextText : "",
+              context: chunksMatched.length > 0 ? chunksMatched.map((c: any, i: number) => `[Syllabus Context Section ${i + 1}]:\n${c.content}`).join("\n\n") : "",
               userId,
             });
 

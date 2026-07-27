@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Update Clerk publicMetadata
-    await clerkClient().users.updateUserMetadata(userId, {
+    const client = await clerkClient();
+    await client.users.updateUserMetadata(userId, {
       publicMetadata: {
         onboarded: true,
         role,
