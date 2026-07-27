@@ -25,7 +25,7 @@ export default async function Image() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyItems: 'center' }}>
-          <svg width="180" height="180" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="180" height="180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="prism-cool" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#3b82f6" />
@@ -36,15 +36,12 @@ export default async function Image() {
                 <stop offset="100%" stopColor="#8b5cf6" />
               </linearGradient>
             </defs>
-            <g transform="scale(0.96) translate(10, 10)">
-              <polygon points="96,96 176,96 176,416 96,416" fill="url(#prism-cool)" />
-              <polygon points="176,96 416,96 336,176 176,176" fill="url(#prism-warm)" />
-              <polygon points="176,96 336,176 176,176" fill="white" opacity="0.2" />
-              <polygon points="176,216 356,216 276,296 176,296" fill="url(#prism-cool)" />
-              <polygon points="176,216 276,296 176,296" fill="white" opacity="0.25" />
-              <polygon points="176,336 416,336 336,416 176,416" fill="url(#prism-warm)" />
-              <polygon points="176,336 336,416 176,416" fill="white" opacity="0.2" />
-            </g>
+            <path d="M4 18L12 20L12 9L4 7Z" fill="url(#prism-cool)" stroke="none" opacity="0.9" />
+            <path d="M20 18L12 20L12 9L20 7Z" fill="url(#prism-warm)" stroke="none" opacity="0.9" />
+            <path d="M4 18L12 20L12 9L4 7Z" stroke="#F8FAFC" />
+            <path d="M20 18L12 20L12 9L20 7Z" stroke="#F8FAFC" />
+            <path d="M12 16L12 2" stroke="#F8FAFC" strokeWidth="2" />
+            <path d="M8 6L12 2L16 6" stroke="#F8FAFC" strokeWidth="2" />
           </svg>
         </div>
         
