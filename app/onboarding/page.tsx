@@ -9,6 +9,7 @@ export default function OnboardingPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [role, setRole] = useState<"student" | "teacher">("student");
 
   if (!isLoaded) return <div className="min-h-screen flex items-center justify-center bg-prism-base text-prism-text">Loading...</div>;
@@ -16,6 +17,7 @@ export default function OnboardingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setErrorMsg(null);
     try {
       const res = await fetch("/api/onboarding", {
         method: "POST",
@@ -26,9 +28,14 @@ export default function OnboardingPage() {
         // Force Clerk user to reload to get new publicMetadata
         await user?.reload();
         router.push("/dashboard");
+      } else {
+        const errData = await res.json().catch(() => null);
+        setErrorMsg(errData?.error || "Failed to update profile. Did you run the SQL migration?");
+        setSaving(false);
       }
     } catch (err) {
       console.error(err);
+      setErrorMsg("A network error occurred. Please try again.");
       setSaving(false);
     }
   };
@@ -68,6 +75,12 @@ export default function OnboardingPage() {
               </button>
             </div>
           </div>
+
+          {errorMsg && (
+            <div className="bg-red-500/10 text-red-500 text-sm font-semibold p-3 rounded-lg border border-red-500/20">
+              {errorMsg}
+            </div>
+          )}
 
           <button
             type="submit"
