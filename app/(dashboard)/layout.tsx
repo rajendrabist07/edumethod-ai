@@ -2,12 +2,22 @@ import React, { Suspense } from "react";
 import { cookies } from "next/headers";
 import { LayoutProvider } from "@/components/layout/LayoutContext";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { userId } = await auth();
+  if (userId) {
+    const user = await clerkClient().users.getUser(userId);
+    if (!user.publicMetadata?.onboarded) {
+      redirect("/onboarding");
+    }
+  }
+
   const cookieStore = await cookies();
   const collapsed = cookieStore.get("sidebar-collapsed")?.value === "true";
 
