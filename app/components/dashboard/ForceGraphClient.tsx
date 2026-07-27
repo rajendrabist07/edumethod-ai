@@ -11,7 +11,7 @@ interface ForceGraphClientProps {
 }
 
 export default function ForceGraphClient({ data }: ForceGraphClientProps) {
-  const fgRef = useRef<ForceGraphMethods>();
+  const fgRef = useRef<ForceGraphMethods | undefined>(undefined);
 
   useEffect(() => {
     // Make the graph fit the container nicely on load
