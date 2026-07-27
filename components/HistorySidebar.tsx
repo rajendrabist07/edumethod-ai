@@ -17,7 +17,7 @@ interface HistoryItem {
 }
 
 interface UsageLimits {
-  plan: "free" | "pro";
+  plan: "standard";
   usage: {
     learning_path: { current: number; limit: number };
     doubt_message: { current: number; limit: number };
@@ -346,61 +346,44 @@ export function HistorySidebar() {
                 <span className="text-3xs font-extrabold uppercase tracking-widest text-[color:var(--muted)]">
                   Usage Limits
                 </span>
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-4xs font-black uppercase tracking-wider ${
-                  usage.plan === "pro"
-                    ? "bg-purple-100 text-purple-700 border border-purple-200 dark:bg-purple-950/65 dark:text-purple-300 dark:border-purple-900/50"
-                    : "bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/65 dark:text-blue-300 dark:border-blue-900/50"
-                }`}>
-                  {usage.plan === "pro" ? "💎 Pro Account" : "🌱 Free Account"}
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-4xs font-black uppercase tracking-wider bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/65 dark:text-blue-300 dark:border-blue-900/50">
+                  Standard
                 </span>
               </div>
 
-              {usage.plan === "free" ? (
-                <div className="space-y-2.5">
-                  {/* Paths limit bar */}
-                  <div>
-                    <div className="flex justify-between text-4xs font-bold text-[color:var(--muted)] mb-1 uppercase tracking-wider">
-                      <span>Study Paths</span>
-                      <span>{usage.usage.learning_path.current} / {usage.usage.learning_path.limit}</span>
-                    </div>
-                    <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                        style={{ width: `${(usage.usage.learning_path.current / usage.usage.learning_path.limit) * 100}%` }}
-                      />
-                    </div>
+              <div className="space-y-2.5">
+                {/* Paths limit bar */}
+                <div>
+                  <div className="flex justify-between text-4xs font-bold text-[color:var(--muted)] mb-1 uppercase tracking-wider">
+                    <span>Study Paths</span>
+                    <span>{usage.usage.learning_path.current} / {usage.usage.learning_path.limit}</span>
                   </div>
-
-                  {/* Chat limit bar */}
-                  <div>
-                    <div className="flex justify-between text-4xs font-bold text-[color:var(--muted)] mb-1 uppercase tracking-wider">
-                      <span>Doubt Solver</span>
-                      <span>{usage.usage.doubt_message.current} / {usage.usage.doubt_message.limit}</span>
-                    </div>
-                    <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-purple-500 rounded-full transition-all duration-300"
-                        style={{ width: `${(usage.usage.doubt_message.current / usage.usage.doubt_message.limit) * 100}%` }}
-                      />
-                    </div>
+                  <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(100, (usage.usage.learning_path.current / usage.usage.learning_path.limit) * 100)}%` }}
+                    />
                   </div>
-
-                  <Link
-                    href="/pricing"
-                    className="block text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white text-4xs font-black py-2.5 px-3 rounded-lg shadow-sm hover:shadow-md transition duration-200 uppercase tracking-widest mt-1"
-                    onClick={() => {
-                      setShowUsageModal(false);
-                      if (window.innerWidth < 1024) setSidebarOpen(false);
-                    }}
-                  >
-                    Upgrade to Pro
-                  </Link>
                 </div>
-              ) : (
-                <p className="text-4xs font-bold text-center text-emerald-500 dark:text-emerald-400 italic">
-                  You have unlimited cognitive API access!
+
+                {/* Chat limit bar */}
+                <div>
+                  <div className="flex justify-between text-4xs font-bold text-[color:var(--muted)] mb-1 uppercase tracking-wider">
+                    <span>Doubt Solver</span>
+                    <span>{usage.usage.doubt_message.current} / {usage.usage.doubt_message.limit}</span>
+                  </div>
+                  <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-purple-500 rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(100, (usage.usage.doubt_message.current / usage.usage.doubt_message.limit) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+                <p className="text-4xs font-semibold text-[color:var(--muted)] leading-relaxed">
+                  Quotas protect AI cost and response quality while monetization is disabled.
                 </p>
-              )}
+              </div>
             </div>
           </>
         )}
@@ -424,7 +407,7 @@ export function HistorySidebar() {
                 {user?.fullName || "My Workspace"}
               </span>
               <span className="text-[9.5px] font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-400 to-slate-500 dark:from-slate-500 dark:to-slate-400 uppercase tracking-[0.2em] leading-none">
-                Settings & Billing
+                Settings
               </span>
             </div>
           </div>
@@ -432,13 +415,9 @@ export function HistorySidebar() {
           {usage && (
             <button
               onClick={() => setShowUsageModal(!showUsageModal)}
-              className={`px-2 py-0.5 rounded-full text-4xs font-black uppercase tracking-wider border cursor-pointer transition active:scale-95 shrink-0 ${
-                usage.plan === "pro"
-                  ? "bg-purple-500/10 text-purple-600 border-purple-500/25 hover:bg-purple-500/20"
-                  : "bg-blue-500/10 text-blue-600 border-blue-500/25 hover:bg-blue-500/20"
-              }`}
+              className="px-2 py-0.5 rounded-full text-4xs font-black uppercase tracking-wider border cursor-pointer transition active:scale-95 shrink-0 bg-blue-500/10 text-blue-600 border-blue-500/25 hover:bg-blue-500/20"
             >
-              {usage.plan === "pro" ? "Pro" : "Limits"}
+              Limits
             </button>
           )}
         </div>

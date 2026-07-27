@@ -21,6 +21,15 @@ interface ChatMessage {
   feedbackText?: string;
 }
 
+type TutorEffort = "low" | "medium" | "high" | "extra";
+
+const effortOptions: Array<{ value: TutorEffort; label: string; hint: string }> = [
+  { value: "low", label: "Low", hint: "Fast answer" },
+  { value: "medium", label: "Medium", hint: "Balanced" },
+  { value: "high", label: "High", hint: "Detailed" },
+  { value: "extra", label: "Extra", hint: "Deep reasoning" },
+];
+
 export default function DoubtSolverPage() {
   const { user } = useUser();
   const router = useRouter();
@@ -38,6 +47,7 @@ export default function DoubtSolverPage() {
   const [voiceMode, setVoiceMode] = useState(false);
   const [voiceState, setVoiceState] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
   const [voiceSupported, setVoiceSupported] = useState(false);
+  const [tutorEffort, setTutorEffort] = useState<TutorEffort>("medium");
   
   // Voice Selection states
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -350,12 +360,14 @@ export default function DoubtSolverPage() {
         regenerate?: boolean;
         truncateHistoryAtIndex?: number;
         isVoiceMode?: boolean;
+        effort?: TutorEffort;
       } = { message: textToSend || "Analyze the attached image." };
 
       if (sessionId) payload.sessionId = sessionId;
       if (isRegenerate) payload.regenerate = true;
       if (truncateHistoryAtIndex !== undefined) payload.truncateHistoryAtIndex = truncateHistoryAtIndex;
       if (voiceMode) payload.isVoiceMode = true;
+      payload.effort = tutorEffort;
 
       if (imageFile) {
         payload.imageBase64 = await fileToBase64(imageFile);
@@ -561,13 +573,10 @@ export default function DoubtSolverPage() {
 
   return (
     <main className="relative min-h-screen flex flex-col text-prism-text overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
-      {/* Cool Ambient Background Orbs */}
+      {/* Ambient study surface */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/15 dark:bg-purple-600/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse [animation-duration:8s]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-indigo-500/15 dark:bg-indigo-500/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse [animation-duration:10s] [animation-delay:2s]"></div>
-        <div className="absolute top-[30%] left-[50%] w-[30%] h-[30%] rounded-full bg-cyan-400/10 dark:bg-cyan-400/10 blur-[100px] mix-blend-multiply dark:mix-blend-screen animate-pulse [animation-duration:12s] [animation-delay:4s]"></div>
-        {/* Subtle noise overlay */}
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:42px_42px] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.045)_1px,transparent_1px)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.10),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.72),rgba(248,250,252,0.92))] dark:bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.16),transparent_40%),linear-gradient(180deg,rgba(10,10,10,0.84),rgba(10,10,10,0.96))]" />
       </div>
       
       {/* Main Chat Panel Area */}
@@ -623,27 +632,27 @@ export default function DoubtSolverPage() {
               </div>
               
               <h2 className="font-black text-lg tracking-tight text-prism-text mb-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
-                What can I help with?
+                Start with any doubt
               </h2>
               <p className="text-2xs font-semibold text-prism-muted leading-relaxed max-w-sm mb-8">
-                Submit homework equations, upload screenshots, or ask quick step-by-step calculus limits questions.
+                Ask in English, Nepali, Hindi, or mixed vocabulary. The tutor will match your language and explain at your selected depth.
               </p>
 
               {/* Quick action prompt badges */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full">
                 {[
                   {
-                    title: "📐 Solve Calculus Limit",
+                    title: "Solve Calculus Limit",
                     desc: "Calculate lim x->0 sin(x)/x step-by-step",
                     prompt: "Solve the limit equation: \\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 step-by-step."
                   },
                   {
-                    title: "🧪 Biology Processes",
+                    title: "Biology Processes",
                     desc: "Explain the cellular respiration cycle",
                     prompt: "Explain the process of cellular respiration in clear, simplified biology terms."
                   },
                   {
-                    title: "🍎 Physics Equation",
+                    title: "Physics Equation",
                     desc: "Explain the force formula F = ma",
                     prompt: "Explain Newton's second law of motion and explain its equation $F = ma$ with examples."
                   }
@@ -1089,6 +1098,27 @@ export default function DoubtSolverPage() {
                 </div>
               </div>
             )}
+
+            <div className="flex items-center gap-1 px-1.5 pt-1.5 pb-2 overflow-x-auto">
+              {effortOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setTutorEffort(option.value)}
+                  className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent ${
+                    tutorEffort === option.value
+                      ? "border-prism-accent bg-prism-accent text-white shadow-sm"
+                      : "border-prism-border bg-prism-surface/60 text-prism-muted hover:text-prism-text hover:bg-prism-accent/5"
+                  }`}
+                  title={option.hint}
+                >
+                  {option.label}
+                  {option.value === "medium" && (
+                    <span className="ml-1 hidden sm:inline opacity-70">Default</span>
+                  )}
+                </button>
+              ))}
+            </div>
 
             {/* Input & Actions */}
             <div className="flex items-end gap-2 px-1 pb-1">

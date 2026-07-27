@@ -1,12 +1,13 @@
 import { supabaseAdmin } from "./supabase-admin";
 
 export type ActionType = "learning_path" | "doubt_message" | "quiz";
+export type UsageTier = "standard";
 
 /**
  * Retrieves the current plan tier of a user.
- * If the user profile doesn't exist yet, it creates a default 'free' profile.
+ * If the user profile doesn't exist yet, it creates a compatible default profile.
  */
-export async function getUserPlan(userId: string): Promise<"free" | "pro"> {
+export async function getUserPlan(userId: string): Promise<UsageTier> {
   try {
     const { data, error } = await supabaseAdmin
       .from("user_profiles")
@@ -15,7 +16,8 @@ export async function getUserPlan(userId: string): Promise<"free" | "pro"> {
       .single();
 
     if (error || !data) {
-      // Auto-insert default 'free' profile on first check
+      // Keep the persisted value compatible with the original DB constraint.
+      // The product surface exposes only the honest "standard" tier.
       const { data: newProfile, error: insertError } = await supabaseAdmin
         .from("user_profiles")
         .insert({ user_id: userId, plan: "free" })
@@ -23,17 +25,17 @@ export async function getUserPlan(userId: string): Promise<"free" | "pro"> {
         .single();
 
       if (insertError) {
-        console.error("Database error inserting user profile, falling back to free:", insertError);
-        return "free";
+        console.error("Database error inserting user profile, falling back to standard:", insertError);
+        return "standard";
       }
 
-      return (newProfile?.plan as "free" | "pro") || "free";
+      return newProfile?.plan === "standard" ? "standard" : "standard";
     }
 
-    return (data.plan as "free" | "pro") || "free";
+    return "standard";
   } catch (err) {
     console.error("Exception fetching user plan:", err);
-    return "free";
+    return "standard";
   }
 }
 
@@ -44,20 +46,14 @@ export async function getUserPlan(userId: string): Promise<"free" | "pro"> {
 export async function checkUsageLimit(
   userId: string,
   actionType: ActionType
-): Promise<{ allowed: boolean; limit: number; current: number; plan: "free" | "pro" }> {
+): Promise<{ allowed: boolean; limit: number; current: number; plan: UsageTier }> {
   const plan = await getUserPlan(userId);
   
-  // Set usage caps
-  const limits = {
-    free: {
-      learning_path: 3,
-      doubt_message: 10,
-      quiz: 3,
-    },
-    pro: {
-      learning_path: 50,
-      doubt_message: 100,
-      quiz: 50,
+  const limits: Record<UsageTier, Record<ActionType, number>> = {
+    standard: {
+      learning_path: 5,
+      doubt_message: 30,
+      quiz: 8,
     },
   };
 

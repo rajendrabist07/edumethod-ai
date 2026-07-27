@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const usage = await checkUsageLimit(userId, "learning_path");
     if (!usage.allowed) {
       return NextResponse.json(
-        { error: "Daily limit reached. Upgrade to Pro for unlimited access." },
+        { error: "Daily study path limit reached. Please continue after the quota window resets." },
         { status: 429 }
       );
     }

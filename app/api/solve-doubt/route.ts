@@ -18,13 +18,22 @@ const requestSchema = z.object({
   socratic: z.boolean().optional(),
   truncateHistoryAtIndex: z.number().optional(),
   isVoiceMode: z.boolean().optional(),
+  effort: z.enum(["low", "medium", "high", "extra"]).optional(),
 });
 
 const SYSTEM_PROMPT = `You are a patient, encouraging, and elite senior AI tutor. Solve questions step-by-step, explaining reasoning at each step.
 Follow these rules strictly:
 1. Mathematical expressions: Always use standard LaTeX. Inline math: $...$, block math: $$...$$. Never use raw text symbols like x^2 or /frac.
-2. Language understanding: You possess advanced multi-lingual and contextual understanding. If the user asks you to speak or explain in a specific language format (like "Romanized Nepali", "Nepanglish", etc.), YOU MUST reply in exactly that format (e.g. using English alphabets to write Nepali words: "timro samasya ko samadhan yesto chha"). Do NOT output Devanagari script if Romanized is requested.
-3. Be professional, deeply insightful, and format your markdown elegantly for a world-class reading experience.`;
+2. Language understanding: Detect the user's language and vocabulary style from their message. Reply in the same language and script unless the user explicitly requests another format. Romanized Nepali/Hindi must receive Romanized Nepali/Hindi; Devanagari Nepali/Hindi must receive Devanagari; English must receive natural English.
+3. Tone matching: Use student-friendly vocabulary in the user's own tone while keeping the reasoning senior, accurate, and direct.
+4. Be professional, deeply insightful, and format your markdown elegantly for a world-class reading experience.`;
+
+const EFFORT_INSTRUCTIONS = {
+  low: "Effort mode: Low. Answer fast with the shortest useful explanation, one clear method, and no extra theory unless needed.",
+  medium: "Effort mode: Medium. Balance speed and depth. Give the key reasoning, a worked path, and a concise checkpoint.",
+  high: "Effort mode: High. Be more thorough. Explain why each step works, mention common mistakes, and include a short verification.",
+  extra: "Effort mode: Extra. Give a senior-level explanation with alternatives, edge cases, and a final mastery summary, while staying readable.",
+};
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,7 +55,7 @@ export async function POST(req: NextRequest) {
     const usage = await checkUsageLimit(userId, "doubt_message");
     if (!usage.allowed) {
       return NextResponse.json(
-        { error: "Daily limit reached. Upgrade to Pro for unlimited access." },
+        { error: "Daily AI usage limit reached. Please continue after the quota window resets." },
         { status: 429 }
       );
     }
@@ -61,6 +70,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate, socratic, truncateHistoryAtIndex, isVoiceMode } = parseResult.data;
+    const effort = parseResult.data.effort ?? "medium";
 
     let finalSessionId = sessionId;
     let session = null;
@@ -121,9 +131,11 @@ export async function POST(req: NextRequest) {
 Follow these rules strictly for VOICE MODE:
 1. Speak concisely, highly intelligently, and with a mature, engaging tone. Give shorter, punchy, conversational answers.
 2. Do NOT output heavy markdown, code blocks, or complex LaTeX formulas. Use plain text formatting that reads naturally out loud.
-3. CRITICAL LANGUAGE RULE: If the user speaks in Nepali or Hindi (even if they use Romanized English alphabets), you MUST reply using native Devanagari script (Nepali/Hindi characters). This is absolutely required so the Text-to-Speech engine can pronounce it with the correct native accent and tone. Do NOT output Romanized Nepali/Hindi.
-4. Be extremely fast and direct.`;
+3. CRITICAL LANGUAGE RULE: Match the user's spoken language, script, and vocabulary style. If they use Romanized Nepali, reply in Romanized Nepali. If they use Devanagari Nepali or Hindi, reply in Devanagari. If they use English, reply in natural English.
+4. Be extremely fast and direct while still giving the student a clear next step.`;
     }
+    finalSystemPrompt = `${finalSystemPrompt}\n\n${EFFORT_INSTRUCTIONS[effort]}`;
+
     let chunksMatched: any[] = [];
     try {
       let targetLearningPathId = learningPathId || null;
@@ -158,7 +170,7 @@ Follow these rules strictly for VOICE MODE:
             .map((c: any, i: number) => `[Syllabus Context Section ${i + 1}]:\n${c.content}`)
             .join("\n\n");
           
-          finalSystemPrompt = `${SYSTEM_PROMPT}\n\nUse the following verified syllabus context when answering the student's question. Address the student's question directly, citing the context sections where applicable (e.g. [Syllabus Context Section 1]).\n\nVerified Context:\n${contextText}`;
+          finalSystemPrompt = `${finalSystemPrompt}\n\nUse the following verified syllabus context when answering the student's question. Address the student's question directly, citing the context sections where applicable (e.g. [Syllabus Context Section 1]).\n\nVerified Context:\n${contextText}`;
         }
       }
     } catch (ragError) {

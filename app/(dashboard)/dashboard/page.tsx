@@ -7,10 +7,9 @@ import { ThemeToggle } from "../../components/theme-toggle";
 import { BrandMark } from "../../components/brand-mark";
 import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
-import { QuizTargetIcon } from "@/components/icons/QuizTargetIcon";
 
 interface UsageLimits {
-  plan: "free" | "pro";
+  plan: "standard";
   usage: {
     learning_path: { current: number; limit: number };
     doubt_message: { current: number; limit: number };
@@ -25,45 +24,53 @@ interface HistoryItem {
   date: string;
 }
 
+interface MasteryTopic {
+  subject: string;
+  topic: string;
+  mastery: number;
+  totalCards: number;
+  nextReview?: string | null;
+}
+
 export default function DashboardPage() {
   const { user } = useUser();
   const [usage, setUsage] = useState<UsageLimits | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [masteryData, setMasteryData] = useState<any[]>([]);
+  const [masteryData, setMasteryData] = useState<MasteryTopic[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    async function fetchDashboardData() {
+      try {
+        // Fetch plan usage limits
+        const usageRes = await fetch("/api/usage");
+        if (usageRes.ok) {
+          const usageData = await usageRes.json();
+          setUsage(usageData);
+        }
 
-  async function fetchDashboardData() {
-    try {
-      // Fetch plan usage limits
-      const usageRes = await fetch("/api/usage");
-      if (usageRes.ok) {
-        const usageData = await usageRes.json();
-        setUsage(usageData);
-      }
+        // Fetch history listing
+        const historyRes = await fetch("/api/history");
+        if (historyRes.ok) {
+          const historyData = await historyRes.json();
+          setHistory(historyData.history || []);
+        }
 
-      // Fetch history listing
-      const historyRes = await fetch("/api/history");
-      if (historyRes.ok) {
-        const historyData = await historyRes.json();
-        setHistory(historyData.history || []);
+        // Fetch mastery scoring data
+        const masteryRes = await fetch("/api/mastery");
+        if (masteryRes.ok) {
+          const masteryJson = await masteryRes.json();
+          setMasteryData(masteryJson.topics || []);
+        }
+      } catch (err) {
+        console.error("Dashboard data fetch error:", err);
+      } finally {
+        setLoading(false);
       }
-
-      // Fetch mastery scoring data
-      const masteryRes = await fetch("/api/mastery");
-      if (masteryRes.ok) {
-        const masteryJson = await masteryRes.json();
-        setMasteryData(masteryJson.topics || []);
-      }
-    } catch (err) {
-      console.error("Dashboard data fetch error:", err);
-    } finally {
-      setLoading(false);
     }
-  }
+
+    void fetchDashboardData();
+  }, []);
 
   // Helper for date formatting
   function formatDate(dateString: string) {
@@ -147,20 +154,20 @@ export default function DashboardPage() {
             </span>
           </Link>
 
-          {/* Quick Action: Plan details */}
+          {/* Quick Action: Usage status */}
           <Link
-            href="/pricing"
+            href="/doubt-solver"
             className="glass-prism rounded-2xl p-5 shadow-sm border border-prism-border flex flex-col justify-between hover:border-prism-accent/40 hover:shadow-lg transition duration-300 hover:-translate-y-0.5"
           >
             <div>
-              <span className="text-xl">💎</span>
-              <h3 className="text-sm font-black mt-3 font-display">Plan Subscription</h3>
+              <span className="text-xl">⚙️</span>
+              <h3 className="text-sm font-black mt-3 font-display">Tutor Controls</h3>
               <p className="text-[10px] font-semibold text-prism-muted leading-relaxed mt-1">
-                Upgrade to the Titan tier to remove daily API limits and unlock prior Vision scanning.
+                Use Low, Medium, High, or Extra effort modes for faster or deeper explanations.
               </p>
             </div>
             <span className="text-prism-warm font-extrabold text-[10px] uppercase tracking-wider mt-4 block font-mono">
-              View Pricing Tier →
+              Open Tutor →
             </span>
           </Link>
         </div>
@@ -171,7 +178,7 @@ export default function DashboardPage() {
           {/* Usage Limit Tracker Widgets */}
           <div className="md:col-span-5 glass-prism rounded-3xl p-5 shadow-sm space-y-4">
             <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
-              Today's Usage Quotas
+              Today&apos;s Usage Quotas
             </h2>
 
             {usage ? (
@@ -220,16 +227,11 @@ export default function DashboardPage() {
 
                 <div className="text-center pt-2">
                   <p className="text-4xs font-semibold text-prism-muted uppercase tracking-wider leading-relaxed font-mono">
-                    Active Plan Tier: <span className="text-prism-text font-extrabold">{usage.plan.toUpperCase()}</span>
+                    Active Access: <span className="text-prism-text font-extrabold">{usage.plan.toUpperCase()}</span>
                   </p>
-                  {usage.plan === "free" && (
-                    <Link
-                      href="/pricing"
-                      className="text-4xs font-bold text-prism-accent hover:text-prism-accent/80 block mt-1 hover:underline uppercase tracking-wider font-mono"
-                    >
-                      Upgrade to Pro for Unlimited usage →
-                    </Link>
-                  )}
+                  <p className="text-4xs font-semibold text-prism-muted mt-1 leading-relaxed font-mono">
+                    Quotas are enabled to control AI cost and keep responses reliable.
+                  </p>
                 </div>
               </div>
             ) : (
