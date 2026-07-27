@@ -6,6 +6,11 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkUsageLimit } from "@/lib/usage";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getHash, getCache, setCache } from "@/lib/cache";
+import { Client } from "@upstash/qstash";
+
+const qstash = new Client({
+  token: process.env.QSTASH_TOKEN || "mock_token_for_dev",
+});
 
 const requestSchema = z.object({
   learningPathId: z.string().uuid(),
@@ -93,66 +98,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ quizId: quiz.id, questions: questionsForFrontend, cached: true });
     }
 
+    // Enqueue background job to QStash
     try {
-      const result = await aiGateway.chat(
-        {
-          messages: [
-            {
-              role: "system",
-              content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization. Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
-            },
-            {
-              role: "user",
-              content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
-            },
-          ],
-          jsonMode: true,
-        },
-        userId
-      );
+      const host = req.headers.get("host") || "edumethod-ai.vercel.app";
+      const protocol = host.includes("localhost") ? "http" : "https";
+      
+      await qstash.publishJSON({
+        url: `${protocol}://${host}/api/jobs/generate-quiz`,
+        body: { learningPathId, userId },
+      });
 
-      const aiText = result.text;
-
-      let aiData;
-      try {
-        aiData = JSON.parse(aiText || "{}");
-      } catch {
-        return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      }
-
-      const validated = quizSchema.safeParse(aiData);
-      if (!validated.success) {
-        return NextResponse.json({ error: "AI response format mismatch" }, { status: 500 });
-      }
-
-      const { data: quiz, error: insertError } = await supabaseAdmin
-        .from("quizzes")
-        .insert({
-          learning_path_id: learningPathId,
-          user_id: userId,
-          questions: validated.data.questions,
-        })
-        .select()
-        .single();
-
-      if (insertError) {
-        return NextResponse.json({ error: insertError.message }, { status: 500 });
-      }
-
-      // Write plan to cache
-      await setCache(cacheKey, validated.data);
-
-      const questionsForFrontend = validated.data.questions.map((q) => ({
-        question: q.question,
-        options: q.options,
-        topic: q.topic,
-      }));
-
-      return NextResponse.json({ quizId: quiz.id, questions: questionsForFrontend });
-    } catch (aiError: any) {
-      console.error("AI Gateway error in quiz generation:", aiError);
+      return NextResponse.json({ status: "processing" }, { status: 202 });
+    } catch (jobError: any) {
+      console.error("QStash enqueue error:", jobError);
       return NextResponse.json(
-        { error: aiError.message || "AI service is busy. Please try again in a moment." },
+        { error: "Failed to queue quiz generation task." },
         { status: 500 }
       );
     }

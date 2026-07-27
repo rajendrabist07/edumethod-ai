@@ -6,6 +6,11 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { checkUsageLimit } from "@/lib/usage";
 import { getHash, getCache, setCache } from "@/lib/cache";
+import { Client } from "@upstash/qstash";
+
+const qstash = new Client({
+  token: process.env.QSTASH_TOKEN || "mock_token_for_dev",
+});
 
 const requestSchema = z.object({
   learningPathId: z.string().uuid(),
@@ -83,55 +88,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ plan: cachedPlan, cached: true });
     }
 
+    // Enqueue background job to QStash
     try {
-      const result = await aiGateway.chat(
-        {
-          messages: [
-            {
-              role: "system",
-              content: `You are a learning science expert. Given a list of topics with difficulty and estimated hours, create an optimal 7-day study plan using interleaving (mix related topics), spaced repetition principles, and active recall methods. Return ONLY valid JSON in this exact format: { "days": [{ "day": number, "topics": string[], "method": string, "durationMinutes": number, "hack": string }] }. "method" should describe the study technique for that day (e.g. "Active recall with flashcards"). "hack" should be one practical tip/mnemonic for that day's topics.`,
-            },
-            {
-              role: "user",
-              content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
-            },
-          ],
-          jsonMode: true,
-        },
-        userId
-      );
+      // In local dev, you might want to call the AI directly or use ngrok.
+      // Assuming production/Vercel:
+      const host = req.headers.get("host") || "edumethod-ai.vercel.app";
+      const protocol = host.includes("localhost") ? "http" : "https";
+      
+      await qstash.publishJSON({
+        url: `${protocol}://${host}/api/jobs/generate-path`,
+        body: { learningPathId, userId },
+      });
 
-      const aiText = result.text;
-
-      let aiData;
-      try {
-        aiData = JSON.parse(aiText || "{}");
-      } catch {
-        return NextResponse.json({ error: "AI returned invalid JSON" }, { status: 500 });
-      }
-
-      const validated = planSchema.safeParse(aiData);
-      if (!validated.success) {
-        return NextResponse.json({ error: "AI response format mismatch" }, { status: 500 });
-      }
-
-      const { error: updateError } = await supabaseAdmin
-        .from("learning_paths")
-        .update({ learning_plan: validated.data })
-        .eq("id", learningPathId);
-
-      if (updateError) {
-        return NextResponse.json({ error: updateError.message }, { status: 500 });
-      }
-
-      // Write plan to cache
-      await setCache(cacheKey, validated.data);
-
-      return NextResponse.json({ plan: validated.data });
-    } catch (aiError: any) {
-      console.error("AI Gateway error in plan generation:", aiError);
+      return NextResponse.json({ status: "processing" }, { status: 202 });
+    } catch (jobError: any) {
+      console.error("QStash enqueue error:", jobError);
       return NextResponse.json(
-        { error: aiError.message || "AI service is busy. Please try again in a moment." },
+        { error: "Failed to queue generation task." },
         { status: 500 }
       );
     }

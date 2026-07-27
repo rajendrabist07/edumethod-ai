@@ -2,6 +2,7 @@ import { AIProvider, ChatOptions, VisionOptions, ProviderResult } from "./provid
 import { GroqProvider } from "./providers/groq";
 import { GeminiProvider } from "./providers/gemini";
 import { logAIRequest } from "./logger";
+import { getHash, getCache, setCache } from "@/lib/cache";
 
 export interface ModelConfig {
   provider: "groq" | "gemini";
@@ -74,6 +75,23 @@ class AIGateway {
     userId?: string | null,
     configs: ModelConfig[] = TEXT_FALLBACKS
   ): Promise<ProviderResult> {
+    const cacheKey = `ai-cache:${getHash(options.messages)}`;
+    const cachedResponse = await getCache<ProviderResult>(cacheKey);
+    if (cachedResponse) {
+      console.log("[AI Gateway]: Cache HIT for chat generation.");
+      logAIRequest({
+        userId,
+        provider: "cache",
+        model: "redis",
+        requestType: options.jsonMode ? "json" : "chat",
+        latencyMs: 10,
+        status: "success",
+        promptTokens: cachedResponse.promptTokens || 0,
+        completionTokens: cachedResponse.completionTokens || 0,
+      });
+      return cachedResponse;
+    }
+
     let lastError: any;
 
     for (let i = 0; i < configs.length; i++) {
@@ -101,6 +119,9 @@ class AIGateway {
           promptTokens: result.promptTokens,
           completionTokens: result.completionTokens,
         });
+
+        // Cache the successful generation (default 24h)
+        await setCache(cacheKey, result);
 
         return result;
       } catch (error: any) {

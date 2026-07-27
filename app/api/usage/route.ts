@@ -9,21 +9,25 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Call checkUsageLimit to retrieve status for all three action types
-    const pathUsage = await checkUsageLimit(userId, "learning_path");
-    const doubtUsage = await checkUsageLimit(userId, "doubt_message");
-    const quizUsage = await checkUsageLimit(userId, "quiz");
+    const [learningPathUsage, quizUsage, doubtUsage] = await Promise.all([
+      checkUsageLimit(userId, "learning_path"),
+      checkUsageLimit(userId, "quiz"),
+      checkUsageLimit(userId, "doubt_message"),
+    ]);
 
     return NextResponse.json({
-      plan: pathUsage.plan,
+      plan: learningPathUsage.plan,
       usage: {
-        learning_path: { current: pathUsage.current, limit: pathUsage.limit },
-        doubt_message: { current: doubtUsage.current, limit: doubtUsage.limit },
-        quiz: { current: quizUsage.current, limit: quizUsage.limit },
+        learning_path: learningPathUsage,
+        quiz: quizUsage,
+        doubt_message: doubtUsage,
       },
     });
-  } catch (err) {
-    console.error("Usage fetch API error:", err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  } catch (error) {
+    console.error("Usage endpoint error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch usage statistics" },
+      { status: 500 }
+    );
   }
 }

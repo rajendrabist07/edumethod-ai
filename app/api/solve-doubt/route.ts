@@ -5,6 +5,7 @@ import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
 import { checkUsageLimit } from "@/lib/usage";
+import { runCognitivePipeline } from "@/lib/ai/cognitive-pipeline";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getEmbedding } from "@/lib/ai/embeddings";
 
@@ -248,16 +249,22 @@ Follow these rules strictly for VOICE MODE:
         async start(controller) {
           let fullResponseText = "";
           try {
-            await aiGateway.chatStream(
-              {
-                messages: messagesToSend,
-              },
-              (chunk) => {
-                fullResponseText += chunk;
-                controller.enqueue(encoder.encode(chunk));
-              },
-              userId
-            );
+            // Run the multi-step cognitive pipeline (Strategist -> Generator -> Verifier)
+            const pipelineResultText = await runCognitivePipeline({
+              message,
+              history,
+              context: typeof contextText !== "undefined" ? contextText : "",
+              userId,
+            });
+
+            // Synthetically chunk the verified response to simulate streaming for the UI
+            fullResponseText = pipelineResultText;
+            const chunkSize = 20;
+            for (let i = 0; i < pipelineResultText.length; i += chunkSize) {
+              const chunk = pipelineResultText.slice(i, i + chunkSize);
+              controller.enqueue(encoder.encode(chunk));
+              await new Promise((r) => setTimeout(r, 5)); // tiny delay for typewriter effect
+            }
 
             const finalMessages = [...updatedMessagesWithUser, { role: "assistant", content: fullResponseText }];
             await supabaseAdmin
