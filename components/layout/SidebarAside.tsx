@@ -12,7 +12,8 @@ import {
   MasteryMapIcon,
   FlashcardsIcon,
   StudyRoomsIcon,
-  FlameIcon
+  FlameIcon,
+  TeacherIcon
 } from "@/components/icons";
 
 interface HistoryItem {
@@ -268,6 +269,17 @@ export function SidebarAside() {
 
         <div className="grid grid-cols-2 gap-1.5">
           <Link
+            href="/mastery-map"
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+              pathname === "/mastery-map"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
+            }`}
+            onClick={handleLinkClick}
+          >
+            <MasteryMapIcon size={14} className="mb-0.5" /> Mastery
+          </Link>
+          <Link
             href="/textbook-chat"
             className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
               pathname === "/textbook-chat"
@@ -278,6 +290,9 @@ export function SidebarAside() {
           >
             <TextbookChatIcon size={14} className="mb-0.5" /> RAG Chat
           </Link>
+        </div>
+
+        <div className="grid grid-cols-3 gap-1.5">
           <Link
             href="/feynman"
             className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
@@ -288,6 +303,28 @@ export function SidebarAside() {
             onClick={handleLinkClick}
           >
             <FlameIcon size={14} className="mb-0.5" /> Feynman
+          </Link>
+          <Link
+            href="/study-rooms"
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+              pathname === "/study-rooms"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
+            }`}
+            onClick={handleLinkClick}
+          >
+            <StudyRoomsIcon size={14} className="mb-0.5" /> Rooms
+          </Link>
+          <Link
+            href="/cohorts"
+            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+              pathname === "/cohorts"
+                ? "bg-prism-accent/10 text-prism-text"
+                : "text-prism-muted hover:text-prism-text"
+            }`}
+            onClick={handleLinkClick}
+          >
+            <TeacherIcon size={14} className="mb-0.5" /> Cohorts
           </Link>
         </div>
       </div>
