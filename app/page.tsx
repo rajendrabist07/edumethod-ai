@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { BrandMark } from "./components/brand-mark";
 import { ThemeToggle } from "./components/theme-toggle";
 import { DocumentPasteIcon } from "@/components/icons/DocumentPasteIcon";
@@ -78,11 +77,11 @@ export default function Home() {
         {/* Hero Section */}
         <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
           <div className="space-y-8 text-center lg:text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-200/60 bg-blue-50/50 px-4 py-1.5 text-xs font-semibold text-blue-600 shadow-sm backdrop-blur-sm dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-400">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500"></span>
-              AI-Powered Learning Platform
+            <span className="inline-flex items-center gap-2 rounded-full border border-prism-border bg-prism-surface/70 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-prism-accent shadow-sm backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--scholar-leaf)]"></span>
+              Learning Intelligence Workspace
             </span>
-            <h1 className="bg-gradient-to-r from-prism-text via-prism-accent to-indigo-600 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent sm:text-5xl lg:text-6xl font-display">
+            <h1 className="edu-brand-text text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl font-display">
               Turn any syllabus into a clearer study path.
             </h1>
             <p className="mx-auto max-w-2xl text-sm leading-7 text-prism-muted sm:text-base lg:mx-0">
@@ -101,16 +100,16 @@ export default function Home() {
 
             {/* Social Proof badges */}
             <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-2.5">
-              <StatBadge label="⚡ Powered by Groq + Gemini" value="" />
-              <StatBadge label="📅 7-Day Adaptive Plans" value="" />
-              <StatBadge label="👁️ Multimodal Input" value="" />
+              <StatBadge label="Groq + Gemini Gateway" value="" />
+              <StatBadge label="Adaptive 7-Day Plans" value="" />
+              <StatBadge label="Multimodal Tutor" value="" />
             </div>
           </div>
 
-          {/* Premium UI Mockup Preview */}
+          {/* UI Mockup Preview */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             {/* LCP Optimization: Heavy CSS blur removed in favor of faster shadow composition */}
-            <div className="glass-card relative rounded-[2rem] p-6 shadow-[0_0_60px_-15px_rgba(59,130,246,0.3)] dark:shadow-[0_0_60px_-15px_rgba(59,130,246,0.15)]">
+            <div className="edu-card relative p-6">
               
               {/* Window Controls */}
               <div className="mb-6 flex items-center justify-between border-b border-prism-border/50 pb-4">
@@ -119,7 +118,7 @@ export default function Home() {
                   <div className="h-3 w-3 rounded-full bg-yellow-400"></div>
                   <div className="h-3 w-3 rounded-full bg-green-400"></div>
                 </div>
-                <StatBadge label="⚡ Live AI Preview" value="" variant="accent" />
+                <StatBadge label="Live AI Preview" value="" variant="accent" />
               </div>
 
               {/* Mock Content */}
@@ -129,7 +128,7 @@ export default function Home() {
                     <p className="text-2xs font-semibold uppercase tracking-[0.2em] text-prism-muted">Subject</p>
                     <p className="text-lg font-bold text-prism-text">Quantum Physics</p>
                   </div>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-prism-accent text-white shadow-md">
+                  <div className="edu-icon-tile h-10 w-10">
                     <ChatSparkIcon size={18} />
                   </div>
                 </div>

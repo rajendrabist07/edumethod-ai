@@ -7,34 +7,61 @@ interface LogoProps {
 }
 
 export function Logo({ size = 32, className = "", colored = true }: LogoProps) {
-  const coolFill = colored ? "url(#prism-cool)" : "currentColor";
-  const warmFill = colored ? "url(#prism-warm)" : "currentColor";
-
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       xmlns="http://www.w3.org/2000/svg"
       className={`select-none ${className}`}
       aria-hidden="true"
     >
-      <path d="M4 18L12 20L12 9L4 7Z" fill={colored ? coolFill : "none"} stroke={colored ? "none" : "currentColor"} opacity={colored ? 0.9 : 1} />
-      <path d="M20 18L12 20L12 9L20 7Z" fill={colored ? warmFill : "none"} stroke={colored ? "none" : "currentColor"} opacity={colored ? 0.9 : 1} />
-      {/* If colored, draw the outline over the fills for crispness */}
-      {colored && (
-        <>
-          <path d="M4 18L12 20L12 9L4 7Z" />
-          <path d="M20 18L12 20L12 9L20 7Z" />
-        </>
-      )}
-      <path d="M12 16L12 2" strokeWidth="2" />
-      <path d="M8 6L12 2L16 6" strokeWidth="2" />
+      <defs>
+        <linearGradient id="edumethod-book" x1="4" y1="8" x2="28" y2="26" gradientUnits="userSpaceOnUse">
+          <stop stopColor={colored ? "#0F8B8D" : "currentColor"} />
+          <stop offset="0.55" stopColor={colored ? "#2BA84A" : "currentColor"} />
+          <stop offset="1" stopColor={colored ? "#D9952F" : "currentColor"} />
+        </linearGradient>
+      </defs>
+      <path
+        d="M5.2 8.8C8.5 8.2 11.7 8.8 16 11.1v14.2C12 23 8.5 22.4 5.2 23.1V8.8Z"
+        fill={colored ? "url(#edumethod-book)" : "none"}
+        fillOpacity={colored ? 0.2 : 0}
+        stroke={colored ? "url(#edumethod-book)" : "currentColor"}
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M26.8 8.8C23.5 8.2 20.3 8.8 16 11.1v14.2C20 23 23.5 22.4 26.8 23.1V8.8Z"
+        fill={colored ? "url(#edumethod-book)" : "none"}
+        fillOpacity={colored ? 0.28 : 0}
+        stroke={colored ? "url(#edumethod-book)" : "currentColor"}
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16 11.1V25.3"
+        stroke={colored ? "url(#edumethod-book)" : "currentColor"}
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+      <path
+        d="M10.2 18.2L13.1 15.2L16.2 17.6L22 11.4"
+        stroke={colored ? "url(#edumethod-book)" : "currentColor"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M22 11.4V15.4H18"
+        stroke={colored ? "url(#edumethod-book)" : "currentColor"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="10.2" cy="18.2" r="1.15" fill={colored ? "#0F8B8D" : "currentColor"} />
+      <circle cx="16.2" cy="17.6" r="1.15" fill={colored ? "#2BA84A" : "currentColor"} />
     </svg>
   );
 }

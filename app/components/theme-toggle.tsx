@@ -121,7 +121,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-2 text-sm font-semibold text-[color:var(--text)] shadow-sm transition hover:border-blue-400 hover:text-blue-600"
+      className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-2 text-sm font-semibold text-[color:var(--text)] shadow-sm transition hover:border-prism-accent hover:text-prism-accent"
       aria-label="Toggle color theme"
     >
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}

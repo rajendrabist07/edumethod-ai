@@ -67,12 +67,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   }, [mobileOpen]);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-prism-base text-prism-text font-sans relative select-none">
+    <div className="edu-shell flex h-screen w-screen overflow-hidden bg-prism-base text-prism-text font-sans relative select-none">
       
-      {/* Premium floating radial ambient glow (iOS 27 style concept visual depth) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-prism-accent/8 dark:bg-prism-accent/5 filter blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse-slow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-prism-warm/6 dark:bg-prism-warm/4 filter blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse-slow-delay" />
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-prism-accent via-[color:var(--scholar-leaf)] to-prism-warm" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(var(--accent-rgb),0.07),transparent_28rem),linear-gradient(180deg,transparent,rgba(var(--accent-rgb),0.035))]" />
       </div>
       
       {/* ========================================================================= */}

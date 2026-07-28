@@ -183,7 +183,7 @@ export function SidebarAside() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-prism-base border-r border-prism-border w-[260px] text-prism-text select-none">
+    <div className="edu-topline flex flex-col h-full bg-[color:var(--sidebar-bg)] border-r border-prism-border w-[260px] text-prism-text select-none backdrop-blur-xl">
       {/* 1. Header (Logo & Collapse toggle) */}
       <div className="flex items-center justify-between px-4.5 py-4 border-b border-prism-border/50 shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2" onClick={handleLinkClick}>
@@ -220,7 +220,7 @@ export function SidebarAside() {
       <div className="p-3 border-b border-prism-border/50 shrink-0 flex flex-col gap-2">
         <Link
           href="/doubt-solver"
-          className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition duration-150 bg-prism-accent hover:bg-prism-accent/90 text-white shadow-xs active:scale-98 border border-white/5"
+          className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold transition duration-150 bg-prism-accent hover:bg-prism-accent/90 text-white shadow-sm active:scale-98 border border-white/10"
           onClick={handleLinkClick}
         >
           <span className="flex items-center gap-2">
@@ -234,10 +234,10 @@ export function SidebarAside() {
         <div className="grid grid-cols-3 gap-1.5">
           <Link
             href="/dashboard"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-0.5 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-0.5 ${
               pathname === "/dashboard"
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >
@@ -245,10 +245,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/upload"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-0.5 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-0.5 ${
               pathname === "/upload"
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >
@@ -256,10 +256,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/flashcards"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-0.5 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-0.5 ${
               pathname.startsWith("/flashcards")
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >
@@ -270,10 +270,10 @@ export function SidebarAside() {
         <div className="grid grid-cols-2 gap-1.5">
           <Link
             href="/mastery-map"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
               pathname === "/mastery-map"
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >
@@ -281,10 +281,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/textbook-chat"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
               pathname === "/textbook-chat"
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >
@@ -295,10 +295,10 @@ export function SidebarAside() {
         <div className="grid grid-cols-3 gap-1.5">
           <Link
             href="/feynman"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
               pathname === "/feynman"
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >
@@ -306,10 +306,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/study-rooms"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
               pathname === "/study-rooms"
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >
@@ -317,10 +317,10 @@ export function SidebarAside() {
           </Link>
           <Link
             href="/cohorts"
-            className={`flex items-center justify-center p-2 rounded-xl border border-prism-border hover:bg-prism-accent/5 transition text-[10px] font-bold gap-1 ${
+            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
               pathname === "/cohorts"
-                ? "bg-prism-accent/10 text-prism-text"
-                : "text-prism-muted hover:text-prism-text"
+                ? "edu-action-active"
+                : "text-prism-muted"
             }`}
             onClick={handleLinkClick}
           >

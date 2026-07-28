@@ -7,6 +7,7 @@ import { ThemeToggle } from "../../components/theme-toggle";
 import { BrandMark } from "../../components/brand-mark";
 import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
+import { SettingsIcon } from "@/components/icons/SettingsIcon";
 
 interface UsageLimits {
   plan: "standard";
@@ -110,7 +111,7 @@ export default function DashboardPage() {
         <div className="glass-prism rounded-3xl p-6 shadow-sm sm:p-8 relative overflow-hidden">
           <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-gradient-to-l from-prism-accent/5 to-transparent pointer-events-none" />
           <h1 className="text-2xl font-black sm:text-3xl lg:text-4xl font-display">
-            Welcome Back, <span className="bg-gradient-to-r from-prism-accent to-blue-400 bg-clip-text text-transparent">{firstName}</span>!
+            Welcome Back, <span className="edu-brand-text">{firstName}</span>
           </h1>
           <p className="mt-2 text-xs font-semibold text-prism-muted max-w-lg leading-relaxed">
             Construct optimal study paths, check memory retention with recall assessments, and consult your step-by-step doubt-solving AI tutor.
@@ -123,10 +124,12 @@ export default function DashboardPage() {
           {/* Quick Action: New Syllabus Path */}
           <Link
             href="/upload"
-            className="glass-prism rounded-2xl p-5 shadow-sm border border-prism-border flex flex-col justify-between hover:border-prism-accent/40 hover:shadow-lg transition duration-300 hover:-translate-y-0.5"
+            className="edu-card p-5 flex flex-col justify-between transition duration-300 hover:-translate-y-0.5"
           >
-            <div>
-              <span className="text-xl">📚</span>
+            <div className="relative">
+              <span className="edu-icon-tile h-10 w-10">
+                <PathProgressIcon size={20} />
+              </span>
               <h3 className="text-sm font-black mt-3 font-display">Personalized Roadmap</h3>
               <p className="text-[10px] font-semibold text-prism-muted leading-relaxed mt-1">
                 Convert book outlines, syllabus snaps, or lecture texts into step study paths.
@@ -140,16 +143,18 @@ export default function DashboardPage() {
           {/* Quick Action: Doubt Solver */}
           <Link
             href="/doubt-solver"
-            className="glass-prism rounded-2xl p-5 shadow-sm border border-prism-border flex flex-col justify-between hover:border-prism-accent/40 hover:shadow-lg transition duration-300 hover:-translate-y-0.5"
+            className="edu-card p-5 flex flex-col justify-between transition duration-300 hover:-translate-y-0.5"
           >
-            <div>
-              <span className="text-xl">💬</span>
+            <div className="relative">
+              <span className="edu-icon-tile h-10 w-10">
+                <ChatSparkIcon size={20} />
+              </span>
               <h3 className="text-sm font-black mt-3 font-display">Doubt Solving Tutor</h3>
               <p className="text-[10px] font-semibold text-prism-muted leading-relaxed mt-1">
                 Submit raw questions, equations, or images to get detailed step-by-step guidance.
               </p>
             </div>
-            <span className="text-indigo-400 font-extrabold text-[10px] uppercase tracking-wider mt-4 block font-mono">
+            <span className="text-prism-accent font-extrabold text-[10px] uppercase tracking-wider mt-4 block font-mono">
               Consult AI Tutor →
             </span>
           </Link>
@@ -157,10 +162,12 @@ export default function DashboardPage() {
           {/* Quick Action: Usage status */}
           <Link
             href="/doubt-solver"
-            className="glass-prism rounded-2xl p-5 shadow-sm border border-prism-border flex flex-col justify-between hover:border-prism-accent/40 hover:shadow-lg transition duration-300 hover:-translate-y-0.5"
+            className="edu-card p-5 flex flex-col justify-between transition duration-300 hover:-translate-y-0.5"
           >
-            <div>
-              <span className="text-xl">⚙️</span>
+            <div className="relative">
+              <span className="edu-icon-tile h-10 w-10">
+                <SettingsIcon size={20} />
+              </span>
               <h3 className="text-sm font-black mt-3 font-display">Tutor Controls</h3>
               <p className="text-[10px] font-semibold text-prism-muted leading-relaxed mt-1">
                 Use Low, Medium, High, or Extra effort modes for faster or deeper explanations.

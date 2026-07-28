@@ -8,18 +8,18 @@ type BrandMarkProps = {
 export function BrandMark({ compact = false, className = "" }: BrandMarkProps) {
   return (
     <div className={`flex items-center gap-3 ${className}`.trim()}>
-      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 p-[1.5px] shadow-lg shadow-blue-500/15 transition-transform duration-300 hover:scale-105">
-        <div className="absolute inset-0 rounded-xl bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.4),_transparent_55%)]" />
-        <Logo size={22} className="relative text-white" colored={false} />
+      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-prism-border bg-prism-surface shadow-sm transition-transform duration-300 hover:scale-105">
+        <div className="absolute inset-x-2 top-0 h-px bg-gradient-to-r from-transparent via-prism-accent to-transparent" />
+        <Logo size={28} className="relative" />
       </div>
 
       {!compact ? (
         <div className="flex flex-col justify-center">
-          <p className="text-lg font-black tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400 font-serif">
+          <p className="edu-brand-text text-lg font-black tracking-tight font-display">
             EduMethod AI
           </p>
           <p className="text-[10px] font-bold tracking-widest text-[color:var(--muted)]">
-            AI-POWERED COGNITION
+            LEARNING INTELLIGENCE
           </p>
         </div>
       ) : null}
@@ -28,7 +28,7 @@ export function BrandMark({ compact = false, className = "" }: BrandMarkProps) {
 }
 
 export function FeatureIcon({ kind }: { kind: "spark" | "target" | "chart" }) {
-  const common = "h-5 w-5 text-blue-600 dark:text-blue-400 transition-transform duration-300 group-hover:scale-110";
+  const common = "h-5 w-5 text-prism-accent transition-transform duration-300 group-hover:scale-110";
 
   if (kind === "spark") {
     return (
