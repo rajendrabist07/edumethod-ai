@@ -19,11 +19,11 @@ export default function Error({
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-cyan-400 to-indigo-600 text-lg font-bold text-white shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-prism-surface border border-prism-border text-lg font-bold text-prism-accent shadow-lg">
               E
             </div>
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-prism-accent">
                 EduMethod AI
               </p>
             </div>
@@ -56,7 +56,7 @@ export default function Error({
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
                 onClick={reset}
-                className="rounded-full bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 transition"
+                className="rounded-full bg-prism-accent px-6 py-3 font-semibold text-white hover:bg-opacity-90 transition"
               >
                 Try Again
               </button>
@@ -70,8 +70,8 @@ export default function Error({
           </div>
         </div>
 
-        <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-950/40">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
+        <div className="mt-8 rounded-lg border border-prism-border bg-prism-surface p-4">
+          <p className="text-sm text-prism-muted">
             <strong>💡 Tip:</strong> If this error persists, try clearing your
             browser cache or reloading the page. If the problem continues,
             please contact support.

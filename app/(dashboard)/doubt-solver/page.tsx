@@ -1030,7 +1030,7 @@ export default function DoubtSolverPage() {
                 onClick={voiceState === 'idle' ? startVoiceListening : undefined}
                 className={`relative w-28 h-28 sm:w-40 sm:h-40 rounded-full transition-all duration-700 animate-morph-blob voice-orb-glow flex items-center justify-center outline-none ${
                   voiceState === 'listening'
-                    ? 'bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500'
+                    ? 'bg-gradient-to-tr from-prism-accent to-prism-warm'
                     : voiceState === 'speaking'
                     ? 'bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 animate-pulse'
                     : voiceState === 'thinking'

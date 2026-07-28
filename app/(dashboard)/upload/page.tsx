@@ -52,7 +52,7 @@ function TopicsSkeleton() {
 
 function TimelineSkeleton() {
   return (
-    <div className="relative pl-6 border-l-2 border-blue-500/10 space-y-6 animate-pulse mt-4">
+    <div className="relative pl-6 border-l-2 border-prism-accent/10 space-y-6 animate-pulse mt-4">
       {[1, 2, 3].map((i) => (
         <div key={i} className="relative opacity-65">
           {/* Timeline Dot */}
@@ -368,7 +368,7 @@ export default function UploadPage() {
 
         {/* Hero Card */}
         <div className="glass-card rounded-3xl p-6 shadow-sm sm:p-8">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-2xs font-bold uppercase tracking-wider text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-prism-surface border border-prism-border px-3 py-1 text-2xs font-bold uppercase tracking-wider text-prism-accent">
             <DocumentPasteIcon size={12} /> Core Engine
           </span>
           <h1 className="mt-3 text-2xl font-black sm:text-3xl lg:text-4xl">
@@ -395,7 +395,7 @@ export default function UploadPage() {
                 placeholder="e.g. Organic Chemistry, Quantum Mechanics, World History"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full rounded-xl border border-prism-border bg-prism-surface/70/50 px-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:bg-prism-surface focus:ring-4 focus:ring-blue-500/10"
+                className="w-full rounded-xl border border-prism-border bg-prism-surface/70 px-4 py-3 text-sm outline-none transition duration-300 focus:border-prism-accent focus:bg-prism-surface focus:ring-4 focus:ring-prism-accent/10"
                 required
               />
             </div>
@@ -409,7 +409,7 @@ export default function UploadPage() {
                 placeholder="Paste the raw text of your topics, subtopics, notes or chapters here..."
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
-                className="h-48 w-full rounded-xl border border-prism-border bg-prism-surface/70/50 px-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:bg-prism-surface focus:ring-4 focus:ring-blue-500/10 resize-y"
+                className="h-48 w-full rounded-xl border border-prism-border bg-prism-surface/70 px-4 py-3 text-sm outline-none transition duration-300 focus:border-prism-accent focus:bg-prism-surface focus:ring-4 focus:ring-prism-accent/10 resize-y"
                 required
               />
             </div>
@@ -418,7 +418,7 @@ export default function UploadPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-blue-500/30 disabled:cursor-not-allowed disabled:opacity-50 active:scale-98"
+            className="mt-6 w-full rounded-full bg-prism-accent py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:bg-opacity-90 disabled:cursor-not-allowed disabled:opacity-50 active:scale-98"
           >
             {loading ? "Analyzing syllabus text..." : "Generate Learning Structure"}
           </button>
@@ -441,7 +441,7 @@ export default function UploadPage() {
         {/* Empty State before syllabus upload */}
         {topics.length === 0 && !loading && (
           <div className="glass-card rounded-3xl p-8 text-center text-prism-muted flex flex-col items-center gap-4 justify-center">
-            <div className="p-4 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="p-4 rounded-full bg-prism-accent/10 text-prism-accent">
               <PathProgressIcon size={32} />
             </div>
             <div>
@@ -468,7 +468,7 @@ export default function UploadPage() {
               <h2 className="text-lg font-bold text-prism-text">
                 Extracted Concept Map
               </h2>
-              <span className="rounded-full bg-blue-100 px-3 py-1 text-2xs font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
+              <span className="rounded-full bg-prism-surface border border-prism-border px-3 py-1 text-2xs font-bold text-prism-text">
                 {topics.length} Modules
               </span>
             </div>
@@ -497,7 +497,7 @@ export default function UploadPage() {
                         </span>
                       </div>
                       <p className="mt-2 text-2xs text-prism-muted flex items-center gap-1.5">
-                        <SpacedRepetitionIcon size={12} className="text-blue-500" /> Estimated time: <span className="font-bold text-prism-text">{topic.estimatedHours} hours</span>
+                        <SpacedRepetitionIcon size={12} className="text-prism-accent" /> Estimated time: <span className="font-bold text-prism-text">{topic.estimatedHours} hours</span>
                       </p>
                     </div>
 
@@ -514,11 +514,11 @@ export default function UploadPage() {
                           type="button"
                           onClick={() => handleGenerateCardsForTopic(topic.name)}
                           disabled={generatingCardsTopic === topic.name}
-                          className="text-3xs font-black text-blue-600 hover:text-blue-700 hover:underline uppercase tracking-widest flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                          className="text-3xs font-black text-prism-accent hover:text-opacity-80 hover:underline uppercase tracking-widest flex items-center gap-1 disabled:opacity-50 cursor-pointer"
                         >
                           {generatingCardsTopic === topic.name ? (
                             <>
-                              <span className="h-2.5 w-2.5 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
+                              <span className="h-2.5 w-2.5 rounded-full border-2 border-t-prism-accent border-r-transparent animate-spin"></span>
                               Creating...
                             </>
                           ) : (
@@ -549,23 +549,23 @@ export default function UploadPage() {
         {plan.length > 0 && (
           <div className="glass-card rounded-3xl p-6 shadow-sm">
             <h2 className="text-lg font-bold text-prism-text border-b border-prism-border/30 pb-3 mb-6 flex items-center gap-2">
-              <PathProgressIcon size={18} className="text-blue-500" /> Your 7-Day Learning Roadmap
+              <PathProgressIcon size={18} className="text-prism-accent" /> Your 7-Day Learning Roadmap
             </h2>
             
-            <div className="relative pl-6 border-l-2 border-blue-500/30 space-y-6">
+            <div className="relative pl-6 border-l-2 border-prism-accent/30 space-y-6">
               {plan.map((day) => (
                 <div key={day.day} className="relative group">
                   {/* Timeline Indicator Dot */}
-                  <div className="absolute -left-[31px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-prism-surface/70 border-2 border-blue-500 transition-all duration-300 group-hover:bg-blue-500">
-                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500 group-hover:bg-white"></div>
+                  <div className="absolute -left-[31px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-prism-surface/70 border-2 border-prism-accent transition-all duration-300 group-hover:bg-prism-accent">
+                    <div className="h-1.5 w-1.5 rounded-full bg-prism-accent group-hover:bg-white"></div>
                   </div>
 
                   <div className="glass-card glass-card-hover rounded-2xl p-5">
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-prism-border/30 pb-2 mb-2.5">
-                      <p className="font-extrabold text-sm text-blue-600 dark:text-blue-400">
+                      <p className="font-extrabold text-sm text-prism-accent">
                         Day {day.day}
                       </p>
-                      <span className="rounded-full bg-blue-50 px-2 py-0.5 text-3xs font-extrabold text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+                      <span className="rounded-full bg-prism-surface border border-prism-border px-2 py-0.5 text-3xs font-extrabold text-prism-text">
                         {day.durationMinutes} minutes
                       </span>
                     </div>
@@ -579,7 +579,7 @@ export default function UploadPage() {
                         <span className="font-semibold text-prism-muted">Methodology: </span>
                         <span className="font-medium text-prism-text">{day.method}</span>
                       </div>
-                      <div className="mt-3 rounded-xl bg-blue-50/60 p-3 text-xs italic text-blue-800 dark:bg-blue-950/20 dark:text-blue-300 border border-blue-100/50 dark:border-blue-900/20 flex items-start gap-1.5">
+                      <div className="mt-3 rounded-xl bg-prism-accent/10 p-3 text-xs italic text-prism-accent border border-prism-accent/20 flex items-start gap-1.5">
                         <ChatSparkIcon size={14} className="text-amber-500 shrink-0 mt-0.5" />
                         <div>
                           <span className="font-bold">Mnemonic / Tip:</span> {day.hack}
@@ -692,14 +692,14 @@ export default function UploadPage() {
         {quizResult && (
           <div className="glass-card rounded-3xl p-6 shadow-lg">
             <h2 className="text-lg font-bold text-prism-text border-b border-prism-border/30 pb-3 mb-5 flex items-center gap-2">
-              <QuizTargetIcon size={18} className="text-blue-500" /> Active Recall Assessment Report
+              <QuizTargetIcon size={18} className="text-prism-accent" /> Active Recall Assessment Report
             </h2>
 
             <div className="grid gap-6 sm:grid-cols-[1fr_2fr] items-center">
               {/* Score Display Ring */}
               <div className="flex flex-col items-center justify-center rounded-2xl bg-prism-surface/70/50 p-6 text-center">
                 <p className="text-xs font-bold uppercase tracking-wider text-prism-muted">Your Score</p>
-                <div className="mt-2 text-5xl font-black text-blue-600 dark:text-blue-400">
+                <div className="mt-2 text-5xl font-black text-prism-accent">
                   {quizResult.score} <span className="text-xl text-prism-muted">/ {quizResult.totalQuestions}</span>
                 </div>
                 <p className="mt-2 text-2xs font-semibold text-prism-muted">
@@ -740,11 +740,11 @@ export default function UploadPage() {
                                   type="button"
                                   onClick={() => handleGenerateCardsForTopic(topic)}
                                   disabled={generatingCardsTopic === topic}
-                                  className="text-4xs font-black text-blue-500 hover:text-blue-600 uppercase tracking-widest hover:underline disabled:opacity-50 cursor-pointer flex items-center gap-0.5"
+                                  className="text-4xs font-black text-prism-accent hover:text-opacity-80 uppercase tracking-widest hover:underline disabled:opacity-50 cursor-pointer flex items-center gap-0.5"
                                 >
                                   {generatingCardsTopic === topic ? (
                                     <>
-                                      <span className="h-2 w-2 rounded-full border border-t-blue-500 border-r-transparent animate-spin"></span>
+                                      <span className="h-2 w-2 rounded-full border border-t-prism-accent border-r-transparent animate-spin"></span>
                                       Creating...
                                     </>
                                   ) : (

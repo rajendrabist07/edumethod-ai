@@ -181,7 +181,7 @@ export default function FeynmanPlaygroundPage() {
                   <button
                     type="submit"
                     disabled={loading || !topicName.trim() || !explanation.trim() || !selectedPathId}
-                    className="flex-1 rounded-full bg-gradient-to-r from-prism-accent to-blue-500 py-3 text-2xs font-extrabold uppercase tracking-widest text-prism-base hover:shadow-lg transition font-mono flex items-center justify-center gap-1.5 disabled:opacity-50"
+                    className="flex-1 rounded-full bg-prism-accent py-3 text-2xs font-extrabold uppercase tracking-widest text-white hover:shadow-lg transition font-mono flex items-center justify-center gap-1.5 disabled:opacity-50 hover:bg-opacity-90"
                   >
                     {loading ? (
                       <>

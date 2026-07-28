@@ -105,10 +105,10 @@ export default function FlashcardsDashboardPage() {
 
         {/* Hero Banner Card */}
         <div className="glass-card rounded-3xl p-6 shadow-sm sm:p-8 relative overflow-hidden">
-          <div className="absolute -right-16 -bottom-16 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -right-16 -bottom-16 w-48 h-48 bg-prism-accent/10 rounded-full blur-2xl pointer-events-none" />
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-2xs font-bold uppercase tracking-wider text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
-              <SpacedRepetitionIcon size={12} className="text-blue-500" /> Spaced Repetition Engine
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-prism-surface px-3 py-1 text-2xs font-bold uppercase tracking-wider text-prism-accent border border-prism-border">
+              <SpacedRepetitionIcon size={12} className="text-prism-accent" /> Spaced Repetition Engine
             </span>
             {totalDue > 0 && (
               <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-2xs font-extrabold uppercase tracking-wide text-amber-600 dark:bg-amber-950/50 dark:text-amber-400 animate-pulse">
@@ -133,7 +133,7 @@ export default function FlashcardsDashboardPage() {
               placeholder="Search your decks by subject or topic name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-2xl border border-prism-border bg-prism-surface pl-11 pr-4 py-3 text-sm outline-none transition duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+              className="w-full rounded-2xl border border-prism-border bg-prism-surface pl-11 pr-4 py-3 text-sm outline-none transition duration-300 focus:border-prism-accent focus:ring-4 focus:ring-prism-accent/10"
             />
           </div>
         )}
@@ -154,8 +154,8 @@ export default function FlashcardsDashboardPage() {
         ) : decks.length === 0 ? (
           // Empty State
           <div className="glass-card rounded-3xl p-10 text-center flex flex-col items-center gap-5 justify-center">
-            <div className="p-5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
-              <SpacedRepetitionIcon size={40} className="text-blue-500" />
+            <div className="p-5 rounded-full bg-prism-accent/10 text-prism-accent">
+              <SpacedRepetitionIcon size={40} className="text-prism-accent" />
             </div>
             <div>
               <h3 className="font-extrabold text-base text-prism-text">Your Flashcards Library is Empty</h3>
@@ -165,7 +165,7 @@ export default function FlashcardsDashboardPage() {
             </div>
             <Link
               href="/upload"
-              className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-xs font-bold text-white shadow-md hover:shadow-lg transition duration-200"
+              className="rounded-full bg-prism-accent px-6 py-3 text-xs font-bold text-white shadow-md hover:shadow-lg transition duration-200 hover:bg-opacity-90"
             >
               Analyze a Syllabus
             </Link>
@@ -187,7 +187,7 @@ export default function FlashcardsDashboardPage() {
               >
                 <div>
                   <div className="flex justify-between items-start gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-blue-500 truncate max-w-[70%]">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-prism-accent truncate max-w-[70%]">
                       {deck.subject}
                     </span>
                     
@@ -224,7 +224,7 @@ export default function FlashcardsDashboardPage() {
                     </button>
                     <Link
                       href={`/flashcards/${deck.id}`}
-                      className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-2xs font-extrabold text-white shadow-md hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg transition duration-200 flex items-center gap-1"
+                      className="rounded-full bg-prism-accent px-4 py-2 text-2xs font-extrabold text-white shadow-md hover:bg-opacity-90 transition duration-200 flex items-center gap-1"
                     >
                       <Play size={10} fill="currentColor" /> Study
                     </Link>

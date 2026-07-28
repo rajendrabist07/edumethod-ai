@@ -161,7 +161,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
   if (loading) {
     return (
       <div className="flex-grow flex items-center justify-center h-screen bg-prism-base">
-        <span className="h-6 w-6 rounded-full border-2 border-t-blue-500 border-r-transparent animate-spin"></span>
+        <span className="h-6 w-6 rounded-full border-2 border-t-prism-accent border-r-transparent animate-spin"></span>
       </div>
     );
   }
@@ -248,7 +248,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                 {[
                   { label: "Again", count: sessionStats.again, color: "text-red-400 bg-red-500/5 border-red-500/15" },
                   { label: "Hard", count: sessionStats.hard, color: "text-prism-warm bg-prism-warm/5 border-prism-warm/15" },
-                  { label: "Good", count: sessionStats.good, color: "text-blue-400 bg-blue-500/5 border-blue-500/15" },
+                  { label: "Good", count: sessionStats.good, color: "text-prism-accent bg-prism-accent/5 border-prism-accent/15" },
                   { label: "Easy", count: sessionStats.easy, color: "text-prism-accent bg-prism-accent/5 border-prism-accent/15" },
                 ].map((stat, i) => (
                   <div key={i} className={`flex flex-col items-center justify-center p-2 rounded-xl border font-mono ${stat.color}`}>
@@ -267,7 +267,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                 </button>
                 <Link
                   href="/flashcards"
-                  className="rounded-full bg-gradient-to-r from-prism-accent to-blue-500 px-6 py-3.5 text-xs font-bold text-prism-base shadow-md hover:shadow-lg transition duration-200 text-center font-mono"
+                  className="rounded-full bg-prism-accent px-6 py-3.5 text-xs font-bold text-white shadow-md hover:shadow-lg transition duration-200 text-center font-mono hover:bg-opacity-90"
                 >
                   Back to Library
                 </Link>
@@ -375,7 +375,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                 <motion.button
                   key="reveal"
                   onClick={() => setIsFlipped(true)}
-                  className="w-full max-w-xs rounded-full bg-gradient-to-r from-prism-accent to-blue-500 py-3.5 text-xs font-bold text-prism-base shadow-lg hover:shadow-xl transition-all duration-200 active:scale-97 flex items-center justify-center gap-1.5 font-mono"
+                  className="w-full max-w-xs rounded-full bg-prism-accent py-3.5 text-xs font-bold text-white shadow-lg hover:shadow-xl transition-all duration-200 active:scale-97 flex items-center justify-center gap-1.5 font-mono hover:bg-opacity-90"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -408,7 +408,7 @@ export default function FlashcardsReviewPage({ params }: { params: Promise<PageP
                       label: "Good",
                       desc: "Correct",
                       rating: "good" as const,
-                      className: "bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white border-blue-500/30",
+                      className: "bg-prism-accent/10 hover:bg-prism-accent text-prism-accent hover:text-white border-prism-accent/30",
                     },
                     {
                       label: "Easy",
