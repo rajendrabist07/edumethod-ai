@@ -14,7 +14,7 @@ export default async function Image() {
     (
       <div
         style={{
-          background: 'linear-gradient(to bottom right, #030409, #1e1b4b)',
+          background: 'linear-gradient(to bottom right, #080D11, #0B1A24)',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -25,23 +25,52 @@ export default async function Image() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyItems: 'center' }}>
-          <svg width="180" height="180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <svg width="220" height="220" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="prism-cool" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#3b82f6" />
-                <stop offset="100%" stopColor="#8b5cf6" />
-              </linearGradient>
-              <linearGradient id="prism-warm" x1="100%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ec4899" />
-                <stop offset="100%" stopColor="#8b5cf6" />
+              <linearGradient id="edumethod-book" x1="4" y1="8" x2="28" y2="26" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#0F8B8D" />
+                <stop offset="0.55" stopColor="#2BA84A" />
+                <stop offset="1" stopColor="#D9952F" />
               </linearGradient>
             </defs>
-            <path d="M4 18L12 20L12 9L4 7Z" fill="url(#prism-cool)" stroke="none" opacity="0.9" />
-            <path d="M20 18L12 20L12 9L20 7Z" fill="url(#prism-warm)" stroke="none" opacity="0.9" />
-            <path d="M4 18L12 20L12 9L4 7Z" stroke="#F8FAFC" />
-            <path d="M20 18L12 20L12 9L20 7Z" stroke="#F8FAFC" />
-            <path d="M12 16L12 2" stroke="#F8FAFC" strokeWidth="2" />
-            <path d="M8 6L12 2L16 6" stroke="#F8FAFC" strokeWidth="2" />
+            <path
+              d="M5.2 8.8C8.5 8.2 11.7 8.8 16 11.1v14.2C12 23 8.5 22.4 5.2 23.1V8.8Z"
+              fill="url(#edumethod-book)"
+              fillOpacity={0.2}
+              stroke="url(#edumethod-book)"
+              strokeWidth="1.7"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M26.8 8.8C23.5 8.2 20.3 8.8 16 11.1v14.2C20 23 23.5 22.4 26.8 23.1V8.8Z"
+              fill="url(#edumethod-book)"
+              fillOpacity={0.28}
+              stroke="url(#edumethod-book)"
+              strokeWidth="1.7"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M16 11.1V25.3"
+              stroke="url(#edumethod-book)"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M10.2 18.2L13.1 15.2L16.2 17.6L22 11.4"
+              stroke="url(#edumethod-book)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M22 11.4V15.4H18"
+              stroke="url(#edumethod-book)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="10.2" cy="18.2" r="1.15" fill="#0F8B8D" />
+            <circle cx="16.2" cy="17.6" r="1.15" fill="#2BA84A" />
           </svg>
         </div>
         
@@ -61,7 +90,7 @@ export default async function Image() {
           <p
             style={{
               fontSize: 36,
-              color: '#94A3B8',
+              color: '#A7B2BA',
               marginTop: 16,
               textAlign: 'center',
               fontWeight: 600,
@@ -73,8 +102,8 @@ export default async function Image() {
         </div>
         
         {/* Decorative Prism Glows */}
-        <div style={{ position: 'absolute', top: -200, left: -200, width: 600, height: 600, background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', bottom: -200, right: -200, width: 600, height: 600, background: 'radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', top: -200, left: -200, width: 600, height: 600, background: 'radial-gradient(circle, rgba(15, 139, 141, 0.25) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', bottom: -200, right: -200, width: 600, height: 600, background: 'radial-gradient(circle, rgba(217, 149, 47, 0.2) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }} />
       </div>
     ),
     {

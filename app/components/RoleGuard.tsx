@@ -9,17 +9,31 @@ interface RoleGuardProps {
 }
 
 export async function RoleGuard({ allowedRoles, children, fallback = null }: RoleGuardProps) {
-  const { userId } = await auth();
+  const { userId, sessionClaims } = await auth();
   if (!userId) return fallback;
 
   try {
-    const { data } = await supabaseAdmin
-      .from("user_profiles")
-      .select("role")
-      .eq("user_id", userId)
-      .single();
+    // Try Clerk session claims first (instant)
+    const sessionRole = (sessionClaims?.metadata as any)?.role || (sessionClaims?.publicMetadata as any)?.role;
+    let role = sessionRole;
 
-    const role = data?.role || "student";
+    // Fallback to fetching directly from Clerk if session claims don't have it
+    if (!role) {
+      const { clerkClient } = await import('@clerk/nextjs/server');
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+      role = user.publicMetadata?.role as string;
+    }
+
+    // Ultimate fallback to DB
+    if (!role) {
+      const { data } = await supabaseAdmin
+        .from("user_profiles")
+        .select("role")
+        .eq("user_id", userId)
+        .single();
+      role = data?.role || "student";
+    }
 
     if (allowedRoles.includes(role)) {
       return <>{children}</>;
