@@ -27,7 +27,7 @@ export async function runCognitivePipeline({
       ],
     },
     userId,
-    [{ provider: "groq", model: "llama3-8b-8192" }] // Extremely fast model for strategy
+    [{ provider: "groq", model: "llama-3.1-8b-instant" }] // Extremely fast model for strategy
   );
 
   const strategy = strategyResult.text;
@@ -74,7 +74,7 @@ export async function runCognitivePipeline({
       jsonMode: true,
     },
     userId,
-    [{ provider: "groq", model: "llama3-8b-8192" }]
+    [{ provider: "groq", model: "llama-3.1-8b-instant" }]
   );
 
   let passed = true;

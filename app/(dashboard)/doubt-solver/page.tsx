@@ -572,15 +572,15 @@ export default function DoubtSolverPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col text-prism-text overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
-      {/* Ambient study surface */}
+    <main className="relative h-full flex flex-col text-prism-text overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
+      {/* Background ambient lighting */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.06)_1px,transparent_1px)] bg-[size:42px_42px] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.045)_1px,transparent_1px)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.10),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.72),rgba(248,250,252,0.92))] dark:bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.16),transparent_40%),linear-gradient(180deg,rgba(10,10,10,0.84),rgba(10,10,10,0.96))]" />
       </div>
       
       {/* Main Chat Panel Area */}
-      <div className="flex-1 flex flex-col h-screen min-w-0 relative z-10">
+      <div className="flex-1 flex flex-col h-full min-w-0 relative z-10">
         
         {/* Navigation Header */}
         <header className="flex shrink-0 items-center justify-between px-5 py-4 bg-prism-surface border-b border-prism-border z-20 transition-colors">
@@ -1079,7 +1079,7 @@ export default function DoubtSolverPage() {
             className="hidden"
           />
 
-          <div className="relative flex flex-col bg-prism-surface backdrop-blur-xl border border-prism-border focus-within:border-prism-accent/40 focus-within:ring-2 focus-within:ring-prism-accent/20 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden p-2.5">
+          <div className="relative flex flex-col bg-prism-surface backdrop-blur-xl border border-prism-border rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden p-2.5">
             
             {/* Image Preview Area */}
             {previewUrl && (
@@ -1141,7 +1141,7 @@ export default function DoubtSolverPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={imageFile ? "Image details..." : "Ask your doubt..."}
-                className="flex-1 bg-transparent border-none outline-none resize-none min-h-[40px] py-2.5 text-prism-text placeholder-slate-500/80 text-sm font-medium"
+                className="flex-1 bg-transparent border-none outline-none resize-none min-h-[40px] py-2.5 text-prism-text placeholder-slate-500/80 text-sm font-medium focus:ring-0 focus:border-none focus:outline-none"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
