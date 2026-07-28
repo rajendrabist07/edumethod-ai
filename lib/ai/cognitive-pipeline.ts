@@ -52,7 +52,7 @@ export async function runCognitivePipeline({
       ],
     },
     userId,
-    [{ provider: "groq", model: "llama3-70b-8192" }, { provider: "gemini", model: "gemini-1.5-flash" }]
+    [{ provider: "groq", model: "llama-3.3-70b-versatile" }, { provider: "gemini", model: "gemini-1.5-flash-latest" }]
   );
 
   const generatedResponse = generatorResult.text || "I'm sorry, I couldn't generate an explanation at this time.";
@@ -107,7 +107,7 @@ export async function runCognitivePipeline({
         ],
       },
       userId,
-      [{ provider: "groq", model: "llama3-70b-8192" }]
+      [{ provider: "groq", model: "llama-3.3-70b-versatile" }]
     );
     return retryResult.text || generatedResponse;
   }

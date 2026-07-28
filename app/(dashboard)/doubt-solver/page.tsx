@@ -1141,7 +1141,7 @@ export default function DoubtSolverPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={imageFile ? "Image details..." : "Ask your doubt..."}
-                className="flex-1 bg-transparent border-none outline-none resize-none min-h-[40px] py-2.5 text-prism-text placeholder-slate-500/80 text-sm font-medium focus:ring-0 focus:border-none focus:outline-none"
+                className="flex-1 bg-transparent border-0 !ring-0 focus:!ring-0 focus:!border-0 outline-none resize-none min-h-[40px] py-2.5 text-prism-text placeholder-slate-500/80 text-sm font-medium shadow-none focus:shadow-none"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
