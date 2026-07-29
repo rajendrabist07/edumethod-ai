@@ -135,34 +135,36 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
         
         {/* Sticky Header for Mobile / Tablet Viewports */}
-        <header className="flex lg:hidden shrink-0 items-center justify-between px-4 py-3 bg-prism-surface border-b border-prism-border shadow-xs z-10">
-          <div className="flex items-center gap-3">
-            <button
-              ref={mobileToggleRef}
-              onClick={() => setMobileOpen(true)}
-              aria-expanded={mobileOpen}
-              className="p-2 rounded-xl border border-prism-border hover:bg-prism-surface/70 text-prism-text transition active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent"
-              aria-label="Open Workspace Navigation Drawer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2.5"
-                stroke="currentColor"
-                className="w-4.5 h-4.5"
+        {!pathname.startsWith("/doubt-solver") && (
+          <header className="flex lg:hidden shrink-0 items-center justify-between px-4 py-3 bg-prism-surface border-b border-prism-border shadow-xs z-10">
+            <div className="flex items-center gap-3">
+              <button
+                ref={mobileToggleRef}
+                onClick={() => setMobileOpen(true)}
+                aria-expanded={mobileOpen}
+                className="p-2 rounded-xl border border-prism-border hover:bg-prism-surface/70 text-prism-text transition active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent"
+                aria-label="Open Workspace Navigation Drawer"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-            </button>
-            <div className="flex items-center gap-2">
-              <Logo size={22} />
-              <span className="text-[11px] font-black uppercase tracking-wider text-prism-accent">
-                EduMethod AI
-              </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2.5"
+                  stroke="currentColor"
+                  className="w-4.5 h-4.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+              </button>
+              <div className="flex items-center gap-2">
+                <Logo size={22} />
+                <span className="text-[11px] font-black uppercase tracking-wider text-prism-accent">
+                  EduMethod AI
+                </span>
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
         {/* Floating Desktop Expand Button (Claude / ChatGPT style panel expander) */}
         {collapsed && (

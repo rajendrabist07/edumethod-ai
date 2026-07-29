@@ -11,6 +11,7 @@ import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { useUser } from "@clerk/nextjs";
+import { useLayout } from "@/components/layout/LayoutContext";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -35,6 +36,7 @@ export default function DoubtSolverPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionIdParam = searchParams.get("sessionId");
+  const { setMobileOpen } = useLayout();
 
   const [sessionId, setSessionId] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -583,25 +585,43 @@ export default function DoubtSolverPage() {
       <div className="flex-1 flex flex-col h-full min-w-0 relative z-10">
         
         {/* Navigation Header */}
-        <header className="flex shrink-0 items-center justify-between px-5 py-4 bg-prism-surface border-b border-prism-border z-20 transition-colors">
-          <div className="flex items-center gap-3">
+        <header className="flex shrink-0 items-center justify-between px-3 sm:px-5 py-2.5 sm:py-4 bg-prism-surface border-b border-prism-border z-20 transition-colors">
+          <div className="flex items-center gap-2 lg:gap-3">
+            {/* Mobile Hamburger Drawer Toggle */}
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="p-2 mr-1 rounded-xl border border-prism-border hover:bg-prism-surface/70 text-prism-text transition active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent lg:hidden shrink-0"
+              aria-label="Open Workspace Navigation Drawer"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2.5"
+                stroke="currentColor"
+                className="w-4 h-4"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+
             {/* Logo and title */}
-            <div className="flex items-center gap-2 pl-12 lg:pl-0">
-              <Logo size={26} />
+            <div className="flex items-center gap-2">
+              <Logo size={24} className="sm:w-[26px] sm:h-[26px]" />
               <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-prism-accent">Doubt Solver</p>
-                <p className="text-[10px] text-prism-muted font-bold uppercase tracking-wider">Active Cognition</p>
+                <p className="text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.2em] text-prism-accent leading-none">Doubt Solver</p>
+                <p className="text-[9px] sm:text-[10px] text-prism-muted font-bold uppercase tracking-wider mt-0.5 leading-none">Active Cognition</p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/dashboard"
-              className="rounded-full border border-prism-border bg-prism-surface p-2 sm:px-4.5 sm:py-2 text-prism-text transition hover:bg-prism-surface/70 active:scale-95 flex items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent"
+              className="rounded-full border border-prism-border bg-prism-surface p-1.5 sm:px-4.5 sm:py-2 text-prism-text transition hover:bg-prism-surface/70 active:scale-95 flex items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent"
               title="Back to study dashboard"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4.5 w-4.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-4 w-4 sm:h-4.5 sm:w-4.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
               <span className="hidden sm:inline text-xs font-bold">Dashboard</span>
@@ -828,29 +848,33 @@ export default function DoubtSolverPage() {
                     {!isUser && (
                       <div className="flex items-center gap-1 mt-1 px-1 text-prism-muted relative select-none">
                         
-                        {/* 1. Like rating */}
+                        {/* 1. Like rating - Circle Checkmark (Green Glow) */}
                         <button
                           onClick={() => submitFeedback(i, "up")}
-                          className={`p-1 rounded-lg hover:bg-prism-surface/70 hover:text-green-500 transition duration-150 active:scale-90 ${
-                            m.feedback === "up" ? "text-green-500 bg-green-500/10" : ""
+                          className={`p-1 rounded-lg border border-transparent transition duration-150 active:scale-90 ${
+                            m.feedback === "up" 
+                              ? "text-emerald-500 bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.25)]" 
+                              : "text-prism-muted hover:bg-prism-surface/70 hover:text-emerald-500"
                           }`}
                           title="Correct/Helpful explanation"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill={m.feedback === "up" ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-3.5 w-3.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.421.068.848.068 1.285 0 1.839-.564 3.546-1.533 4.962-.486.709-1.284 1.138-2.147 1.138H13.5a3.375 3.375 0 01-3.375-3.375V10.5z" />
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </button>
 
-                        {/* 2. Dislike rating */}
+                        {/* 2. Dislike rating - Circle Cross (Red Glow) */}
                         <button
                           onClick={() => submitFeedback(i, "down")}
-                          className={`p-1 rounded-lg hover:bg-prism-surface/70 hover:text-red-500 transition duration-150 active:scale-90 ${
-                            m.feedback === "down" ? "text-red-500 bg-red-500/10" : ""
+                          className={`p-1 rounded-lg border border-transparent transition duration-150 active:scale-90 ${
+                            m.feedback === "down" 
+                              ? "text-rose-500 bg-rose-500/10 border-rose-500/20 shadow-[0_0_12px_rgba(244,63,94,0.25)]" 
+                              : "text-prism-muted hover:bg-prism-surface/70 hover:text-rose-500"
                           }`}
                           title="Incorrect/Bad explanation"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill={m.feedback === "down" ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="h-3.5 w-3.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.367 13.5c-.806 0-1.533.446-2.031 1.08a9.041 9.041 0 01-2.861 2.4c-.723.384-1.35.956-1.653 1.715a4.498 4.498 0 00-.322 1.672v.21a.75.75 0 01-.75.75 2.25 2.25 0 01-2.25-2.25c0-1.152.26-2.243.723-3.218.266-.558-.107-1.282-.725-1.282H4.374c-1.026 0-1.945-.694-2.054-1.715A12.137 12.137 0 012.25 12c0-1.839.564-3.546 1.533-4.962.486-.709 1.284-1.138 2.147-1.138H10.5a3.375 3.375 0 013.375 3.375V13.5h3.492z" />
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-3.5 w-3.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
                           </svg>
                         </button>
 
@@ -1014,40 +1038,76 @@ export default function DoubtSolverPage() {
 
             {/* Glowing Liquid Morphing Orb */}
             <div className="relative flex-1 flex flex-col items-center justify-center">
-              {/* Outer pulsing ring 1 */}
-              <div className={`absolute w-44 h-44 sm:w-60 sm:h-60 rounded-full bg-purple-500/10 blur-xl transition-transform duration-700 ${
-                voiceState === 'listening' ? 'scale-110 opacity-70' : voiceState === 'speaking' ? 'scale-125 opacity-80' : 'scale-90 opacity-40'
-              }`}></div>
-              
-              {/* Outer pulsing ring 2 */}
-              <div className={`absolute w-32 h-32 sm:w-44 sm:h-44 rounded-full bg-cyan-500/15 blur-lg transition-transform duration-500 delay-75 ${
-                voiceState === 'listening' ? 'scale-120 opacity-80' : voiceState === 'speaking' ? 'scale-130 opacity-90' : 'scale-95 opacity-30'
-              }`}></div>
+              {/* Outer concentric pulsing glow rings */}
+              <div className={`absolute w-48 h-48 sm:w-64 sm:h-64 rounded-full transition-all duration-1000 blur-2xl ${
+                voiceState === 'listening' ? 'bg-cyan-500/30 scale-125 opacity-100' :
+                voiceState === 'speaking' ? 'bg-indigo-500/25 scale-135 opacity-90 animate-pulse' :
+                voiceState === 'thinking' ? 'bg-purple-500/20 scale-110 opacity-80' :
+                'bg-slate-500/10 scale-95 opacity-40'
+              }`} />
+              <div className={`absolute w-36 h-36 sm:w-48 sm:h-48 rounded-full transition-all duration-1000 blur-xl ${
+                voiceState === 'listening' ? 'bg-blue-600/20 scale-115 opacity-100' :
+                voiceState === 'speaking' ? 'bg-pink-500/20 scale-120 opacity-95' :
+                voiceState === 'thinking' ? 'bg-cyan-500/15 scale-105 opacity-85 animate-pulse' :
+                'bg-slate-600/10 scale-90 opacity-30'
+              }`} />
 
-              {/* Central Morphing Liquid Blob */}
+              {/* Central Multi-Layered Morphing Liquid Blob */}
               <button
                 type="button"
                 onClick={voiceState === 'idle' ? startVoiceListening : undefined}
-                className={`relative w-28 h-28 sm:w-40 sm:h-40 rounded-full transition-all duration-700 animate-morph-blob voice-orb-glow flex items-center justify-center outline-none ${
-                  voiceState === 'listening'
-                    ? 'bg-gradient-to-tr from-prism-accent to-prism-warm'
-                    : voiceState === 'speaking'
-                    ? 'bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 animate-pulse'
-                    : voiceState === 'thinking'
-                    ? 'bg-gradient-to-tr from-purple-500 via-indigo-600 to-pink-500 animate-spin-slow'
-                    : 'bg-gradient-to-tr from-slate-600 via-slate-500 to-slate-400 cursor-pointer active:scale-98 hover:scale-102'
-                }`}
+                className="relative w-32 h-32 sm:w-44 sm:h-44 rounded-full flex items-center justify-center outline-none cursor-pointer focus:outline-none z-10 active:scale-95 transition-transform"
                 title={voiceState === 'idle' ? "Tap to speak" : undefined}
               >
-                {/* Visual mic/indicator icon inside center if idle */}
-                {voiceState === 'idle' && (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-8 w-8 text-white">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
-                  </svg>
-                )}
-                {voiceState === 'listening' && (
-                  <span className="absolute h-3 w-3 rounded-full bg-white animate-ping"></span>
-                )}
+                {/* Layer 1: Base Morphing Blob */}
+                <div className={`absolute inset-0 rounded-full transition-all duration-1000 opacity-80 blur-xs animate-morph-blob ${
+                  voiceState === 'listening' ? 'bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 [animation-duration:6s] shadow-[0_0_50px_rgba(6,182,212,0.5)]' :
+                  voiceState === 'speaking' ? 'bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-700 [animation-duration:5s] shadow-[0_0_50px_rgba(236,72,153,0.5)] animate-pulse' :
+                  voiceState === 'thinking' ? 'bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-500 [animation-duration:8s] animate-spin-slow shadow-[0_0_40px_rgba(139,92,246,0.4)]' :
+                  'bg-gradient-to-tr from-slate-700 via-slate-600 to-slate-500 [animation-duration:12s]'
+                }`} />
+
+                {/* Layer 2: Second Morphing Blob (Rotating, Offset Delay, Translucent) */}
+                <div className={`absolute inset-1.5 rounded-full transition-all duration-1000 opacity-70 blur-xs animate-morph-blob [animation-delay:2s] [animation-duration:9s] ${
+                  voiceState === 'listening' ? 'bg-gradient-to-br from-teal-300 via-cyan-400 to-blue-600' :
+                  voiceState === 'speaking' ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-amber-400' :
+                  voiceState === 'thinking' ? 'bg-gradient-to-br from-indigo-500 via-cyan-400 to-pink-500 [animation-duration:10s]' :
+                  'bg-gradient-to-br from-slate-600 via-slate-500 to-slate-400 [animation-duration:15s]'
+                }`} />
+
+                {/* Layer 3: Core Inner Glowing Orb */}
+                <div className={`absolute inset-3 rounded-full transition-all duration-1000 opacity-95 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_8px_24px_rgba(0,0,0,0.2)] flex items-center justify-center ${
+                  voiceState === 'listening' ? 'bg-gradient-to-tr from-cyan-400 to-blue-500' :
+                  voiceState === 'speaking' ? 'bg-gradient-to-tr from-rose-400 to-purple-600' :
+                  voiceState === 'thinking' ? 'bg-gradient-to-tr from-purple-500 to-cyan-400' :
+                  'bg-gradient-to-tr from-slate-500 to-slate-400'
+                }`}>
+                  {/* Visual indicators based on state */}
+                  {voiceState === 'idle' && (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="h-8 w-8 text-white drop-shadow-md">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+                    </svg>
+                  )}
+                  {voiceState === 'listening' && (
+                    <div className="flex gap-1 items-center justify-center">
+                      <span className="w-1 bg-white h-4 rounded-full animate-bounce [animation-delay:0s] [animation-duration:0.6s]"></span>
+                      <span className="w-1 bg-white h-6 rounded-full animate-bounce [animation-delay:0.15s] [animation-duration:0.6s]"></span>
+                      <span className="w-1 bg-white h-4 rounded-full animate-bounce [animation-delay:0.3s] [animation-duration:0.6s]"></span>
+                    </div>
+                  )}
+                  {voiceState === 'speaking' && (
+                    <div className="flex gap-1.5 items-center justify-center">
+                      <span className="w-1 bg-white h-3 rounded-full animate-pulse [animation-duration:0.5s]"></span>
+                      <span className="w-1 bg-white h-6 rounded-full animate-pulse [animation-duration:0.3s]"></span>
+                      <span className="w-1 bg-white h-8 rounded-full animate-pulse [animation-duration:0.4s]"></span>
+                      <span className="w-1 bg-white h-6 rounded-full animate-pulse [animation-duration:0.3s]"></span>
+                      <span className="w-1 bg-white h-3 rounded-full animate-pulse [animation-duration:0.5s]"></span>
+                    </div>
+                  )}
+                  {voiceState === 'thinking' && (
+                    <span className="h-6 w-6 rounded-full border-2 border-t-white border-r-transparent animate-spin"></span>
+                  )}
+                </div>
               </button>
             </div>
 
