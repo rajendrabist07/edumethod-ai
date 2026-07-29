@@ -19,9 +19,9 @@ export function Logo({ size = 32, className = "", colored = true }: LogoProps) {
     >
       <defs>
         <linearGradient id="edumethod-book" x1="4" y1="8" x2="28" y2="26" gradientUnits="userSpaceOnUse">
-          <stop stopColor={colored ? "#0F8B8D" : "currentColor"} />
-          <stop offset="0.55" stopColor={colored ? "#2BA84A" : "currentColor"} />
-          <stop offset="1" stopColor={colored ? "#D9952F" : "currentColor"} />
+          <stop stopColor={colored ? "var(--accent, #0F8B8D)" : "currentColor"} />
+          <stop offset="0.55" stopColor={colored ? "var(--scholar-leaf, #2BA84A)" : "currentColor"} />
+          <stop offset="1" stopColor={colored ? "var(--scholar-gold, #D9952F)" : "currentColor"} />
         </linearGradient>
       </defs>
       <path
@@ -60,8 +60,8 @@ export function Logo({ size = 32, className = "", colored = true }: LogoProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="10.2" cy="18.2" r="1.15" fill={colored ? "#0F8B8D" : "currentColor"} />
-      <circle cx="16.2" cy="17.6" r="1.15" fill={colored ? "#2BA84A" : "currentColor"} />
+      <circle cx="10.2" cy="18.2" r="1.15" fill={colored ? "var(--accent, #0F8B8D)" : "currentColor"} />
+      <circle cx="16.2" cy="17.6" r="1.15" fill={colored ? "var(--scholar-leaf, #2BA84A)" : "currentColor"} />
     </svg>
   );
 }

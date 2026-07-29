@@ -65,7 +65,8 @@ async function generate() {
       console.log("Installing png-to-ico...");
       execSync('npm install png-to-ico --no-save', { stdio: 'inherit' });
     }
-    const pngToIco = require('png-to-ico');
+    const pngToIcoModule = require('png-to-ico');
+    const pngToIco = pngToIcoModule.default || pngToIcoModule;
     const buf = await pngToIco(path.join(publicDir, 'favicon-32x32.png'));
     fs.writeFileSync(path.join(publicDir, 'favicon.ico'), buf);
     console.log("Generated favicon.ico");
