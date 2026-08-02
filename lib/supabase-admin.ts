@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { withTimeout } from "./timeout";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co";
+const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY || "placeholder-secret-key";
 
 const customFetch = (input: RequestInfo | URL, init?: RequestInit) => {
   return withTimeout(
