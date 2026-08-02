@@ -8,6 +8,7 @@ import { BrandMark } from "../../components/brand-mark";
 import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 import { SettingsIcon } from "@/components/icons/SettingsIcon";
+import { toast } from "sonner";
 
 interface UsageLimits {
   plan: "standard";
@@ -39,6 +40,9 @@ export default function DashboardPage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [masteryData, setMasteryData] = useState<MasteryTopic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [classrooms, setClassrooms] = useState<any[]>([]);
+  const [joinCode, setJoinCode] = useState("");
+  const [joining, setJoining] = useState(false);
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -63,6 +67,13 @@ export default function DashboardPage() {
           const masteryJson = await masteryRes.json();
           setMasteryData(masteryJson.topics || []);
         }
+
+        // Fetch classrooms
+        const classroomsRes = await fetch("/api/cohorts");
+        if (classroomsRes.ok) {
+          const classroomsData = await classroomsRes.json();
+          setClassrooms(classroomsData.cohorts || []);
+        }
       } catch (err) {
         console.error("Dashboard data fetch error:", err);
       } finally {
@@ -72,6 +83,37 @@ export default function DashboardPage() {
 
     void fetchDashboardData();
   }, []);
+
+  async function handleJoinClassroom(e: React.FormEvent) {
+    e.preventDefault();
+    if (!joinCode.trim()) return;
+    setJoining(true);
+    try {
+      const res = await fetch("/api/cohorts/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cohortId: joinCode.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message || "Successfully joined classroom!");
+        setJoinCode("");
+        // Reload classrooms list
+        const classroomsRes = await fetch("/api/cohorts");
+        if (classroomsRes.ok) {
+          const classroomsData = await classroomsRes.json();
+          setClassrooms(classroomsData.cohorts || []);
+        }
+      } else {
+        toast.error(data.error || "Failed to join classroom");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error joining classroom");
+    } finally {
+      setJoining(false);
+    }
+  }
 
   // Helper for date formatting
   function formatDate(dateString: string) {
@@ -308,6 +350,70 @@ export default function DashboardPage() {
                 </span>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Classrooms / Cohorts Membership Widget */}
+        <div className="grid gap-6 md:grid-cols-12">
+          {/* Join Classroom Card */}
+          <div className="md:col-span-5 glass-prism rounded-3xl p-5 shadow-sm flex flex-col justify-between border border-prism-border">
+            <div>
+              <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
+                🏫 Connect to classroom
+              </h2>
+              <p className="text-[10px] font-semibold text-prism-muted mt-3 leading-relaxed font-mono">
+                Enter your teacher's classroom code to join their cohort and share your study progress.
+              </p>
+              <form onSubmit={handleJoinClassroom} className="mt-4 space-y-3">
+                <input
+                  type="text"
+                  required
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value)}
+                  placeholder="Enter Classroom ID (UUID)"
+                  className="w-full bg-prism-base border border-prism-border rounded-xl px-3 py-2 text-2xs focus:outline-none focus:border-prism-accent transition font-mono"
+                />
+                <button
+                  type="submit"
+                  disabled={joining || !joinCode.trim()}
+                  className="w-full py-2 bg-prism-accent text-white font-bold rounded-xl hover:bg-opacity-90 disabled:opacity-50 transition text-2xs uppercase tracking-wider"
+                >
+                  {joining ? "Joining..." : "Join Class"}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Joined Classrooms List */}
+          <div className="md:col-span-7 glass-prism rounded-3xl p-5 shadow-sm flex flex-col border border-prism-border">
+            <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
+              📚 My classrooms
+            </h2>
+            <div className="flex-grow overflow-y-auto max-h-[180px] pr-1 mt-3 space-y-3">
+              {classrooms.length === 0 ? (
+                <div className="text-center py-10 text-prism-muted">
+                  <p className="text-2xs font-bold uppercase tracking-wider font-mono">Not enrolled in any classes</p>
+                  <p className="text-4xs font-semibold mt-1">Submit a classroom code on the left to join!</p>
+                </div>
+              ) : (
+                classrooms.map((cls) => (
+                  <div
+                    key={cls.id}
+                    className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-prism-border/40 hover:border-prism-accent/30 transition"
+                  >
+                    <div>
+                      <h4 className="text-2xs font-bold text-prism-text font-display">{cls.name}</h4>
+                      <span className="text-[9px] text-prism-muted font-mono block mt-0.5">
+                        Joined: {new Date(cls.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <span className="bg-prism-surface px-2 py-0.5 rounded text-[8px] text-prism-accent font-bold font-mono">
+                      Active
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
 

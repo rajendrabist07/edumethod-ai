@@ -15,6 +15,14 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
+      exclude: [
+        "**/node_modules/**",
+        "**/e2e/**",
+        "app/api/**",
+        "scripts/**",
+        "**/*.test.ts",
+        "**/*.spec.ts"
+      ],
       thresholds: {
         statements: 85,
         branches: 65,
