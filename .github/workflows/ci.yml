@@ -59,6 +59,7 @@ jobs:
   e2e-tests:
     needs: validate
     runs-on: ubuntu-latest
+    if: ${{ secrets.CLERK_SECRET_KEY != '' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

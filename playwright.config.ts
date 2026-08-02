@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import { clerkSetup } from '@clerk/testing/playwright';
+
+clerkSetup();
 
 export default defineConfig({
   testDir: './e2e',
