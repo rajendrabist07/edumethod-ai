@@ -6,5 +6,15 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./"),
     },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      thresholds: {
+        statements: 85,
+        branches: 65,
+        functions: 90,
+        lines: 84,
+      },
+    },
   },
 });

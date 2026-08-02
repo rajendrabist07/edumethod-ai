@@ -30,7 +30,12 @@ const planSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
+    let userId: string | null = null;
+    if (process.env.ENABLE_E2E_MOCK === "true" && req.headers.get("x-mock-user-id")) {
+      userId = req.headers.get("x-mock-user-id");
+    } else {
+      userId = (await auth()).userId;
+    }
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -88,7 +93,54 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ plan: cachedPlan, cached: true });
     }
 
-    // Enqueue background job to QStash
+    // Enqueue background job to QStash, or execute synchronously in mock/test mode
+    const shouldMockOrSync = process.env.ENABLE_E2E_MOCK === "true" || process.env.QSTASH_TOKEN === "mock_token_for_dev" || !process.env.QSTASH_TOKEN;
+
+    if (shouldMockOrSync) {
+      try {
+        const result = await aiGateway.chat(
+          {
+            messages: [
+              {
+                role: "system",
+                content: `You are a learning science expert. Given a list of topics with difficulty and estimated hours, create an optimal 7-day study plan using interleaving (mix related topics), spaced repetition principles, and active recall methods. Return ONLY valid JSON in this exact format: { "days": [{ "day": number, "topics": string[], "method": string, "durationMinutes": number, "hack": string }] }. "method" should describe the study technique for that day (e.g. "Active recall with flashcards"). "hack" should be one practical tip/mnemonic for that day's topics.`,
+              },
+              {
+                role: "user",
+                content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
+              },
+            ],
+            jsonMode: true,
+          },
+          userId
+        );
+
+        const aiText = result.text;
+        const aiData = JSON.parse(aiText || "{}");
+        const validated = planSchema.safeParse(aiData);
+        if (!validated.success) {
+          return NextResponse.json({ error: "AI response format mismatch" }, { status: 500 });
+        }
+
+        const { error: dbUpdateError } = await supabaseAdmin
+          .from("learning_paths")
+          .update({ learning_plan: validated.data })
+          .eq("id", learningPathId);
+
+        if (dbUpdateError) {
+          return NextResponse.json({ error: dbUpdateError.message }, { status: 500 });
+        }
+
+        const cacheKey = `cache:study-plan:${getHash(learningPath.topics)}`;
+        await setCache(cacheKey, validated.data);
+
+        return NextResponse.json({ plan: validated.data, cached: false });
+      } catch (genErr: any) {
+        console.error("Sync plan generation error:", genErr);
+        return NextResponse.json({ error: genErr.message || "Failed to generate plan" }, { status: 500 });
+      }
+    }
+
     try {
       // In local dev, you might want to call the AI directly or use ngrok.
       // Assuming production/Vercel:

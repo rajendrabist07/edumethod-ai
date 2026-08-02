@@ -12,10 +12,12 @@ export async function RoleGuard({ allowedRoles, children, fallback = null }: Rol
   const { userId, sessionClaims } = await auth();
   if (!userId) return fallback;
 
+  let role: any = null;
+
   try {
     // Try Clerk session claims first (instant)
     const sessionRole = (sessionClaims?.metadata as any)?.role || (sessionClaims?.publicMetadata as any)?.role;
-    let role = sessionRole;
+    role = sessionRole;
 
     // Fallback to fetching directly from Clerk if session claims don't have it
     if (!role) {
@@ -34,12 +36,12 @@ export async function RoleGuard({ allowedRoles, children, fallback = null }: Rol
         .single();
       role = data?.role || "student";
     }
-
-    if (allowedRoles.includes(role)) {
-      return <>{children}</>;
-    }
   } catch (err) {
     console.error("RoleGuard error:", err);
+  }
+
+  if (role && allowedRoles.includes(role as any)) {
+    return <>{children}</>;
   }
 
   return fallback;

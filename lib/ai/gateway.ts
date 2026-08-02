@@ -3,6 +3,7 @@ import { GroqProvider } from "./providers/groq";
 import { GeminiProvider } from "./providers/gemini";
 import { logAIRequest } from "./logger";
 import { getHash, getCache, setCache } from "@/lib/cache";
+import { withTimeout } from "@/lib/timeout";
 
 export interface ModelConfig {
   provider: "groq" | "gemini";
@@ -19,6 +20,45 @@ export const VISION_FALLBACKS: ModelConfig[] = [
   { provider: "gemini", model: "gemini-1.5-flash-latest" },
   { provider: "groq", model: "llama-3.2-11b-vision-preview" },
 ];
+
+class CircuitBreaker {
+  private state: "CLOSED" | "OPEN" | "HALF-OPEN" = "CLOSED";
+  private failureCount = 0;
+  private maxFailures = 3;
+  private cooldownMs = 15000; // 15 seconds
+  private lastFailureTime = 0;
+
+  constructor(maxFailures = 3, cooldownMs = 15000) {
+    this.maxFailures = maxFailures;
+    this.cooldownMs = cooldownMs;
+  }
+
+  isOpen(): boolean {
+    if (this.state === "OPEN") {
+      if (Date.now() - this.lastFailureTime > this.cooldownMs) {
+        this.state = "HALF-OPEN";
+        console.warn(`[Circuit Breaker]: Cooldown expired. Transitioning to HALF-OPEN.`);
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  recordSuccess() {
+    this.state = "CLOSED";
+    this.failureCount = 0;
+  }
+
+  recordFailure() {
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
+    if (this.failureCount >= this.maxFailures) {
+      this.state = "OPEN";
+      console.error(`[Circuit Breaker]: Max failures (${this.maxFailures}) reached. Transitioning to OPEN.`);
+    }
+  }
+}
 
 /**
  * Executes a function with automatic retries and exponential backoff.
@@ -59,11 +99,16 @@ async function executeWithRetry<T>(
 
 class AIGateway {
   private providers: Record<string, AIProvider>;
+  private breakers: Record<string, CircuitBreaker>;
 
   constructor() {
     this.providers = {
       groq: new GroqProvider(),
       gemini: new GeminiProvider(),
+    };
+    this.breakers = {
+      groq: new CircuitBreaker(3, 15000),
+      gemini: new CircuitBreaker(3, 15000),
     };
   }
 
@@ -96,16 +141,28 @@ class AIGateway {
 
     for (let i = 0; i < configs.length; i++) {
       const config = configs[i];
+      const breaker = this.breakers[config.provider];
+
+      if (breaker.isOpen()) {
+        console.warn(`[Circuit Breaker]: Skipping provider ${config.provider} because circuit is OPEN.`);
+        continue;
+      }
+
       const provider = this.providers[config.provider];
       const startTime = Date.now();
 
       try {
-        const result = await executeWithRetry(
-          () => provider.chat(options, config.model),
-          2,
-          500
+        const result = await withTimeout(
+          executeWithRetry(
+            () => provider.chat(options, config.model),
+            2,
+            500
+          ),
+          15000,
+          `AI request to ${config.provider} timed out after 15s`
         );
 
+        breaker.recordSuccess();
         const latency = Date.now() - startTime;
         
         // Log logAIRequest asynchronously
@@ -125,6 +182,7 @@ class AIGateway {
 
         return result;
       } catch (error: any) {
+        breaker.recordFailure();
         lastError = error;
         const latency = Date.now() - startTime;
 
@@ -163,6 +221,13 @@ class AIGateway {
 
     for (let i = 0; i < configs.length; i++) {
       const config = configs[i];
+      const breaker = this.breakers[config.provider];
+
+      if (breaker.isOpen()) {
+        console.warn(`[Circuit Breaker]: Skipping provider ${config.provider} because circuit is OPEN.`);
+        continue;
+      }
+
       const provider = this.providers[config.provider];
       const startTime = Date.now();
 
@@ -170,16 +235,21 @@ class AIGateway {
         // Reset dynamic stream chunk accumulation per provider attempt
         accumulatedText = "";
 
-        const result = await executeWithRetry(
-          () =>
-            provider.chatStream(options, config.model, (chunk) => {
-              accumulatedText += chunk;
-              onChunk(chunk);
-            }),
-          2,
-          500
+        const result = await withTimeout(
+          executeWithRetry(
+            () =>
+              provider.chatStream(options, config.model, (chunk) => {
+                accumulatedText += chunk;
+                onChunk(chunk);
+              }),
+            2,
+            500
+          ),
+          15000,
+          `AI stream to ${config.provider} timed out after 15s`
         );
 
+        breaker.recordSuccess();
         const latency = Date.now() - startTime;
 
         logAIRequest({
@@ -195,6 +265,7 @@ class AIGateway {
 
         return result;
       } catch (error: any) {
+        breaker.recordFailure();
         lastError = error;
         const latency = Date.now() - startTime;
 
@@ -239,16 +310,28 @@ class AIGateway {
 
     for (let i = 0; i < configs.length; i++) {
       const config = configs[i];
+      const breaker = this.breakers[config.provider];
+
+      if (breaker.isOpen()) {
+        console.warn(`[Circuit Breaker]: Skipping provider ${config.provider} because circuit is OPEN.`);
+        continue;
+      }
+
       const provider = this.providers[config.provider];
       const startTime = Date.now();
 
       try {
-        const result = await executeWithRetry(
-          () => provider.vision(options, config.model),
-          2,
-          500
+        const result = await withTimeout(
+          executeWithRetry(
+            () => provider.vision(options, config.model),
+            2,
+            500
+          ),
+          15000,
+          `AI request to ${config.provider} timed out after 15s`
         );
 
+        breaker.recordSuccess();
         const latency = Date.now() - startTime;
 
         logAIRequest({
@@ -264,6 +347,7 @@ class AIGateway {
 
         return result;
       } catch (error: any) {
+        breaker.recordFailure();
         lastError = error;
         const latency = Date.now() - startTime;
 
@@ -302,22 +386,34 @@ class AIGateway {
 
     for (let i = 0; i < configs.length; i++) {
       const config = configs[i];
+      const breaker = this.breakers[config.provider];
+
+      if (breaker.isOpen()) {
+        console.warn(`[Circuit Breaker]: Skipping provider ${config.provider} because circuit is OPEN.`);
+        continue;
+      }
+
       const provider = this.providers[config.provider];
       const startTime = Date.now();
 
       try {
         accumulatedText = "";
 
-        const result = await executeWithRetry(
-          () =>
-            provider.visionStream(options, config.model, (chunk) => {
-              accumulatedText += chunk;
-              onChunk(chunk);
-            }),
-          2,
-          500
+        const result = await withTimeout(
+          executeWithRetry(
+            () =>
+              provider.visionStream(options, config.model, (chunk) => {
+                accumulatedText += chunk;
+                onChunk(chunk);
+              }),
+            2,
+            500
+          ),
+          15000,
+          `AI stream to ${config.provider} timed out after 15s`
         );
 
+        breaker.recordSuccess();
         const latency = Date.now() - startTime;
 
         logAIRequest({
@@ -333,6 +429,7 @@ class AIGateway {
 
         return result;
       } catch (error: any) {
+        breaker.recordFailure();
         lastError = error;
         const latency = Date.now() - startTime;
 

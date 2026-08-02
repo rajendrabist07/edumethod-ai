@@ -29,7 +29,12 @@ const quizSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
+    let userId: string | null = null;
+    if (process.env.ENABLE_E2E_MOCK === "true" && req.headers.get("x-mock-user-id")) {
+      userId = req.headers.get("x-mock-user-id");
+    } else {
+      userId = (await auth()).userId;
+    }
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -98,7 +103,65 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ quizId: quiz.id, questions: questionsForFrontend, cached: true });
     }
 
-    // Enqueue background job to QStash
+    // Enqueue background job to QStash, or execute synchronously in mock/test mode
+    const shouldMockOrSync = process.env.ENABLE_E2E_MOCK === "true" || process.env.QSTASH_TOKEN === "mock_token_for_dev" || !process.env.QSTASH_TOKEN;
+
+    if (shouldMockOrSync) {
+      try {
+        const result = await aiGateway.chat(
+          {
+            messages: [
+              {
+                role: "system",
+                content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization. Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
+              },
+              {
+                role: "user",
+                content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
+              },
+            ],
+            jsonMode: true,
+          },
+          userId
+        );
+
+        const aiText = result.text;
+        const aiData = JSON.parse(aiText || "{}");
+        const validated = quizSchema.safeParse(aiData);
+        if (!validated.success) {
+          return NextResponse.json({ error: "AI response format mismatch" }, { status: 500 });
+        }
+
+        const { data: quiz, error: insertError } = await supabaseAdmin
+          .from("quizzes")
+          .insert({
+            learning_path_id: learningPathId,
+            user_id: userId,
+            questions: validated.data.questions,
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          return NextResponse.json({ error: insertError.message }, { status: 500 });
+        }
+
+        const cacheKey = `cache:quiz:${getHash(learningPath.topics)}`;
+        await setCache(cacheKey, validated.data);
+
+        const questionsForFrontend = validated.data.questions.map((q: any) => ({
+          question: q.question,
+          options: q.options,
+          topic: q.topic,
+        }));
+
+        return NextResponse.json({ quizId: quiz.id, questions: questionsForFrontend, cached: false });
+      } catch (genErr: any) {
+        console.error("Sync quiz generation error:", genErr);
+        return NextResponse.json({ error: genErr.message || "Failed to generate quiz" }, { status: 500 });
+      }
+    }
+
     try {
       const host = req.headers.get("host") || "edumethod-ai.vercel.app";
       const protocol = host.includes("localhost") ? "http" : "https";

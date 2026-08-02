@@ -1,5 +1,7 @@
 # EduMethod AI
 
+[![CI/CD Pipeline](https://github.com/rajendrabist07/edumethod-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/rajendrabist07/edumethod-ai/actions/workflows/ci.yml)
+
 EduMethod AI is a production-oriented learning workspace built with Next.js, Clerk, Supabase, pgvector, Groq, Gemini, and Upstash. It turns syllabus text and study material into structured learning paths, quizzes, flashcards, cited doubt-solving conversations, and spaced-repetition review flows.
 
 This repository intentionally does not expose a paid Pro/subscription tier. AI usage is controlled through transparent daily quotas while payment infrastructure is not implemented.

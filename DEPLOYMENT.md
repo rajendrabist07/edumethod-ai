@@ -350,4 +350,26 @@ Your live URL is: **`https://edumethod-ai.vercel.app`**
 
 ---
 
+## ↩️ Rollback Strategy
+
+If a faulty release is merged to `main` and deployed to production, use one of the following methods to instantly roll back:
+
+### Method 1: Vercel Dashboard (Recommended)
+1. Go to the **Vercel Dashboard** and click on your project.
+2. Navigate to the **"Deployments"** tab.
+3. Find the last stable, successful deployment.
+4. Click the **"..." (three dots)** menu on the right.
+5. Select **"Promote to Production"**.
+6. This instantly redirects production traffic to the chosen stable deployment (takes ~5 seconds, no rebuild needed).
+
+### Method 2: Vercel CLI
+If you have the Vercel CLI configured locally, you can roll back via the terminal:
+1. Run `vercel rollback` in your terminal.
+2. Select the target stable deployment from the interactive prompt, or pass the deployment ID directly:
+   ```bash
+   vercel rollback <deployment-id>
+   ```
+
+---
+
 _Your AI-powered learning platform is now live! 🎓_

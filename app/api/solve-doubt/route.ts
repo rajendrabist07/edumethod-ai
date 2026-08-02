@@ -38,7 +38,12 @@ const EFFORT_INSTRUCTIONS = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
+    let userId: string | null = null;
+    if (process.env.ENABLE_E2E_MOCK === "true" && req.headers.get("x-mock-user-id")) {
+      userId = req.headers.get("x-mock-user-id");
+    } else {
+      userId = (await auth()).userId;
+    }
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
