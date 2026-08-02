@@ -73,18 +73,60 @@ jobs:
         run: npm ci
 
       - name: Wait for Vercel Preview Deployment
-        uses: vercel/wait-for-deployment-action@v2
         id: vercel
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-        # Default fallback to localhost if wait-for-deployment fails or is skipped outside PR context
-        continue-on-error: true
+        run: |
+          echo "Waiting for Vercel deployment status..."
+          SHA="${{ github.sha }}"
+          REPO="${{ github.repository }}"
+          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          URL=""
+          
+          # Poll GitHub API for deployment status of the current commit
+          NO_DEPLOY_COUNT=0
+          for i in {1..30}; do
+            DEPLOYS=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/$REPO/deployments?sha=$SHA")
+            DEPLOY_ID=$(echo "$DEPLOYS" | grep -m 1 -o '"id": [0-9]*' | grep -o '[0-9]*')
+            
+            if [ -n "$DEPLOY_ID" ]; then
+              STATUSES=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/$REPO/deployments/$DEPLOY_ID/statuses")
+              STATE=$(echo "$STATUSES" | grep -m 1 -o '"state": "[^"]*"' | cut -d'"' -f4)
+              
+              if [ "$STATE" = "success" ]; then
+                URL=$(echo "$STATUSES" | grep -m 1 -o '"environment_url": "[^"]*"' | cut -d'"' -f4)
+                if [ -z "$URL" ]; then
+                  URL=$(echo "$STATUSES" | grep -m 1 -o '"target_url": "[^"]*"' | cut -d'"' -f4)
+                fi
+                if [ -n "$URL" ]; then
+                  echo "Vercel preview URL is ready: $URL"
+                  echo "url=$URL" >> $GITHUB_OUTPUT
+                  exit 0
+                fi
+              fi
+            else
+              NO_DEPLOY_COUNT=$((NO_DEPLOY_COUNT+1))
+              if [ "$NO_DEPLOY_COUNT" -ge 3 ]; then
+                echo "No deployments found after 3 checks. Assuming Vercel integration is not active."
+                break
+              fi
+            fi
+            echo "Deployment not ready yet, sleeping 10 seconds (attempt $i/30)..."
+            sleep 10
+          done
+          echo "Vercel deployment timeout, falling back to local server."
+          echo "url=http://localhost:3000" >> $GITHUB_OUTPUT
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
       - name: Run E2E Tests
-        run: npx playwright test
+        run: |
+          if [ "${{ steps.vercel.outputs.url }}" = "http://localhost:3000" ] || [ -z "${{ steps.vercel.outputs.url }}" ]; then
+            echo "Starting local dev server and running E2E tests..."
+            npx start-server-and-test 'npm run dev' http://localhost:3000 'npx playwright test'
+          else
+            echo "Running E2E tests against Vercel preview URL: ${{ steps.vercel.outputs.url }}"
+            npx playwright test
+          fi
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ steps.vercel.outputs.url || 'http://localhost:3000' }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
