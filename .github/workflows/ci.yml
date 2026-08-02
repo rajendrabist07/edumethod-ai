@@ -73,11 +73,11 @@ jobs:
         run: npm ci
 
       - name: Wait for Vercel Preview Deployment
-        uses: UnlyEd/github-action-await-vercel-requested-deployment@v3
+        uses: vercel/wait-for-deployment-action@v2
         id: vercel
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        # Default fallback to localhost if UnlyEd fails or is skipped outside PR context
+          token: ${{ secrets.GITHUB_TOKEN }}
+        # Default fallback to localhost if wait-for-deployment fails or is skipped outside PR context
         continue-on-error: true
 
       - name: Install Playwright Browsers
