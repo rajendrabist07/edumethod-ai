@@ -20,7 +20,24 @@ const requestSchema = z.object({
   truncateHistoryAtIndex: z.number().optional(),
   isVoiceMode: z.boolean().optional(),
   effort: z.enum(["low", "medium", "high", "extra"]).optional(),
-});
+}).refine(
+  (data) => {
+    if (data.imageBase64) {
+      if (!data.mimeType) return false;
+      const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+      if (!allowedTypes.includes(data.mimeType)) return false;
+      
+      // Calculate approximate size in bytes from base64 representation
+      const approxBytes = (data.imageBase64.length * 3) / 4;
+      if (approxBytes > 4 * 1024 * 1024) return false; // 4MB maximum payload limit
+    }
+    return true;
+  },
+  {
+    message: "Invalid image upload. Must be JPEG, PNG, WEBP, or GIF, and under 4MB.",
+    path: ["imageBase64"],
+  }
+);
 
 const SYSTEM_PROMPT = `You are a patient, encouraging, and elite senior AI tutor. Solve questions step-by-step, explaining reasoning at each step.
 Follow these rules strictly:

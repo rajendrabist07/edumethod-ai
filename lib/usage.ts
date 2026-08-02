@@ -47,6 +47,15 @@ export async function checkUsageLimit(
   userId: string,
   actionType: ActionType
 ): Promise<{ allowed: boolean; limit: number; current: number; plan: UsageTier }> {
+  if (process.env.ENABLE_E2E_MOCK === "true") {
+    return {
+      allowed: true,
+      limit: 999999,
+      current: 0,
+      plan: "standard",
+    };
+  }
+
   const plan = await getUserPlan(userId);
   
   const limits: Record<UsageTier, Record<ActionType, number>> = {

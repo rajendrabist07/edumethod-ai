@@ -9,8 +9,8 @@ import { chunkText, getEmbedding } from "@/lib/ai/embeddings";
 
 // Step 1: Define what input we expect from frontend
 const requestSchema = z.object({
-  subject: z.string().min(1),
-  rawText: z.string().min(5),
+  subject: z.string().min(1).max(100),
+  rawText: z.string().min(5).max(50000),
 });
 
 // Step 2: Define what shape AI response must match

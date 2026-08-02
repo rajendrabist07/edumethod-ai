@@ -1,0 +1,28 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 20
+      arrivalRate: 2
+      rampTo: 8
+      name: "Ramp up local traffic"
+    - duration: 20
+      arrivalRate: 8
+      name: "Sustained concurrency load"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      x-mock-user-id: "user_3GM79cfWQK57yjbtQoitBHwjJdH"
+scenarios:
+  - name: "AI Doubt Solving & Quiz Generation Flow"
+    flow:
+      - post:
+          url: "/api/solve-doubt"
+          json:
+            message: "What is Newton's second law of motion?"
+            learningPathId: "ed45edb5-77d7-45df-89ac-fa89c50c4dd4"
+            effort: "low"
+      - think: 1
+      - post:
+          url: "/api/generate-quiz"
+          json:
+            learningPathId: "ed45edb5-77d7-45df-89ac-fa89c50c4dd4"
