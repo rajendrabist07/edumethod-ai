@@ -73,6 +73,8 @@ export default function DoubtSolverPage() {
   const recognitionRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const speechUtteranceRef = useRef<any>(null);
+  const accumulatedTextRef = useRef("");
+  const ttsBufferRef = useRef("");
 
   // Auto scroll to latest messages
   useEffect(() => {
@@ -83,10 +85,14 @@ export default function DoubtSolverPage() {
   useEffect(() => {
     if (imageFile) {
       const url = URL.createObjectURL(imageFile);
-      setPreviewUrl(url);
+      setTimeout(() => {
+        setPreviewUrl(url);
+      }, 0);
       return () => URL.revokeObjectURL(url);
     } else {
-      setPreviewUrl(null);
+      setTimeout(() => {
+        setPreviewUrl(null);
+      }, 0);
     }
   }, [imageFile]);
 
@@ -116,19 +122,6 @@ export default function DoubtSolverPage() {
     }
   }, []);
 
-  // Sync with search parameter to resume conversations
-  useEffect(() => {
-    if (sessionIdParam) {
-      loadSession(sessionIdParam);
-    } else {
-      setSessionId("");
-      setMessages([]);
-      setInput("");
-      setImageFile(null);
-      setError("");
-    }
-  }, [sessionIdParam]);
-
   // Load a specific session
   async function loadSession(id: string) {
     setError("");
@@ -156,6 +149,23 @@ export default function DoubtSolverPage() {
     }
   }
 
+  // Sync with search parameter to resume conversations
+  useEffect(() => {
+    if (sessionIdParam) {
+      setTimeout(() => {
+        loadSession(sessionIdParam);
+      }, 0);
+    } else {
+      setTimeout(() => {
+        setSessionId("");
+        setMessages([]);
+        setInput("");
+        setImageFile(null);
+        setError("");
+      }, 0);
+    }
+  }, [sessionIdParam]);
+
   // Helper to guess voice gender
   function getVoiceGender(voice: SpeechSynthesisVoice): "male" | "female" | "unknown" {
     const name = voice.name.toLowerCase();
@@ -164,11 +174,7 @@ export default function DoubtSolverPage() {
     return "unknown"; 
   }
 
-  // Start a new chat session
-  function handleNewChat() {
-    if (loading) return;
-    router.push("/doubt-solver");
-  }
+
 
   // Voice recognition activation logic (with interruption handling)
   function startVoiceListening() {
@@ -412,16 +418,16 @@ export default function DoubtSolverPage() {
         return;
       }
 
-      let accumulatedText = "";
-      let ttsBuffer = "";
+      accumulatedTextRef.current = "";
+      ttsBufferRef.current = "";
 
       while (true) {
         const { value, done } = await reader.read();
         
         if (done) {
           // Speak remainder if any
-          if (voiceMode && ttsBuffer.trim()) {
-            speakResponse(ttsBuffer, true, true);
+          if (voiceMode && ttsBufferRef.current.trim()) {
+            speakResponse(ttsBufferRef.current, true, true);
           } else if (voiceMode) {
             // Trigger loopback if we just finished streaming and buffer was empty
             speakResponse("", true, true);
@@ -430,19 +436,19 @@ export default function DoubtSolverPage() {
         }
 
         const chunk = decoder.decode(value, { stream: true });
-        accumulatedText += chunk;
+        accumulatedTextRef.current += chunk;
 
         if (voiceMode) {
-          ttsBuffer += chunk;
+          ttsBufferRef.current += chunk;
           // Split by punctuation or newline to dispatch sentences
-          if (/[.?!]\s|\n/.test(ttsBuffer)) {
-            const sentences = ttsBuffer.split(/(?<=[.?!]\s|\n)/);
+          if (/[.?!]\s|\n/.test(ttsBufferRef.current)) {
+            const sentences = ttsBufferRef.current.split(/(?<=[.?!]\s|\n)/);
             for (let i = 0; i < sentences.length - 1; i++) {
               if (sentences[i].trim()) {
                 speakResponse(sentences[i], true, false);
               }
             }
-            ttsBuffer = sentences[sentences.length - 1]; // keep remainder
+            ttsBufferRef.current = sentences[sentences.length - 1]; // keep remainder
           }
         }
 
@@ -452,11 +458,11 @@ export default function DoubtSolverPage() {
             const updated = [...prev];
             updated[updated.length - 1] = {
               ...lastMsg,
-              content: accumulatedText,
+              content: accumulatedTextRef.current,
             };
             return updated;
           } else {
-            return [...prev, { role: "assistant", content: accumulatedText }];
+            return [...prev, { role: "assistant", content: accumulatedTextRef.current }];
           }
         });
       }
@@ -782,7 +788,7 @@ export default function DoubtSolverPage() {
                                 remarkPlugins={[remarkMath]}
                                 rehypePlugins={[rehypeKatex]}
                                 components={{
-                                  code({ className, children, ...props }: any) {
+                                  code({ className, children, ...props }: React.ComponentPropsWithoutRef<"code">) {
                                     const inline = !className;
                                     return !inline ? (
                                       <pre className="bg-slate-50 dark:bg-[#0d0d0d] border border-slate-200 dark:border-white/10 rounded-xl p-3.5 my-3 overflow-x-auto text-[11px] font-mono leading-normal shadow-inner">

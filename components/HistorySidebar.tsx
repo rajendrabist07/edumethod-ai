@@ -97,7 +97,9 @@ export function HistorySidebar() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const isLarge = window.innerWidth >= 1024;
-      setSidebarOpen(isLarge);
+      setTimeout(() => {
+        setSidebarOpen(isLarge);
+      }, 0);
     }
   }, []);
 
