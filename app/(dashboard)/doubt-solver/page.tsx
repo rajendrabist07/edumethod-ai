@@ -664,7 +664,7 @@ export default function DoubtSolverPage() {
                 Start with any doubt
               </h2>
               <p className="text-2xs font-semibold text-prism-muted leading-relaxed max-w-sm mb-8">
-                Ask in English, Nepali, Hindi, or mixed vocabulary. The tutor will match your language and explain at your selected depth.
+                Ask any question, paste a syllabus topic, or scan a complex diagram. Your tutor will match your language and concept depth automatically.
               </p>
 
               {/* Quick action prompt badges */}
@@ -689,10 +689,10 @@ export default function DoubtSolverPage() {
                   <button
                     key={idx}
                     onClick={() => setInput(action.prompt)}
-                    className="p-3.5 rounded-2xl border border-prism-border bg-prism-surface hover:bg-prism-surface/70 text-left transition hover:border-purple-500/30 hover:shadow-sm active:scale-98 cursor-pointer"
+                    className="p-4 rounded-2xl border border-prism-border/50 bg-prism-surface/40 hover:bg-prism-surface/80 text-left transition-all duration-300 hover:border-prism-accent/30 hover:-translate-y-0.5 hover:shadow-sm active:scale-98 cursor-pointer group"
                   >
-                    <p className="text-3xs font-extrabold text-prism-text uppercase tracking-wide mb-1">{action.title}</p>
-                    <p className="text-4xs font-medium text-prism-muted leading-normal">{action.desc}</p>
+                    <p className="text-[10px] font-black text-prism-text uppercase tracking-wider mb-1.5 transition-colors group-hover:text-prism-accent">{action.title}</p>
+                    <p className="text-4xs font-semibold text-prism-muted leading-relaxed">{action.desc}</p>
                   </button>
                 ))}
               </div>
@@ -1167,7 +1167,7 @@ export default function DoubtSolverPage() {
         )}
 
         {/* Floating Input Area (ChatGPT Style) */}
-        <div className="shrink-0 w-full max-w-2xl sm:max-w-3xl mx-auto px-4 pb-6 bg-transparent z-20 relative">
+        <div className="shrink-0 w-full max-w-2xl sm:max-w-3xl mx-auto px-4 pb-6 bg-transparent z-30 relative">
           <input
             type="file"
             accept="image/*"
@@ -1257,7 +1257,7 @@ export default function DoubtSolverPage() {
                     <>
                       {/* Backdrop for closing popover */}
                       <div className="fixed inset-0 z-40" onClick={() => setShowEffortMenu(false)} />
-                      <div className="absolute right-0 bottom-full mb-2 w-56 rounded-2xl border border-prism-border bg-[color:var(--surface)] shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-bottom-2 duration-150">
+                      <div className="absolute right-0 bottom-full mb-2 w-56 rounded-2xl border border-prism-border bg-white dark:bg-zinc-950 shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-bottom-2 duration-150">
                         {/* Model header option */}
                         <div className="flex items-center justify-between px-2.5 py-2 rounded-xl bg-prism-accent/5 border border-prism-accent/15 select-none mb-1.5">
                           <div className="flex flex-col text-left">
