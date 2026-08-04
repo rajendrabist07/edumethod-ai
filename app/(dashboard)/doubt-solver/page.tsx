@@ -1176,7 +1176,7 @@ export default function DoubtSolverPage() {
             className="hidden"
           />
 
-          <div className="relative flex flex-col bg-prism-surface backdrop-blur-xl border border-prism-border rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden p-2.5">
+          <div className="relative flex flex-col bg-prism-surface backdrop-blur-xl border border-prism-border rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-visible p-2.5">
             
             {/* Image Preview Area */}
             {previewUrl && (
@@ -1239,10 +1239,9 @@ export default function DoubtSolverPage() {
                     type="button"
                     onClick={() => setShowEffortMenu(!showEffortMenu)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-prism-surface border border-prism-border hover:border-prism-accent/50 text-prism-text transition duration-200 cursor-pointer active:scale-95 shrink-0 select-none shadow-sm"
-                    title="Configure AI model & cognitive effort depth"
+                    title="Configure tutor cognitive effort depth"
                   >
-                    <span className="hidden sm:inline">Gemini Pro •</span>
-                    <span>{tutorEffort.charAt(0).toUpperCase() + tutorEffort.slice(1)}</span>
+                    <span>Effort: {tutorEffort.charAt(0).toUpperCase() + tutorEffort.slice(1)}</span>
                     <svg
                       className={`w-3 h-3 opacity-70 transition-transform duration-200 ${showEffortMenu ? "rotate-180" : ""}`}
                       fill="none"
@@ -1258,12 +1257,12 @@ export default function DoubtSolverPage() {
                     <>
                       {/* Backdrop for closing popover */}
                       <div className="fixed inset-0 z-40" onClick={() => setShowEffortMenu(false)} />
-                      <div className="absolute right-0 bottom-full mb-2 w-56 rounded-2xl border border-prism-border bg-[color:var(--surface)] shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150">
+                      <div className="absolute right-0 bottom-full mb-2 w-56 rounded-2xl border border-prism-border bg-[color:var(--surface)] shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-bottom-2 duration-150">
                         {/* Model header option */}
                         <div className="flex items-center justify-between px-2.5 py-2 rounded-xl bg-prism-accent/5 border border-prism-accent/15 select-none mb-1.5">
                           <div className="flex flex-col text-left">
-                            <span className="text-[10px] font-black text-prism-accent tracking-wide uppercase">Tutor Engine</span>
-                            <span className="text-xs font-extrabold text-prism-text mt-0.5">Gemini 1.5 Pro</span>
+                            <span className="text-[10px] font-black text-prism-accent tracking-wide uppercase">Tutor Mode</span>
+                            <span className="text-xs font-extrabold text-prism-text mt-0.5">Active Cognition</span>
                           </div>
                           <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-prism-accent/10 text-prism-accent">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
