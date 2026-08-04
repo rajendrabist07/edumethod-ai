@@ -64,7 +64,7 @@ export default function Home() {
         <header className="glass-card mb-12 flex items-center justify-between rounded-2xl px-6 py-4 transition-all duration-300 hover:border-prism-accent/30 focus-within:ring-2 focus-within:ring-prism-accent">
           <BrandMark />
           <div className="flex items-center gap-2 sm:gap-4">
-            <GlassButton href="/doubt-solver" variant="secondary" className="px-4 py-2 text-xs sm:text-sm hidden sm:inline-flex">
+            <GlassButton href="/doubt-solver" variant="secondary" className="px-4 py-2 text-xs sm:text-sm hidden md:inline-flex">
               Try Doubt Solver
             </GlassButton>
             <GlassButton href="/upload" variant="primary" className="px-4 py-2 text-xs sm:text-sm">

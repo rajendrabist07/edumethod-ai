@@ -1195,25 +1195,27 @@ export default function DoubtSolverPage() {
               </div>
             )}
 
-            <div className="flex items-center gap-1 px-1.5 pt-1.5 pb-2 overflow-x-auto">
-              {effortOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setTutorEffort(option.value)}
-                  className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent ${
-                    tutorEffort === option.value
-                      ? "border-prism-accent bg-prism-accent text-white shadow-sm"
-                      : "border-prism-border bg-prism-surface/60 text-prism-muted hover:text-prism-text hover:bg-prism-accent/5"
-                  }`}
-                  title={option.hint}
-                >
-                  {option.label}
-                  {option.value === "medium" && (
-                    <span className="ml-1 hidden sm:inline opacity-70">Default</span>
-                  )}
-                </button>
-              ))}
+            <div className="flex items-center px-1.5 pt-1.5 pb-2">
+              <div className="flex w-full rounded-2xl bg-prism-base/60 p-0.5 border border-prism-border/40 backdrop-blur-sm">
+                {effortOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setTutorEffort(option.value)}
+                    className={`flex-1 text-center py-2 text-[10px] font-black uppercase tracking-wider transition-all duration-300 rounded-xl active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent ${
+                      tutorEffort === option.value
+                        ? "bg-prism-accent text-white shadow-md shadow-prism-accent/15"
+                        : "text-prism-muted hover:text-prism-text"
+                    }`}
+                    title={option.hint}
+                  >
+                    {option.label}
+                    {option.value === "medium" && (
+                      <span className="ml-1 hidden sm:inline opacity-70">(Default)</span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Input & Actions */}

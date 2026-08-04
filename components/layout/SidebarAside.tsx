@@ -217,11 +217,11 @@ export function SidebarAside() {
         </button>
       </div>
 
-      {/* 2. Action Links (New chat button + Quick Nav Grid) */}
-      <div className="p-3 border-b border-prism-border/50 shrink-0 flex flex-col gap-2">
+      {/* 2. Action Links (New chat button + Quick Nav List) */}
+      <div className="p-3 border-b border-prism-border/50 shrink-0 flex flex-col gap-2.5">
         <Link
           href="/doubt-solver"
-          className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold transition duration-150 bg-prism-accent hover:bg-prism-accent/90 text-white shadow-sm active:scale-98 border border-white/10"
+          className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold transition duration-150 bg-prism-accent hover:bg-prism-accent/90 text-white shadow-md active:scale-98 border border-white/10"
           onClick={handleLinkClick}
         >
           <span className="flex items-center gap-2">
@@ -232,102 +232,112 @@ export function SidebarAside() {
           </span>
         </Link>
 
-        <div className="grid grid-cols-3 gap-1.5">
+        {/* Vertical Navigation Links */}
+        <nav className="flex flex-col gap-1 mt-1">
           <Link
             href="/dashboard"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-0.5 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname === "/dashboard"
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <DashboardIcon size={14} className="mb-0.5" /> Home
+            <DashboardIcon size={15} className="shrink-0" />
+            <span>Workspace Home</span>
           </Link>
+
           <Link
             href="/upload"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-0.5 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname === "/upload"
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <MasteryMapIcon size={14} className="mb-0.5" /> Path
+            <MasteryMapIcon size={15} className="shrink-0" />
+            <span>Syllabus Decomposer</span>
           </Link>
+
           <Link
             href="/flashcards"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-0.5 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname.startsWith("/flashcards")
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <FlashcardsIcon size={14} className="mb-0.5" /> Cards
+            <FlashcardsIcon size={15} className="shrink-0" />
+            <span>Active Recall Decks</span>
           </Link>
-        </div>
 
-        <div className="grid grid-cols-2 gap-1.5">
           <Link
             href="/mastery-map"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname === "/mastery-map"
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <MasteryMapIcon size={14} className="mb-0.5" /> Mastery
+            <MasteryMapIcon size={15} className="shrink-0" />
+            <span>Retention Matrix</span>
           </Link>
+
           <Link
             href="/textbook-chat"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname === "/textbook-chat"
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <TextbookChatIcon size={14} className="mb-0.5" /> RAG Chat
+            <TextbookChatIcon size={15} className="shrink-0" />
+            <span>Cognitive RAG Chat</span>
           </Link>
-        </div>
 
-        <div className="grid grid-cols-3 gap-1.5">
           <Link
             href="/feynman"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname === "/feynman"
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <FlameIcon size={14} className="mb-0.5" /> Feynman
+            <FlameIcon size={15} className="shrink-0" />
+            <span>Feynman Active Recall</span>
           </Link>
+
           <Link
             href="/study-rooms"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname === "/study-rooms"
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <StudyRoomsIcon size={14} className="mb-0.5" /> Rooms
+            <StudyRoomsIcon size={15} className="shrink-0" />
+            <span>Collaborative Rooms</span>
           </Link>
+
           <Link
             href="/cohorts"
-            className={`edu-action flex items-center justify-center p-2 text-[10px] font-bold gap-1 ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
               pathname === "/cohorts"
-                ? "edu-action-active"
-                : "text-prism-muted"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
             }`}
             onClick={handleLinkClick}
           >
-            <TeacherIcon size={14} className="mb-0.5" /> Cohorts
+            <TeacherIcon size={15} className="shrink-0" />
+            <span>Classroom Cohorts</span>
           </Link>
-        </div>
+        </nav>
       </div>
 
       {/* 3. History Scroll Pane */}
@@ -382,8 +392,13 @@ export function SidebarAside() {
                         }`}
                         onClick={handleLinkClick}
                       >
-                        <span className="truncate flex-1 pr-3 text-left">
-                          {item.title}
+                        <span className="truncate flex-1 pr-3 text-left flex items-center gap-2">
+                          {isPath ? (
+                            <MasteryMapIcon size={12} className="shrink-0 text-prism-accent/70" />
+                          ) : (
+                            <TextbookChatIcon size={12} className="shrink-0 text-purple-500/70" />
+                          )}
+                          <span className="truncate">{item.title}</span>
                         </span>
 
                         <button
@@ -490,27 +505,29 @@ export function SidebarAside() {
       )}
 
       {/* 5. Footer Account Widgets */}
-      <div className="px-4.5 py-3.5 border-t border-prism-border/50 bg-prism-accent/5/30 shrink-0 flex items-center justify-between gap-3 z-30 relative select-none">
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <UserButton />
-          <div className="min-w-0 flex flex-col flex-1">
-            <span className="text-[10px] font-bold truncate text-prism-text leading-snug">
-              {user?.fullName || "My Workspace"}
-            </span>
-            <span className="text-4xs font-semibold text-prism-muted uppercase tracking-wider">
-              Settings
-            </span>
+      <div className="p-3 border-t border-prism-border/50 shrink-0 select-none">
+        <div className="flex items-center justify-between gap-2 bg-prism-surface/50 border border-prism-border/40 p-2.5 rounded-2xl">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <UserButton />
+            <div className="min-w-0 flex flex-col flex-1">
+              <span className="text-[10px] font-extrabold truncate text-prism-text leading-snug">
+                {user?.fullName || "My Workspace"}
+              </span>
+              <span className="text-[8px] font-bold text-prism-muted uppercase tracking-wider">
+                Settings
+              </span>
+            </div>
           </div>
-        </div>
 
-        {usage && (
-          <button
-            onClick={() => setShowUsageModal(!showUsageModal)}
-            className="px-2 py-0.5 rounded-full text-4xs font-black uppercase tracking-wider border cursor-pointer transition active:scale-95 shrink-0 bg-blue-500/10 text-blue-600 border-blue-500/25 hover:bg-blue-500/20"
-          >
-            Limits
-          </button>
-        )}
+          {usage && (
+            <button
+              onClick={() => setShowUsageModal(!showUsageModal)}
+              className="px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-wider border cursor-pointer transition active:scale-95 shrink-0 bg-blue-500/10 text-blue-600 border-blue-500/25 hover:bg-blue-500/20"
+            >
+              Limits
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

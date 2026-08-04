@@ -14,7 +14,7 @@ export function BrandMark({ compact = false, className = "" }: BrandMarkProps) {
       </div>
 
       {!compact ? (
-        <div className="flex flex-col justify-center">
+        <div className="hidden sm:flex flex-col justify-center">
           <p className="edu-brand-text text-lg font-black tracking-tight font-display">
             EduMethod AI
           </p>

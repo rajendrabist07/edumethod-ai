@@ -28,13 +28,8 @@ export const metadata: Metadata = {
     description: "Transform raw syllabus text or snapshots into personalized study plans, active recall quizzes, and get step-by-step doubt-solving guide from our AI tutor.",
   },
   icons: {
-    icon: [
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" }
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
-    ]
+    icon: "/favicon.svg",
+    apple: "/favicon.svg"
   },
   manifest: "/manifest.json",
 };
