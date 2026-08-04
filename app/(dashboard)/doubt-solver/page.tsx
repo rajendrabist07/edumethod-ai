@@ -671,28 +671,52 @@ export default function DoubtSolverPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full">
                 {[
                   {
-                    title: "Solve Calculus Limit",
-                    desc: "Calculate lim x->0 sin(x)/x step-by-step",
-                    prompt: "Solve the limit equation: \\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 step-by-step."
+                    title: "Calculus",
+                    desc: "Calculate limits and solve derivatives step-by-step.",
+                    prompt: "Solve the limit equation: \\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 step-by-step.",
+                    icon: (
+                      <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 11h.01M12 7h.01M15 7h.01M15 14h.01M15 11h.01M9 11h.01M3 19V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                      </svg>
+                    )
                   },
                   {
-                    title: "Biology Processes",
-                    desc: "Explain the cellular respiration cycle",
-                    prompt: "Explain the process of cellular respiration in clear, simplified biology terms."
+                    title: "Biology",
+                    desc: "Deconstruct respiration, cell pathways, and structures.",
+                    prompt: "Explain the process of cellular respiration in clear, simplified biology terms.",
+                    icon: (
+                      <svg className="w-3.5 h-3.5 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v19M8.664 7h6.672M5.336 12h13.328M8.664 17h6.672M12 3a9 9 0 100 18 9 9 0 000-18z" />
+                      </svg>
+                    )
                   },
                   {
-                    title: "Physics Equation",
-                    desc: "Explain the force formula F = ma",
-                    prompt: "Explain Newton's second law of motion and explain its equation $F = ma$ with examples."
+                    title: "Physics",
+                    desc: "Deconstruct mechanics, force formulas, and Newton's laws.",
+                    prompt: "Explain Newton's second law of motion and explain its equation $F = ma$ with examples.",
+                    icon: (
+                      <svg className="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18M3 12h18M12 3a9 9 0 110 18 9 9 0 010-18z" />
+                      </svg>
+                    )
                   }
                 ].map((action, idx) => (
                   <button
                     key={idx}
                     onClick={() => setInput(action.prompt)}
-                    className="p-4 rounded-2xl border border-prism-border/50 bg-prism-surface/40 hover:bg-prism-surface/80 text-left transition-all duration-300 hover:border-prism-accent/30 hover:-translate-y-0.5 hover:shadow-sm active:scale-98 cursor-pointer group"
+                    className="flex flex-col justify-between p-4.5 min-h-[116px] rounded-2xl border border-prism-border/45 bg-gradient-to-br from-prism-surface/40 to-prism-surface/10 hover:from-prism-surface/85 hover:to-prism-surface/45 text-left transition-all duration-300 hover:border-prism-accent/35 hover:-translate-y-0.5 hover:shadow-sm hover:shadow-prism-accent/5 active:scale-98 cursor-pointer group relative overflow-hidden"
                   >
-                    <p className="text-[10px] font-black text-prism-text uppercase tracking-wider mb-1.5 transition-colors group-hover:text-prism-accent">{action.title}</p>
-                    <p className="text-4xs font-semibold text-prism-muted leading-relaxed">{action.desc}</p>
+                    <div className="flex items-center justify-between w-full mb-3">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-prism-muted group-hover:text-prism-accent transition-colors font-mono">
+                        {action.title}
+                      </span>
+                      <div className="p-1.5 rounded-xl bg-prism-base/50 group-hover:bg-prism-base border border-prism-border/10 transition-all duration-300">
+                        {action.icon}
+                      </div>
+                    </div>
+                    <p className="text-[11.5px] font-semibold text-prism-text leading-relaxed tracking-tight">
+                      {action.desc}
+                    </p>
                   </button>
                 ))}
               </div>
