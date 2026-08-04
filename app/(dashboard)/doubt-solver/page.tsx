@@ -12,6 +12,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { useUser } from "@clerk/nextjs";
 import { useLayout } from "@/components/layout/LayoutContext";
+import { Moon, Radio, TriangleAlert, UserRound, Volume2, Zap } from "lucide-react";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -639,8 +640,9 @@ export default function DoubtSolverPage() {
         {/* Conversation list window */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 flex flex-col">
           {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs font-bold text-red-700 dark:border-red-950/40 dark:bg-red-950/45 dark:text-red-400 shrink-0">
-              ⚠️ {error}
+            <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs font-bold text-red-700 dark:border-red-950/40 dark:bg-red-950/45 dark:text-red-400 shrink-0">
+              <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{error}</span>
             </div>
           )}
 
@@ -939,7 +941,8 @@ export default function DoubtSolverPage() {
                                   }}
                                   className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-prism-surface/70 text-prism-text transition flex items-center gap-1.5"
                                 >
-                                  🔊 Read Aloud
+                                  <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                  Read Aloud
                                 </button>
                                 <button
                                   onClick={() => {
@@ -948,7 +951,8 @@ export default function DoubtSolverPage() {
                                   }}
                                   className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-prism-surface/70 text-red-500 hover:text-red-600 transition flex items-center gap-1.5"
                                 >
-                                  ⚠️ Report Issue
+                                  <TriangleAlert className="h-3.5 w-3.5" aria-hidden="true" />
+                                  Report Issue
                                 </button>
                                 <button
                                   onClick={() => {
@@ -1017,7 +1021,10 @@ export default function DoubtSolverPage() {
                         : "text-white/60 hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    👨 Male
+                    <span className="inline-flex items-center gap-1">
+                      <UserRound className="h-3 w-3" aria-hidden="true" />
+                      Male
+                    </span>
                   </button>
                   <button
                     onClick={() => setPreferredGender("female")}
@@ -1027,7 +1034,10 @@ export default function DoubtSolverPage() {
                         : "text-white/60 hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    👩 Female
+                    <span className="inline-flex items-center gap-1">
+                      <UserRound className="h-3 w-3" aria-hidden="true" />
+                      Female
+                    </span>
                   </button>
                 </div>
               </div>
@@ -1119,11 +1129,31 @@ export default function DoubtSolverPage() {
 
             {/* Footer Text status */}
             <div className="w-full max-w-md text-center flex flex-col gap-2 pb-6">
-              <h3 className="text-sm font-black tracking-widest uppercase">
-                {voiceState === 'listening' && "🔴 Listening..."}
-                {voiceState === 'speaking' && "🔊 Speaking..."}
-                {voiceState === 'thinking' && "⚡ Thinking..."}
-                {voiceState === 'idle' && "💤 Connection Idle"}
+              <h3 className="inline-flex items-center justify-center gap-2 text-sm font-black tracking-widest uppercase">
+                {voiceState === 'listening' && (
+                  <>
+                    <Radio className="h-4 w-4 text-red-300" aria-hidden="true" />
+                    Listening...
+                  </>
+                )}
+                {voiceState === 'speaking' && (
+                  <>
+                    <Volume2 className="h-4 w-4 text-cyan-200" aria-hidden="true" />
+                    Speaking...
+                  </>
+                )}
+                {voiceState === 'thinking' && (
+                  <>
+                    <Zap className="h-4 w-4 text-amber-200" aria-hidden="true" />
+                    Thinking...
+                  </>
+                )}
+                {voiceState === 'idle' && (
+                  <>
+                    <Moon className="h-4 w-4 text-white/70" aria-hidden="true" />
+                    Connection Idle
+                  </>
+                )}
               </h3>
               <p className="text-3xs text-white/60 max-w-xs mx-auto leading-relaxed">
                 {voiceState === 'listening' && "Speak clearly. The AI is listening to your question..."}

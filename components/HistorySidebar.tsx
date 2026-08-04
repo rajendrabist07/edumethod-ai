@@ -4,9 +4,12 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
+import { DashboardIcon } from "@/components/icons/DashboardIcon";
+import { FlashcardsIcon } from "@/components/icons/FlashcardsIcon";
 import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 import { QuizTargetIcon } from "@/components/icons/QuizTargetIcon";
+import { SearchIcon } from "@/components/icons/SearchIcon";
 import { UserButton, useUser } from "@clerk/nextjs";
 
 interface HistoryItem {
@@ -231,7 +234,7 @@ export function HistorySidebar() {
             onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
           >
             <span className="flex items-center gap-2">
-              <span className="text-sm">💬</span> New Doubt Solver
+              <ChatSparkIcon size={15} aria-hidden="true" /> New Doubt Solver
             </span>
             <span className="text-4xs opacity-75 uppercase tracking-wider bg-white/10 px-1.5 py-0.5 rounded-md font-mono">⌘N</span>
           </Link>
@@ -242,21 +245,21 @@ export function HistorySidebar() {
               className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-0.5 text-[color:var(--muted)] hover:text-[color:var(--text)]"
               onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
             >
-              <span>🏡</span> Home
+              <DashboardIcon size={13} aria-hidden="true" /> Home
             </Link>
             <Link
               href="/upload"
               className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-0.5 text-[color:var(--muted)] hover:text-[color:var(--text)]"
               onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
             >
-              <span>📚</span> Path
+              <PathProgressIcon size={13} aria-hidden="true" /> Path
             </Link>
             <Link
               href="/flashcards"
               className="flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-[#1c1d20]/60 hover:bg-slate-100 dark:hover:bg-[#1c1d20]/30 transition duration-150 text-[10px] font-bold gap-0.5 text-[color:var(--muted)] hover:text-[color:var(--text)]"
               onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
             >
-              <span>🗂️</span> Cards
+              <FlashcardsIcon size={13} aria-hidden="true" /> Cards
             </Link>
           </div>
         </div>
@@ -276,7 +279,7 @@ export function HistorySidebar() {
             </div>
           ) : history.length === 0 ? (
             <div className="py-8 px-4 text-center">
-              <span className="inline-block text-xl mb-2 text-slate-400">🔍</span>
+              <SearchIcon size={24} className="mx-auto mb-2 text-[color:var(--muted)]" aria-hidden="true" />
               <p className="text-[11px] font-extrabold text-[color:var(--text)] uppercase tracking-wider">No conversations yet</p>
               <p className="text-4xs font-semibold text-[color:var(--muted)] leading-relaxed mt-1">
                 Generate a study plan or ask the Doubt Solver a question to save records.

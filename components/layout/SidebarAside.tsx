@@ -13,7 +13,8 @@ import {
   FlashcardsIcon,
   StudyRoomsIcon,
   FlameIcon,
-  TeacherIcon
+  TeacherIcon,
+  SearchIcon
 } from "@/components/icons";
 
 interface HistoryItem {
@@ -344,7 +345,7 @@ export function SidebarAside() {
           </div>
         ) : history.length === 0 ? (
           <div className="py-8 px-4 text-center">
-            <span className="inline-block text-xl mb-2 text-slate-400">🔍</span>
+            <SearchIcon size={24} className="mx-auto mb-2 text-prism-muted/70" aria-hidden="true" />
             <p className="text-[11px] font-extrabold text-prism-text uppercase tracking-wider">
               No history found
             </p>

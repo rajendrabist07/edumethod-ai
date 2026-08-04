@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { GlassCard } from "@/app/components/ui/GlassCard";
 import { toast } from "sonner";
+import { School, Sparkles } from "lucide-react";
 
 interface Cohort {
   id: string;
@@ -194,7 +195,9 @@ export function CohortsDashboard() {
             </div>
           ) : cohorts.length === 0 ? (
             <GlassCard className="flex-grow flex flex-col items-center justify-center py-20 text-center border border-prism-border/40">
-              <span className="text-5xl mb-4">🏫</span>
+              <span className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-prism-accent/20 bg-prism-accent/10 text-prism-accent">
+                <School className="h-8 w-8" aria-hidden="true" />
+              </span>
               <h3 className="text-lg font-bold">No Classrooms Yet</h3>
               <p className="text-sm text-prism-muted mt-2 max-w-sm">
                 Create a classroom to share with your students, inspect their study metrics, and generate AI teaching insights.
@@ -365,7 +368,9 @@ export function CohortsDashboard() {
               <div className="space-y-6">
                 <GlassCard className="p-5 border border-prism-border/40 flex flex-col h-full bg-gradient-to-br from-prism-surface/60 via-prism-base to-prism-surface/20">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xl">✨</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-prism-accent/20 bg-prism-accent/10 text-prism-accent">
+                      <Sparkles className="h-4 w-4" aria-hidden="true" />
+                    </span>
                     <h3 className="font-bold text-lg bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
                       AI Pedagogical Coach
                     </h3>

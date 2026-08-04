@@ -112,7 +112,8 @@ export default function FlashcardsDashboardPage() {
             </span>
             {totalDue > 0 && (
               <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-2xs font-extrabold uppercase tracking-wide text-amber-600 dark:bg-amber-950/50 dark:text-amber-400 animate-pulse">
-                ⚠️ {totalDue} reviews due
+                <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                {totalDue} reviews due
               </span>
             )}
           </div>

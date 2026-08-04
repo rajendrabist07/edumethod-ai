@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ThemeToggle } from "@/app/components/theme-toggle";
+import { Lightbulb, TriangleAlert } from "lucide-react";
 
 export default function Error({
   error,
@@ -33,7 +34,9 @@ export default function Error({
 
         <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 shadow-sm">
           <div className="text-center">
-            <div className="mb-4 text-6xl">⚠️</div>
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl border border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400">
+              <TriangleAlert className="h-8 w-8" aria-hidden="true" />
+            </div>
             <h1 className="text-3xl font-bold text-red-600 dark:text-red-400">
               Oops! Something went wrong
             </h1>
@@ -71,10 +74,12 @@ export default function Error({
         </div>
 
         <div className="mt-8 rounded-lg border border-prism-border bg-prism-surface p-4">
-          <p className="text-sm text-prism-muted">
-            <strong>💡 Tip:</strong> If this error persists, try clearing your
-            browser cache or reloading the page. If the problem continues,
-            please contact support.
+          <p className="flex items-start gap-2 text-sm text-prism-muted">
+            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-prism-accent" aria-hidden="true" />
+            <span>
+              <strong>Tip:</strong> If this error persists, try clearing your browser cache or reloading the page.
+              If the problem continues, please contact support.
+            </span>
           </p>
         </div>
       </div>

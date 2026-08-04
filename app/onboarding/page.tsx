@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GlassCard } from "@/app/components/ui/GlassCard";
+import { GlassButton } from "@/app/components/ui/GlassButton";
 import { useUser } from "@clerk/nextjs";
+import { GraduationCap, Presentation } from "lucide-react";
 
 export default function OnboardingPage() {
   const { user, isLoaded } = useUser();
@@ -42,35 +44,35 @@ export default function OnboardingPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-prism-base text-prism-text p-6">
-      <GlassCard className="max-w-md w-full p-8 space-y-6">
+      <GlassCard className="max-w-md w-full rounded-3xl p-6 sm:p-8 space-y-6 border border-prism-border">
         <div className="text-center">
-          <h1 className="text-2xl font-display font-black text-white">Welcome to EduMethod!</h1>
+          <h1 className="text-2xl font-display font-black text-prism-text">Welcome to EduMethod!</h1>
           <p className="text-sm text-prism-muted mt-2">Let's get your account set up.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
             <label className="block text-sm font-semibold">How will you use this platform?</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => setRole("student")}
-                className={`p-4 border rounded-xl flex flex-col items-center transition-all ${
-                  role === "student" ? "border-prism-accent bg-prism-accent/10" : "border-prism-border hover:border-prism-text/30"
+                className={`min-h-28 p-4 border rounded-2xl flex flex-col items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent ${
+                  role === "student" ? "border-prism-accent bg-prism-accent/10 text-prism-accent" : "border-prism-border hover:border-prism-accent/40 text-prism-text"
                 }`}
               >
-                <span className="text-2xl mb-2">🎓</span>
+                <GraduationCap className="h-7 w-7" strokeWidth={2.2} aria-hidden="true" />
                 <span className="text-sm font-medium">Student</span>
               </button>
               
               <button
                 type="button"
                 onClick={() => setRole("teacher")}
-                className={`p-4 border rounded-xl flex flex-col items-center transition-all ${
-                  role === "teacher" ? "border-prism-accent bg-prism-accent/10" : "border-prism-border hover:border-prism-text/30"
+                className={`min-h-28 p-4 border rounded-2xl flex flex-col items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-accent ${
+                  role === "teacher" ? "border-prism-accent bg-prism-accent/10 text-prism-accent" : "border-prism-border hover:border-prism-accent/40 text-prism-text"
                 }`}
               >
-                <span className="text-2xl mb-2">👨‍🏫</span>
+                <Presentation className="h-7 w-7" strokeWidth={2.2} aria-hidden="true" />
                 <span className="text-sm font-medium">Teacher</span>
               </button>
             </div>
@@ -82,13 +84,14 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          <button
+          <GlassButton
             type="submit"
             disabled={saving}
-            className="w-full py-3 px-4 rounded-full bg-prism-accent text-white font-bold hover:bg-opacity-90 disabled:opacity-50 transition-all"
+            variant="primary"
+            className="w-full min-h-11"
           >
             {saving ? "Setting up..." : "Complete Setup"}
-          </button>
+          </GlassButton>
         </form>
       </GlassCard>
     </main>

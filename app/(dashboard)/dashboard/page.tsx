@@ -8,6 +8,7 @@ import { BrandMark } from "../../components/brand-mark";
 import { PathProgressIcon } from "@/components/icons/PathProgressIcon";
 import { ChatSparkIcon } from "@/components/icons/ChatSparkIcon";
 import { SettingsIcon } from "@/components/icons/SettingsIcon";
+import { BookOpen, Brain, GraduationCap, School, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 
 interface UsageLimits {
@@ -358,8 +359,9 @@ export default function DashboardPage() {
           {/* Join Classroom Card */}
           <div className="md:col-span-5 glass-prism rounded-3xl p-5 shadow-sm flex flex-col justify-between border border-prism-border">
             <div>
-              <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
-                🏫 Connect to classroom
+              <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
+                <School className="h-4 w-4 text-prism-accent" aria-hidden="true" />
+                Connect to classroom
               </h2>
               <p className="text-[10px] font-semibold text-prism-muted mt-3 leading-relaxed font-mono">
                 Enter your teacher's classroom code to join their cohort and share your study progress.
@@ -386,8 +388,9 @@ export default function DashboardPage() {
 
           {/* Joined Classrooms List */}
           <div className="md:col-span-7 glass-prism rounded-3xl p-5 shadow-sm flex flex-col border border-prism-border">
-            <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
-              📚 My classrooms
+            <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
+              <BookOpen className="h-4 w-4 text-prism-accent" aria-hidden="true" />
+              My classrooms
             </h2>
             <div className="flex-grow overflow-y-auto max-h-[180px] pr-1 mt-3 space-y-3">
               {classrooms.length === 0 ? (
@@ -419,8 +422,9 @@ export default function DashboardPage() {
 
         {/* Analytics & Mastery Dashboard */}
         <div className="glass-prism rounded-3xl p-6 shadow-sm border border-prism-border">
-          <h2 className="text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
-            🧠 Spaced Repetition & Topic Mastery Dashboard
+          <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-prism-muted border-b border-prism-border pb-2 font-display">
+            <Brain className="h-4 w-4 text-prism-accent" aria-hidden="true" />
+            Spaced Repetition & Topic Mastery Dashboard
           </h2>
 
           {loading ? (
@@ -429,7 +433,7 @@ export default function DashboardPage() {
             </div>
           ) : masteryData.length === 0 ? (
             <div className="text-center py-10 text-prism-muted">
-              <span className="text-2xl block mb-2">🎓</span>
+              <GraduationCap className="mx-auto mb-3 h-7 w-7 text-prism-accent" aria-hidden="true" />
               <p className="text-2xs font-bold uppercase tracking-wider font-mono">No mastery data available yet</p>
               <p className="text-4xs font-semibold mt-1">Generate a flashcard deck and review cards to see your topic mastery grow!</p>
             </div>
@@ -484,7 +488,7 @@ export default function DashboardPage() {
               {/* Weak-Topic Alert Notification */}
               {masteryData.some(t => t.mastery < 60) && (
                 <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/5 flex items-start gap-3">
-                  <span className="text-base shrink-0">⚠️</span>
+                  <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-red-500" aria-hidden="true" />
                   <div>
                     <h4 className="text-3xs font-black text-red-500 uppercase tracking-wide font-display">Attention: Weak Topics Found</h4>
                     <p className="text-[10px] font-medium text-prism-muted mt-0.5 leading-relaxed">

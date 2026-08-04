@@ -13,6 +13,7 @@ import { CameraScanIcon } from "@/components/icons/CameraScanIcon";
 import { LoadingPulse } from "@/components/ui/LoadingPulse";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { FolderPlus, PartyPopper, TriangleAlert, Zap } from "lucide-react";
 
 interface Topic {
   name: string;
@@ -425,8 +426,9 @@ export default function UploadPage() {
         </form>
 
         {error && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400">
-            ⚠️ {error}
+          <div className="flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400">
+            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -505,16 +507,17 @@ export default function UploadPage() {
                       {existingDeck ? (
                         <Link
                           href={`/flashcards/${existingDeck.id}`}
-                          className="text-3xs font-black text-emerald-600 hover:text-emerald-700 hover:underline uppercase tracking-widest flex items-center gap-1"
+                          className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 text-3xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest transition hover:bg-emerald-500/15"
                         >
-                          ⚡ Review Flashcards
+                          <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+                          Review Flashcards
                         </Link>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleGenerateCardsForTopic(topic.name)}
                           disabled={generatingCardsTopic === topic.name}
-                          className="text-3xs font-black text-prism-accent hover:text-opacity-80 hover:underline uppercase tracking-widest flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                          className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-prism-accent/20 bg-prism-accent/10 px-3 text-3xs font-black text-prism-accent uppercase tracking-widest transition hover:bg-prism-accent/15 disabled:opacity-50 cursor-pointer"
                         >
                           {generatingCardsTopic === topic.name ? (
                             <>
@@ -522,7 +525,10 @@ export default function UploadPage() {
                               Creating...
                             </>
                           ) : (
-                            <>🗂️ Generate Flashcards</>
+                            <>
+                              <FolderPlus className="h-3.5 w-3.5" aria-hidden="true" />
+                              Generate Flashcards
+                            </>
                           )}
                         </button>
                       )}
@@ -703,11 +709,11 @@ export default function UploadPage() {
                   {quizResult.score} <span className="text-xl text-prism-muted">/ {quizResult.totalQuestions}</span>
                 </div>
                 <p className="mt-2 text-2xs font-semibold text-prism-muted">
-                  {quizResult.score === quizResult.totalQuestions 
-                    ? "🎉 Perfect! Excellent retention." 
-                    : quizResult.score >= quizResult.totalQuestions * 0.7 
-                    ? "👍 Good progress! Review weak areas." 
-                    : "📚 We recommend a complete study run."}
+                  {quizResult.score === quizResult.totalQuestions
+                    ? "Perfect. Excellent retention."
+                    : quizResult.score >= quizResult.totalQuestions * 0.7
+                    ? "Good progress. Review weak areas."
+                    : "We recommend a complete study run."}
                 </p>
               </div>
 
@@ -725,22 +731,24 @@ export default function UploadPage() {
                           const existingDeck = decks.find((d) => d.topic === topic);
                           return (
                             <div key={i} className="flex items-center gap-2">
-                              <span className="rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-2xs font-bold text-rose-700 dark:bg-rose-950/30 dark:border-rose-900/50 dark:text-rose-400">
-                                ⚠️ {topic}
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-2xs font-bold text-rose-700 dark:bg-rose-950/30 dark:border-rose-900/50 dark:text-rose-400">
+                                <TriangleAlert className="h-3.5 w-3.5" aria-hidden="true" />
+                                {topic}
                               </span>
                               {existingDeck ? (
                                 <Link
                                   href={`/flashcards/${existingDeck.id}`}
-                                  className="text-4xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest hover:underline flex items-center gap-0.5"
+                                  className="inline-flex min-h-7 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 text-4xs font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest transition hover:bg-emerald-500/15"
                                 >
-                                  ⚡ Study Cards
+                                  <Zap className="h-3 w-3" aria-hidden="true" />
+                                  Study Cards
                                 </Link>
                               ) : (
                                 <button
                                   type="button"
                                   onClick={() => handleGenerateCardsForTopic(topic)}
                                   disabled={generatingCardsTopic === topic}
-                                  className="text-4xs font-black text-prism-accent hover:text-opacity-80 uppercase tracking-widest hover:underline disabled:opacity-50 cursor-pointer flex items-center gap-0.5"
+                                  className="inline-flex min-h-7 items-center gap-1 rounded-full border border-prism-accent/20 bg-prism-accent/10 px-2.5 text-4xs font-black text-prism-accent uppercase tracking-widest transition hover:bg-prism-accent/15 disabled:opacity-50 cursor-pointer"
                                 >
                                   {generatingCardsTopic === topic ? (
                                     <>
@@ -748,7 +756,10 @@ export default function UploadPage() {
                                       Creating...
                                     </>
                                   ) : (
-                                    <>🗂️ Build Cards</>
+                                    <>
+                                      <FolderPlus className="h-3 w-3" aria-hidden="true" />
+                                      Build Cards
+                                    </>
                                   )}
                                 </button>
                               )}
@@ -761,8 +772,9 @@ export default function UploadPage() {
                       </p>
                     </div>
                   ) : (
-                    <div className="mt-2 rounded-xl bg-emerald-50/50 border border-emerald-200 p-3 text-xs text-emerald-800 dark:bg-emerald-950/20 dark:border-emerald-900/40 dark:text-emerald-400 font-semibold">
-                      ✨ Outstanding performance! No weak topic modules detected. Keep up the good work!
+                    <div className="mt-2 flex items-start gap-2 rounded-xl bg-emerald-50/50 border border-emerald-200 p-3 text-xs text-emerald-800 dark:bg-emerald-950/20 dark:border-emerald-900/40 dark:text-emerald-400 font-semibold">
+                      <PartyPopper className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                      <span>Outstanding performance. No weak topic modules detected. Keep up the good work!</span>
                     </div>
                   )}
                 </div>
