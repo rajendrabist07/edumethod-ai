@@ -1257,87 +1257,89 @@ export default function DoubtSolverPage() {
               {/* Right Actions: Popover Menu, Mic, and Send */}
               <div className="flex items-center gap-1.5 mb-1 shrink-0 relative">
                 
-                {/* Effort Selection Dropdown */}
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setShowEffortMenu(!showEffortMenu)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-prism-surface border border-prism-border hover:border-prism-accent/50 text-prism-text transition duration-200 cursor-pointer active:scale-95 shrink-0 select-none shadow-sm"
-                    title="Configure tutor cognitive effort depth"
-                  >
-                    <span>Effort: {tutorEffort.charAt(0).toUpperCase() + tutorEffort.slice(1)}</span>
-                    <svg
-                      className={`w-3 h-3 opacity-70 transition-transform duration-200 ${showEffortMenu ? "rotate-180" : ""}`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
+                {/* Effort Selection Dropdown (Only show at the beginning when messages are empty) */}
+                {messages.length === 0 && (
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowEffortMenu(!showEffortMenu)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-prism-surface border border-prism-border hover:border-prism-accent/50 text-prism-text transition duration-200 cursor-pointer active:scale-95 shrink-0 select-none shadow-sm"
+                      title="Configure tutor cognitive effort depth"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                    </svg>
-                  </button>
+                      <span>Effort: {tutorEffort.charAt(0).toUpperCase() + tutorEffort.slice(1)}</span>
+                      <svg
+                        className={`w-3 h-3 opacity-70 transition-transform duration-200 ${showEffortMenu ? "rotate-180" : ""}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </button>
 
-                  {showEffortMenu && (
-                    <>
-                      {/* Backdrop for closing popover */}
-                      <div className="fixed inset-0 z-40" onClick={() => setShowEffortMenu(false)} />
-                      <div className="absolute right-0 bottom-full mb-2 w-56 rounded-2xl border border-prism-border bg-white dark:bg-zinc-950 shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-bottom-2 duration-150">
-                        {/* Model header option */}
-                        <div className="flex items-center justify-between px-2.5 py-2 rounded-xl bg-prism-accent/5 border border-prism-accent/15 select-none mb-1.5">
-                          <div className="flex flex-col text-left">
-                            <span className="text-[10px] font-black text-prism-accent tracking-wide uppercase">Tutor Mode</span>
-                            <span className="text-xs font-extrabold text-prism-text mt-0.5">Active Cognition</span>
+                    {showEffortMenu && (
+                      <>
+                        {/* Backdrop for closing popover */}
+                        <div className="fixed inset-0 z-40" onClick={() => setShowEffortMenu(false)} />
+                        <div className="absolute right-0 bottom-full mb-2 w-56 rounded-2xl border border-prism-border bg-white dark:bg-zinc-950 shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-bottom-2 duration-150">
+                          {/* Model header option */}
+                          <div className="flex items-center justify-between px-2.5 py-2 rounded-xl bg-prism-accent/5 border border-prism-accent/15 select-none mb-1.5">
+                            <div className="flex flex-col text-left">
+                              <span className="text-[10px] font-black text-prism-accent tracking-wide uppercase">Tutor Mode</span>
+                              <span className="text-xs font-extrabold text-prism-text mt-0.5">Active Cognition</span>
+                            </div>
+                            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-prism-accent/10 text-prism-accent">
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                              </svg>
+                            </div>
                           </div>
-                          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-prism-accent/10 text-prism-accent">
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                            </svg>
+
+                          <div className="h-px bg-prism-border/40 my-1" />
+
+                          {/* Effort Options List */}
+                          <div className="px-2 py-1 text-[9px] font-black uppercase tracking-widest text-prism-muted/65 mb-1.5">
+                            Cognitive Effort Depth
+                          </div>
+
+                          <div className="flex flex-col gap-0.5">
+                            {effortOptions.map((option) => {
+                              const isSelected = tutorEffort === option.value;
+                              return (
+                                <button
+                                  key={option.value}
+                                  type="button"
+                                  onClick={() => {
+                                    setTutorEffort(option.value);
+                                    setShowEffortMenu(false);
+                                  }}
+                                  className={`flex items-start justify-between w-full px-2.5 py-1.5 rounded-xl text-xs text-left font-bold transition duration-150 active:scale-[0.98] ${
+                                    isSelected
+                                      ? "bg-prism-accent text-white shadow-sm"
+                                      : "text-prism-muted hover:text-prism-text hover:bg-prism-base/50"
+                                  }`}
+                                >
+                                  <div className="flex flex-col">
+                                    <span>{option.label}</span>
+                                    <span className={`text-[9px] font-medium leading-tight mt-0.5 ${isSelected ? "text-white/80" : "text-prism-muted"}`}>
+                                      {option.hint}
+                                    </span>
+                                  </div>
+                                  {isSelected && (
+                                    <svg className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                  )}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
-
-                        <div className="h-px bg-prism-border/40 my-1" />
-
-                        {/* Effort Options List */}
-                        <div className="px-2 py-1 text-[9px] font-black uppercase tracking-widest text-prism-muted/65 mb-1.5">
-                          Cognitive Effort Depth
-                        </div>
-
-                        <div className="flex flex-col gap-0.5">
-                          {effortOptions.map((option) => {
-                            const isSelected = tutorEffort === option.value;
-                            return (
-                              <button
-                                key={option.value}
-                                type="button"
-                                onClick={() => {
-                                  setTutorEffort(option.value);
-                                  setShowEffortMenu(false);
-                                }}
-                                className={`flex items-start justify-between w-full px-2.5 py-1.5 rounded-xl text-xs text-left font-bold transition duration-150 active:scale-[0.98] ${
-                                  isSelected
-                                    ? "bg-prism-accent text-white shadow-sm"
-                                    : "text-prism-muted hover:text-prism-text hover:bg-prism-base/50"
-                                }`}
-                              >
-                                <div className="flex flex-col">
-                                  <span>{option.label}</span>
-                                  <span className={`text-[9px] font-medium leading-tight mt-0.5 ${isSelected ? "text-white/80" : "text-prism-muted"}`}>
-                                    {option.hint}
-                                  </span>
-                                </div>
-                                {isSelected && (
-                                  <svg className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                  </svg>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {voiceSupported && (
                   <button
