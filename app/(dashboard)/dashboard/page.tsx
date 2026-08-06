@@ -35,11 +35,39 @@ interface MasteryTopic {
   nextReview?: string | null;
 }
 
+interface JourneyOverview {
+  totalRoadmaps: number;
+  totalTopics: number;
+  completedTopics: number;
+  overallCompletionPercentage: number;
+  currentStreak: number;
+  nextScheduledReview: string | null;
+  dueReviewsCount: number;
+  roadmaps: Array<{
+    id: string;
+    subject: string;
+    createdAt: string;
+    completionPercentage: number;
+    topics: Array<{
+      name: string;
+      order: number;
+      difficulty: string;
+      estimatedHours: number;
+      dependencies: string[];
+      masteryScore: number;
+      completed: boolean;
+      sm2DueStatus: string;
+      nextReviewDate: string | null;
+    }>;
+  }>;
+}
+
 export default function DashboardPage() {
   const { user } = useUser();
   const [usage, setUsage] = useState<UsageLimits | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [masteryData, setMasteryData] = useState<MasteryTopic[]>([]);
+  const [journeyData, setJourneyData] = useState<JourneyOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [classrooms, setClassrooms] = useState<any[]>([]);
   const [joinCode, setJoinCode] = useState("");
@@ -48,33 +76,19 @@ export default function DashboardPage() {
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        // Fetch plan usage limits
-        const usageRes = await fetch("/api/usage");
-        if (usageRes.ok) {
-          const usageData = await usageRes.json();
-          setUsage(usageData);
-        }
+        const [usageRes, historyRes, masteryRes, classroomsRes, journeyRes] = await Promise.all([
+          fetch("/api/usage"),
+          fetch("/api/history"),
+          fetch("/api/mastery"),
+          fetch("/api/cohorts"),
+          fetch("/api/journey"),
+        ]);
 
-        // Fetch history listing
-        const historyRes = await fetch("/api/history");
-        if (historyRes.ok) {
-          const historyData = await historyRes.json();
-          setHistory(historyData.history || []);
-        }
-
-        // Fetch mastery scoring data
-        const masteryRes = await fetch("/api/mastery");
-        if (masteryRes.ok) {
-          const masteryJson = await masteryRes.json();
-          setMasteryData(masteryJson.topics || []);
-        }
-
-        // Fetch classrooms
-        const classroomsRes = await fetch("/api/cohorts");
-        if (classroomsRes.ok) {
-          const classroomsData = await classroomsRes.json();
-          setClassrooms(classroomsData.cohorts || []);
-        }
+        if (usageRes.ok) setUsage(await usageRes.json());
+        if (historyRes.ok) setHistory((await historyRes.json()).history || []);
+        if (masteryRes.ok) setMasteryData((await masteryRes.json()).topics || []);
+        if (classroomsRes.ok) setClassrooms((await classroomsRes.json()).cohorts || []);
+        if (journeyRes.ok) setJourneyData((await journeyRes.json()).journey || null);
       } catch (err) {
         console.error("Dashboard data fetch error:", err);
       } finally {
@@ -159,6 +173,108 @@ export default function DashboardPage() {
           <p className="mt-2 text-xs font-semibold text-prism-muted max-w-lg leading-relaxed">
             Construct optimal study paths, check memory retention with recall assessments, and consult your step-by-step doubt-solving AI tutor.
           </p>
+        </div>
+
+        {/* Structured Learning Journey & Progress Banner (Visible on Login) */}
+        <div className="glass-card rounded-3xl p-6 border border-prism-accent/30 shadow-md flex flex-col gap-6 bg-gradient-to-r from-prism-accent/5 via-transparent to-purple-500/5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-prism-border/40 pb-5">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-prism-accent/10 text-prism-accent border border-prism-accent/20">
+                <Brain className="h-7 w-7" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-black uppercase tracking-widest text-prism-accent flex items-center gap-2">
+                  <span>Structured Learning Plan</span>
+                  <span className="px-2 py-0.5 rounded-full text-4xs font-mono bg-prism-accent/20 text-prism-accent">PERSISTENT DB ROADMAP</span>
+                </span>
+                <h2 className="text-lg font-black tracking-tight text-prism-text sm:text-xl">
+                  Your Learning Journey & SM-2 Review Schedule
+                </h2>
+              </div>
+            </div>
+
+            {/* Login Progress Metrics */}
+            <div className="flex items-center gap-6 font-mono shrink-0">
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-black text-prism-accent">
+                  {journeyData?.overallCompletionPercentage ?? 0}%
+                </span>
+                <span className="text-4xs font-bold text-prism-muted uppercase tracking-wider">Roadmap Progress</span>
+              </div>
+              <div className="h-8 w-px bg-prism-border/50" />
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-black text-amber-500 flex items-center gap-1">
+                  🔥 {journeyData?.currentStreak ?? 0}
+                </span>
+                <span className="text-4xs font-bold text-prism-muted uppercase tracking-wider">Day Streak</span>
+              </div>
+              <div className="h-8 w-px bg-prism-border/50" />
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-black text-purple-600 dark:text-purple-400">
+                  {journeyData?.dueReviewsCount ?? 0}
+                </span>
+                <span className="text-4xs font-bold text-prism-muted uppercase tracking-wider">SM-2 Due Today</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Persistent DB Roadmaps Overview */}
+          {journeyData && journeyData.roadmaps.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              <span className="text-3xs font-extrabold uppercase tracking-widest text-prism-muted font-mono">
+                Active Persistent Subject Roadmaps ({journeyData.roadmaps.length})
+              </span>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {journeyData.roadmaps.map((r) => (
+                  <div key={r.id} className="glass-card rounded-2xl p-4 border border-prism-border/60 flex flex-col justify-between gap-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-black text-prism-text">{r.subject}</span>
+                        <span className="text-4xs font-mono text-prism-muted">
+                          {r.topics.length} Sequential Topics • Created {new Date(r.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full text-4xs font-mono font-bold bg-prism-accent/10 text-prism-accent">
+                        {r.completionPercentage}% Done
+                      </span>
+                    </div>
+
+                    {/* Topic Sequence Bar */}
+                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-prism-accent to-purple-500 h-full transition-all duration-500"
+                        style={{ width: `${r.completionPercentage}%` }}
+                      />
+                    </div>
+
+                    {/* Automatic SM-2 Status Tag */}
+                    <div className="flex items-center justify-between text-4xs font-mono pt-1">
+                      <span className="text-prism-muted flex items-center gap-1">
+                        <BookOpen className="h-3 w-3" />
+                        Next: {r.topics.find((t) => !t.completed)?.name || "All Mastered!"}
+                      </span>
+                      {r.topics.some((t) => t.sm2DueStatus.includes("due_today")) ? (
+                        <Link href="/flashcards" className="text-amber-500 font-bold hover:underline">
+                          ⚡ SM-2 Review Due Today
+                        </Link>
+                      ) : (
+                        <span className="text-prism-muted">SM-2 Scheduled</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-prism-accent/5 border border-prism-accent/15">
+              <span className="text-xs font-semibold text-prism-muted">
+                No active syllabus roadmap yet. Upload a syllabus or textbook outline to build your persistent roadmap!
+              </span>
+              <Link href="/upload" className="px-3 py-1.5 rounded-xl bg-prism-accent text-white font-black text-xs hover:opacity-90 transition">
+                Create Roadmap →
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Dashboard Grid */}
