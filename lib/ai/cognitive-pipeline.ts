@@ -62,8 +62,8 @@ export async function runCognitivePipeline({
     userId,
     [
       { provider: "groq", model: "llama-3.1-8b-instant" },
+      { provider: "groq", model: "llama-3.3-70b-versatile" },
       { provider: "gemini", model: "gemini-2.0-flash" },
-      { provider: "gemini", model: "gemini-1.5-flash" },
     ]
   );
 
@@ -91,9 +91,8 @@ export async function runCognitivePipeline({
     userId,
     [
       { provider: "groq", model: "llama-3.3-70b-versatile" },
-      { provider: "gemini", model: "gemini-2.0-flash" },
-      { provider: "gemini", model: "gemini-1.5-flash" },
       { provider: "groq", model: "llama-3.1-8b-instant" },
+      { provider: "gemini", model: "gemini-2.0-flash" },
     ]
   );
 
@@ -118,6 +117,7 @@ export async function runCognitivePipeline({
     userId,
     [
       { provider: "groq", model: "llama-3.1-8b-instant" },
+      { provider: "groq", model: "llama-3.3-70b-versatile" },
       { provider: "gemini", model: "gemini-2.0-flash" },
     ]
   );
@@ -151,8 +151,8 @@ export async function runCognitivePipeline({
       userId,
       [
         { provider: "groq", model: "llama-3.3-70b-versatile" },
+        { provider: "groq", model: "llama-3.1-8b-instant" },
         { provider: "gemini", model: "gemini-2.0-flash" },
-        { provider: "gemini", model: "gemini-1.5-flash" },
       ]
     );
     return retryResult.text || generatedResponse;

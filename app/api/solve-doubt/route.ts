@@ -208,14 +208,15 @@ Follow these rules strictly for VOICE MODE:
 
       if (targetLearningPathId) {
         const queryEmbedding = await getEmbedding(message);
-        const { data: matchedChunks, error: rpcError } = await supabaseAdmin.rpc("match_syllabus_chunks", {
-          query_embedding: queryEmbedding,
-          match_threshold: 0.35,
-          match_count: 5,
-          filter_learning_path_id: targetLearningPathId
-        });
+        if (queryEmbedding && Array.isArray(queryEmbedding)) {
+          const { data: matchedChunks, error: rpcError } = await supabaseAdmin.rpc("match_syllabus_chunks", {
+            query_embedding: queryEmbedding,
+            match_threshold: 0.35,
+            match_count: 5,
+            filter_learning_path_id: targetLearningPathId
+          });
 
-        if (!rpcError && matchedChunks && matchedChunks.length > 0) {
+          if (!rpcError && matchedChunks && matchedChunks.length > 0) {
           chunksMatched = matchedChunks;
           const contextText = matchedChunks
             .map((c: any, i: number) => {
@@ -230,6 +231,7 @@ Follow these rules strictly for VOICE MODE:
           // No chunks matched above threshold 0.35
           finalSystemPrompt = `${finalSystemPrompt}\n\n=== GROUNDING NOTICE: NO MATCHING NOTES FOUND ===\nCRITICAL GROUNDING RULE (NO MATCHING NOTES):\n1. No relevant sections were found in the student's uploaded syllabus/notes above the similarity threshold for this question.\n2. YOU MUST EXPLICITLY STATE THIS HONESTLY to the student right at the beginning of your response.\n3. Start your response with: "⚠️ Note: I searched your uploaded syllabus/notes, but could not find a direct reference to this question."\n4. After stating this notice, you may provide a clear general answer while explicitly clarifying that it is from general knowledge, not their uploaded material.`;
         }
+      }
       } else {
         // No uploaded material exists for this subject yet
         finalSystemPrompt = `${finalSystemPrompt}\n\n=== GROUNDING NOTICE: NO MATERIAL UPLOADED ===\nCRITICAL GROUNDING RULE:\n1. The student has not uploaded a syllabus or study notes for this subject yet.\n2. Start your response with: "⚠️ Note: You have not uploaded any syllabus or study notes for this subject yet."\n3. After stating this notice, provide a helpful general answer.`;

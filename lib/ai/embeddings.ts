@@ -29,18 +29,20 @@ export function chunkText(text: string, chunkSizeWord = 350, overlapWord = 50): 
 
 /**
  * Queries Gemini's text-embedding-004 model to generate 768-dimension vectors for raw content.
+ * Returns null gracefully if API key is missing or quota limits are exceeded.
  */
-export async function getEmbedding(text: string): Promise<number[]> {
+export async function getEmbedding(text: string): Promise<number[] | null> {
   if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY environment variable is not set.");
+    console.warn("[Gemini Embedding Notice]: GEMINI_API_KEY is not set. Skipping vector embedding.");
+    return null;
   }
   
   try {
     const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
     const result = await model.embedContent(text);
-    return result.embedding.values;
+    return result.embedding?.values || null;
   } catch (error: any) {
-    console.error("[Gemini Embedding Error]:", error);
-    throw new Error(`Embedding generation failed: ${error.message}`);
+    console.warn("[Gemini Embedding Notice]: Vector embedding unavailable (quota/rate-limit):", error?.message || String(error));
+    return null;
   }
 }
