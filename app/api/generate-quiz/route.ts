@@ -7,6 +7,7 @@ import { checkUsageLimit } from "@/lib/usage";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getHash, getCache, setCache } from "@/lib/cache";
 import { Client } from "@upstash/qstash";
+import { getOrCreateLearnerProfile } from "@/lib/learner-profile";
 
 const qstash = new Client({
   token: process.env.QSTASH_TOKEN || "mock_token_for_dev",
@@ -108,16 +109,20 @@ export async function POST(req: NextRequest) {
 
     if (shouldMockOrSync) {
       try {
+        const profile = await getOrCreateLearnerProfile(userId);
+
         const result = await aiGateway.chat(
           {
             messages: [
               {
                 role: "system",
-                content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization. Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
+                content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization.
+Customize the questions based on the student's profile: focus more on topics with lower mastery scores and target recovery from past misconceptions where applicable.
+Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
               },
               {
                 role: "user",
-                content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
+                content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}\n\nStudent Learning Profile Context:\nMastery Scores: ${JSON.stringify(profile.mastery_scores)}\nRecent Misconceptions: ${JSON.stringify(profile.recent_mistakes.slice(0, 3))}`,
               },
             ],
             jsonMode: true,

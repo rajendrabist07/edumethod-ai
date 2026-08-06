@@ -1,16 +1,32 @@
 import { aiGateway } from "./gateway";
+import { LearnerProfile } from "@/lib/learner-profile";
 
 export async function runCognitivePipeline({
   message,
   history,
   context,
   userId,
+  learnerProfile,
 }: {
   message: string;
   history: any[];
   context: string;
   userId: string;
+  learnerProfile?: LearnerProfile | null;
 }): Promise<string> {
+  const profileContext = learnerProfile
+    ? `\n\nSTUDENT LEARNING PROFILE:
+- Preferred Explanation Style: ${learnerProfile.preferred_explanation_style || "balanced"}
+- Per-Topic Mastery Scores: ${JSON.stringify(learnerProfile.mastery_scores || {})}
+- Recent Misconceptions & Lapses: ${JSON.stringify(
+        (learnerProfile.recent_mistakes || []).slice(0, 3).map((m) => ({
+          topic: m.topic,
+          question: m.question,
+          misconception: m.misconception,
+        }))
+      )}`
+    : "";
+
   // 1. STRATEGIST
   // Pure logic, step-by-step reasoning on how to solve the problem.
   const strategyResult = await aiGateway.chat(
@@ -22,7 +38,7 @@ export async function runCognitivePipeline({
         },
         {
           role: "user",
-          content: `Question: ${message}\nContext: ${context}`,
+          content: `Question: ${message}\nContext: ${context}${profileContext}`,
         },
       ],
     },
@@ -39,7 +55,7 @@ export async function runCognitivePipeline({
       messages: [
         {
           role: "system",
-          content: "You are the Generator, an elite empathetic tutor. Use the provided Strategy Plan to write a clear, highly engaging, and pedagogical explanation for the student. Maintain a supportive tone.",
+          content: `You are the Generator, an elite empathetic tutor. Use the provided Strategy Plan to write a clear, highly engaging, and pedagogical explanation for the student. Maintain a supportive tone. Adapt your explanation to match the student's preferred style (${learnerProfile?.preferred_explanation_style || "balanced"}) and address any known misconceptions if relevant.`,
         },
         ...history.map((m: any) => ({
           role: m.role as "user" | "assistant" | "system",
@@ -47,7 +63,7 @@ export async function runCognitivePipeline({
         })),
         {
           role: "user",
-          content: `Student Question: ${message}\nStrategy Plan:\n${strategy}\n\nPlease generate the final explanation based on the strategy.`,
+          content: `Student Question: ${message}\nStrategy Plan:\n${strategy}${profileContext}\n\nPlease generate the final explanation based on the strategy.`,
         },
       ],
     },
@@ -89,9 +105,6 @@ export async function runCognitivePipeline({
   }
 
   if (!passed) {
-    // In a full system we would loop/retry here. For TTFB safety, we return the generated response with a disclaimer
-    // or just a safer generic response. 
-    // Given the prompt, we want elite accuracy, so we will do ONE retry if it fails.
     console.log("Cognitive Pipeline: Verifier failed, regenerating once...");
     const retryResult = await aiGateway.chat(
       {
@@ -114,3 +127,4 @@ export async function runCognitivePipeline({
 
   return generatedResponse;
 }
+

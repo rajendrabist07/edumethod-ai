@@ -8,6 +8,7 @@ import { checkUsageLimit } from "@/lib/usage";
 import { runCognitivePipeline } from "@/lib/ai/cognitive-pipeline";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getEmbedding } from "@/lib/ai/embeddings";
+import { getOrCreateLearnerProfile, recordDoubtSessionInteraction } from "@/lib/learner-profile";
 
 const requestSchema = z.object({
   sessionId: z.string().uuid().optional(),
@@ -95,9 +96,11 @@ export async function POST(req: NextRequest) {
     const { sessionId, learningPathId, message, imageBase64, mimeType, regenerate, socratic, truncateHistoryAtIndex, isVoiceMode } = parseResult.data;
     const effort = parseResult.data.effort ?? "medium";
 
+    // Fetch Learner Profile
+    const learnerProfile = await getOrCreateLearnerProfile(userId);
+
     let finalSessionId = sessionId;
     let session = null;
-    
     if (finalSessionId) {
       const { data } = await supabaseAdmin
         .from("doubt_sessions")
@@ -142,7 +145,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // RAG Similarity Match
+    // RAG & Syllabus Context
     let finalSystemPrompt = SYSTEM_PROMPT;
     if (socratic) {
       finalSystemPrompt = `You are a patient Socratic tutor. Do NOT give direct answers or solutions. Instead:
@@ -157,9 +160,17 @@ Follow these rules strictly for VOICE MODE:
 3. CRITICAL LANGUAGE RULE: Match the user's spoken language, script, and vocabulary style. If they use Romanized Nepali, reply in Romanized Nepali. If they use Devanagari Nepali or Hindi, reply in Devanagari. If they use English, reply in natural English.
 4. Be extremely fast and direct while still giving the student a clear next step.`;
     }
-    finalSystemPrompt = `${finalSystemPrompt}\n\n${EFFORT_INSTRUCTIONS[effort]}`;
+
+    // Inject Learner Profile Context into system prompt
+    const profilePromptText = `\n\n[STUDENT LEARNING PROFILE CONTEXT]:
+- Preferred Explanation Style: ${learnerProfile.preferred_explanation_style}
+- Per-Topic Mastery Scores: ${JSON.stringify(learnerProfile.mastery_scores)}
+- Recent Misconceptions: ${JSON.stringify(learnerProfile.recent_mistakes.slice(0, 3).map((m) => ({ topic: m.topic, misconception: m.misconception })))}`;
+
+    finalSystemPrompt = `${finalSystemPrompt}\n\n${EFFORT_INSTRUCTIONS[effort]}${profilePromptText}`;
 
     let chunksMatched: any[] = [];
+    let detectedSubject: string | null = null;
     try {
       let targetLearningPathId = learningPathId || null;
 
@@ -167,7 +178,7 @@ Follow these rules strictly for VOICE MODE:
         // Fetch the user's most recent learning path as fallback
         const { data: recentPath } = await supabaseAdmin
           .from("learning_paths")
-          .select("id")
+          .select("id, subject")
           .eq("user_id", userId)
           .order("created_at", { ascending: false })
           .limit(1)
@@ -175,6 +186,16 @@ Follow these rules strictly for VOICE MODE:
 
         if (recentPath) {
           targetLearningPathId = recentPath.id;
+          detectedSubject = recentPath.subject;
+        }
+      } else {
+        const { data: currentPath } = await supabaseAdmin
+          .from("learning_paths")
+          .select("subject")
+          .eq("id", targetLearningPathId)
+          .maybeSingle();
+        if (currentPath) {
+          detectedSubject = currentPath.subject;
         }
       }
 
@@ -199,6 +220,9 @@ Follow these rules strictly for VOICE MODE:
     } catch (ragError) {
       console.warn("RAG retrieval failed, falling back to standard AI prompt:", ragError);
     }
+
+    // Automatically record interaction stats in profile
+    void recordDoubtSessionInteraction(userId, detectedSubject, { effort, socratic, isVoiceMode });
 
     const encoder = new TextEncoder();
 
@@ -277,6 +301,7 @@ Follow these rules strictly for VOICE MODE:
               history,
               context: chunksMatched.length > 0 ? chunksMatched.map((c: any, i: number) => `[Syllabus Context Section ${i + 1}]:\n${c.content}`).join("\n\n") : "",
               userId,
+              learnerProfile,
             });
 
             // Synthetically chunk the verified response to simulate streaming for the UI

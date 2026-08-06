@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { calculateSM2, mapRatingToQuality } from "@/lib/spaced-repetition";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { recordFlashcardReview } from "@/lib/learner-profile";
 
 const reviewSchema = z.object({
   cardId: z.string().uuid(),
@@ -73,6 +74,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Database update error" }, { status: 500 });
     }
 
+    // Automatically record flashcard review metrics in learner profile
+    void recordFlashcardReview(userId, cardId, rating);
+
     return NextResponse.json({
       success: true,
       cardId,
@@ -85,3 +89,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
   }
 }
+

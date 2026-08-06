@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { recordQuizSubmission } from "@/lib/learner-profile";
 
 const requestSchema = z.object({
   quizId: z.string().uuid(),
@@ -65,6 +66,9 @@ export async function POST(req: NextRequest) {
   const weakTopicNames = Object.entries(weakTopics)
     .filter(([, stats]) => stats.correct / stats.total < 0.6)
     .map(([topic]) => topic);
+
+  // Automatically update learner profile in background
+  void recordQuizSubmission(userId, quizId, answers);
 
   return NextResponse.json({
     score: correctCount,

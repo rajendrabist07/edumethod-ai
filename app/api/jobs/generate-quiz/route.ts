@@ -3,6 +3,7 @@ import { aiGateway } from "@/lib/ai/gateway";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { getHash, setCache } from "@/lib/cache";
 import { z } from "zod";
+import { getOrCreateLearnerProfile } from "@/lib/learner-profile";
 
 const quizSchema = z.object({
   questions: z.array(
@@ -35,16 +36,20 @@ async function handler(req: NextRequest) {
       return NextResponse.json({ error: "Learning path not found" }, { status: 404 });
     }
 
+    const profile = await getOrCreateLearnerProfile(userId);
+
     const result = await aiGateway.chat(
       {
         messages: [
           {
             role: "system",
-            content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization. Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
+            content: `You are a quiz generator. Given a subject and topics, create 5 multiple-choice questions (4 options each, only one correct) that test conceptual understanding, not just memorization.
+Customize the questions based on the student's profile: focus more on topics with lower mastery scores and target recovery from past misconceptions where applicable.
+Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[4], "correctIndex": number, "topic": string }] }. "topic" must match one of the given topic names exactly, so we can track which topic each question belongs to.`,
           },
           {
             role: "user",
-            content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}`,
+            content: `Subject: ${learningPath.subject}\nTopics: ${JSON.stringify(learningPath.topics)}\n\nStudent Learning Profile Context:\nMastery Scores: ${JSON.stringify(profile.mastery_scores)}\nRecent Misconceptions: ${JSON.stringify(profile.recent_mistakes.slice(0, 3))}`,
           },
         ],
         jsonMode: true,

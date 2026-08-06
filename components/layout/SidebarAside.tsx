@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useLayout } from "./LayoutContext";
 import { Logo } from "@/components/ui/Logo";
+import { Brain } from "lucide-react";
 import {
   TextbookChatIcon,
   DashboardIcon,
@@ -336,6 +337,19 @@ export function SidebarAside() {
           >
             <TeacherIcon size={15} className="shrink-0" />
             <span>Classroom Cohorts</span>
+          </Link>
+
+          <Link
+            href="/learning-profile"
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
+              pathname === "/learning-profile"
+                ? "bg-prism-accent/10 border-prism-accent/20 text-prism-accent font-extrabold"
+                : "border-transparent text-prism-muted hover:bg-prism-accent/5 hover:text-prism-text hover:translate-x-1"
+            }`}
+            onClick={handleLinkClick}
+          >
+            <Brain size={15} className="shrink-0 text-emerald-500" />
+            <span>Your Learning Profile</span>
           </Link>
         </nav>
       </div>
