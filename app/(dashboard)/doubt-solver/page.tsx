@@ -397,8 +397,18 @@ export default function DoubtSolverPage() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        setError(errData.error || "Failed to initiate AI reply.");
-        setMessages((prev) => prev.slice(0, -1));
+        const userMsg = errData.error && errData.error !== "An unexpected error occurred"
+          ? errData.error
+          : "The AI tutor is momentarily busy. Please try asking your question again.";
+        
+        setError(userMsg);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: `⚠️ ${userMsg}`,
+          },
+        ]);
         setVoiceState("idle");
         setLoading(false);
         return;

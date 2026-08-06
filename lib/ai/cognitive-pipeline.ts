@@ -60,7 +60,11 @@ export async function runCognitivePipeline({
       ],
     },
     userId,
-    [{ provider: "groq", model: "llama-3.1-8b-instant" }] // Extremely fast model for strategy
+    [
+      { provider: "groq", model: "llama-3.1-8b-instant" },
+      { provider: "gemini", model: "gemini-2.0-flash" },
+      { provider: "gemini", model: "gemini-1.5-flash" },
+    ]
   );
 
   const strategy = strategyResult.text;
@@ -85,7 +89,12 @@ export async function runCognitivePipeline({
       ],
     },
     userId,
-    [{ provider: "groq", model: "llama-3.3-70b-versatile" }, { provider: "gemini", model: "gemini-1.5-flash-latest" }]
+    [
+      { provider: "groq", model: "llama-3.3-70b-versatile" },
+      { provider: "gemini", model: "gemini-2.0-flash" },
+      { provider: "gemini", model: "gemini-1.5-flash" },
+      { provider: "groq", model: "llama-3.1-8b-instant" },
+    ]
   );
 
   const generatedResponse = generatorResult.text || "I'm sorry, I couldn't generate an explanation at this time.";
@@ -107,7 +116,10 @@ export async function runCognitivePipeline({
       jsonMode: true,
     },
     userId,
-    [{ provider: "groq", model: "llama-3.1-8b-instant" }]
+    [
+      { provider: "groq", model: "llama-3.1-8b-instant" },
+      { provider: "gemini", model: "gemini-2.0-flash" },
+    ]
   );
 
   let passed = true;
@@ -137,7 +149,11 @@ export async function runCognitivePipeline({
         ],
       },
       userId,
-      [{ provider: "groq", model: "llama-3.3-70b-versatile" }]
+      [
+        { provider: "groq", model: "llama-3.3-70b-versatile" },
+        { provider: "gemini", model: "gemini-2.0-flash" },
+        { provider: "gemini", model: "gemini-1.5-flash" },
+      ]
     );
     return retryResult.text || generatedResponse;
   }

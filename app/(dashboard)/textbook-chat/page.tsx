@@ -102,7 +102,18 @@ export default function TextbookChatPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Tutor service returned an error");
+        const errJson = await response.json().catch(() => ({}));
+        const errMsg = errJson.error || "AI service is temporarily busy. Please try asking again in a moment.";
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: `⚠️ ${errMsg}`,
+          },
+        ]);
+        toast.error(errMsg);
+        setLoading(false);
+        return;
       }
 
       // Track session ID from headers

@@ -11,12 +11,18 @@ export class GeminiProvider implements AIProvider {
 
   async chat(options: ChatOptions, model: string): Promise<ProviderResult> {
     const systemMessage = options.messages.find((m) => m.role === "system")?.content;
-    const contents = options.messages
+    let contents = options.messages
       .filter((m) => m.role !== "system")
       .map((m) => ({
         role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
+        parts: [{ text: m.content || " " }],
       }));
+
+    if (contents.length === 0) {
+      contents = [{ role: "user", parts: [{ text: "Hello" }] }];
+    } else if (contents[0].role !== "user") {
+      contents.unshift({ role: "user", parts: [{ text: "Context:" }] });
+    }
 
     const modelInstance = this.genAI.getGenerativeModel({
       model,
@@ -41,12 +47,18 @@ export class GeminiProvider implements AIProvider {
     onChunk: (text: string) => void
   ): Promise<ProviderResult> {
     const systemMessage = options.messages.find((m) => m.role === "system")?.content;
-    const contents = options.messages
+    let contents = options.messages
       .filter((m) => m.role !== "system")
       .map((m) => ({
         role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
+        parts: [{ text: m.content || " " }],
       }));
+
+    if (contents.length === 0) {
+      contents = [{ role: "user", parts: [{ text: "Hello" }] }];
+    } else if (contents[0].role !== "user") {
+      contents.unshift({ role: "user", parts: [{ text: "Context:" }] });
+    }
 
     const modelInstance = this.genAI.getGenerativeModel({
       model,

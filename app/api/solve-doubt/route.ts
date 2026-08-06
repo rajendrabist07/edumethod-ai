@@ -128,23 +128,28 @@ export async function POST(req: NextRequest) {
 
     // Save user message to DB first
     if (finalSessionId) {
-      const { error } = await supabaseAdmin
+      const { data: existingSession } = await supabaseAdmin
         .from("doubt_sessions")
-        .update({ messages: updatedMessagesWithUser })
-        .eq("id", finalSessionId);
-      if (error) {
-        console.error("Database update error:", error);
-        return NextResponse.json({ error: "Database error" }, { status: 500 });
+        .select("id")
+        .eq("id", finalSessionId)
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (existingSession) {
+        await supabaseAdmin
+          .from("doubt_sessions")
+          .update({ messages: updatedMessagesWithUser })
+          .eq("id", finalSessionId);
+      } else {
+        await supabaseAdmin
+          .from("doubt_sessions")
+          .insert({ id: finalSessionId, user_id: userId, messages: updatedMessagesWithUser });
       }
     } else {
       finalSessionId = crypto.randomUUID();
-      const { error } = await supabaseAdmin
+      await supabaseAdmin
         .from("doubt_sessions")
         .insert({ id: finalSessionId, user_id: userId, messages: updatedMessagesWithUser });
-      if (error) {
-        console.error("Database insert error:", error);
-        return NextResponse.json({ error: "Database error" }, { status: 500 });
-      }
     }
 
     // RAG & Syllabus Context
@@ -166,8 +171,8 @@ Follow these rules strictly for VOICE MODE:
     // Inject Learner Profile Context into system prompt
     const profilePromptText = `\n\n[STUDENT LEARNING PROFILE CONTEXT]:
 - Preferred Explanation Style: ${learnerProfile.preferred_explanation_style}
-- Per-Topic Mastery Scores: ${JSON.stringify(learnerProfile.mastery_scores)}
-- Recent Misconceptions: ${JSON.stringify(learnerProfile.recent_mistakes.slice(0, 3).map((m) => ({ topic: m.topic, misconception: m.misconception })))}`;
+- Per-Topic Mastery Scores: ${JSON.stringify(learnerProfile.mastery_scores || {})}
+- Recent Misconceptions: ${JSON.stringify((learnerProfile.recent_mistakes || []).slice(0, 3).map((m) => ({ topic: m?.topic || "General", misconception: m?.misconception || "" })))}`;
 
     finalSystemPrompt = `${finalSystemPrompt}\n\n${EFFORT_INSTRUCTIONS[effort]}${profilePromptText}`;
 
@@ -309,7 +314,7 @@ Follow these rules strictly for VOICE MODE:
         : null;
 
       const mistakesForSubject = detectedSubject && learnerProfile?.recent_mistakes
-        ? learnerProfile.recent_mistakes.filter((m) => m.topic.toLowerCase() === detectedSubject?.toLowerCase()).length
+        ? learnerProfile.recent_mistakes.filter((m) => m?.topic?.toLowerCase() === detectedSubject?.toLowerCase()).length
         : learnerProfile?.recent_mistakes?.length || 0;
 
       const teachingStrategy: AdaptiveTeachingStrategy = determineTeachingStrategy({
