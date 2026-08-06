@@ -18,6 +18,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
+import { determineTeachingStrategy, STRATEGY_PROMPT_INSTRUCTIONS } from "@/lib/ai/adaptive-strategy";
 
 interface RecentMistake {
   topic: string;
@@ -146,6 +147,12 @@ export default function LearningProfilePage() {
   const studyTimeEntries = Object.entries(profile?.study_times || {});
   const mistakes = profile?.recent_mistakes || [];
 
+  const activeStrategyKey = determineTeachingStrategy({
+    userPreference: profile?.preferred_explanation_style,
+    recentMistakesCount: mistakes.length,
+  });
+  const activeStrategyInfo = STRATEGY_PROMPT_INSTRUCTIONS[activeStrategyKey];
+
   return (
     <main className="grid-bg h-full overflow-y-auto px-4 py-8 text-prism-text transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8 font-sans bg-prism-base">
       <div className="mx-auto flex max-w-5xl flex-col gap-8 animate-focus-lens">
@@ -230,6 +237,17 @@ export default function LearningProfilePage() {
                   <span className="text-[10px] font-bold text-prism-muted uppercase font-mono">
                     Auto-Tuned
                   </span>
+                </div>
+
+                {/* Active Adaptive Teaching Strategy Banner */}
+                <div className="rounded-xl p-3 bg-prism-accent/10 border border-prism-accent/20 flex flex-col gap-1">
+                  <span className="text-4xs font-mono font-bold uppercase tracking-wider text-prism-accent flex items-center gap-1.5">
+                    <Zap className="h-3 w-3" />
+                    Active Teaching Strategy: {activeStrategyInfo.label}
+                  </span>
+                  <p className="text-4xs font-medium text-prism-muted leading-relaxed">
+                    {activeStrategyInfo.description}
+                  </p>
                 </div>
 
                 <div className="flex flex-col gap-2">

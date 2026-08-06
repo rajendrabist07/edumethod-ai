@@ -1,5 +1,10 @@
 import { aiGateway } from "./gateway";
 import { LearnerProfile } from "@/lib/learner-profile";
+import {
+  AdaptiveTeachingStrategy,
+  determineTeachingStrategy,
+  STRATEGY_PROMPT_INSTRUCTIONS,
+} from "./adaptive-strategy";
 
 export async function runCognitivePipeline({
   message,
@@ -7,15 +12,27 @@ export async function runCognitivePipeline({
   context,
   userId,
   learnerProfile,
+  teachingStrategy,
 }: {
   message: string;
   history: any[];
   context: string;
   userId: string;
   learnerProfile?: LearnerProfile | null;
+  teachingStrategy?: AdaptiveTeachingStrategy;
 }): Promise<string> {
+  const activeStrategy =
+    teachingStrategy ||
+    determineTeachingStrategy({
+      userPreference: learnerProfile?.preferred_explanation_style,
+      recentMistakesCount: learnerProfile?.recent_mistakes?.length || 0,
+    });
+
+  const strategyDetails = STRATEGY_PROMPT_INSTRUCTIONS[activeStrategy];
+
   const profileContext = learnerProfile
     ? `\n\nSTUDENT LEARNING PROFILE:
+- Active Teaching Strategy: ${strategyDetails.label} (${activeStrategy})
 - Preferred Explanation Style: ${learnerProfile.preferred_explanation_style || "balanced"}
 - Per-Topic Mastery Scores: ${JSON.stringify(learnerProfile.mastery_scores || {})}
 - Recent Misconceptions & Lapses: ${JSON.stringify(
@@ -34,7 +51,7 @@ export async function runCognitivePipeline({
       messages: [
         {
           role: "system",
-          content: "You are the Strategist. Analyze the student's question and any provided syllabus context. Create a step-by-step logical plan to solve the doubt accurately. Focus strictly on the logic/math/facts, not the final pedagogical tone. Be extremely concise.",
+          content: `You are the Strategist. Analyze the student's question and any provided syllabus context. Create a step-by-step logical plan to solve the doubt accurately.\n\n${strategyDetails.promptInstruction}`,
         },
         {
           role: "user",
@@ -55,7 +72,7 @@ export async function runCognitivePipeline({
       messages: [
         {
           role: "system",
-          content: `You are the Generator, an elite empathetic tutor. Use the provided Strategy Plan to write a clear, highly engaging, and pedagogical explanation for the student. Maintain a supportive tone. Adapt your explanation to match the student's preferred style (${learnerProfile?.preferred_explanation_style || "balanced"}) and address any known misconceptions if relevant.`,
+          content: `You are the Generator, an elite empathetic tutor. Use the provided Strategy Plan to write a clear, highly engaging explanation for the student.\n\n${strategyDetails.promptInstruction}\n\nAddress any known student misconceptions if relevant.`,
         },
         ...history.map((m: any) => ({
           role: m.role as "user" | "assistant" | "system",

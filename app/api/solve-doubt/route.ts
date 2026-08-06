@@ -10,6 +10,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getEmbedding } from "@/lib/ai/embeddings";
 import { getOrCreateLearnerProfile, recordDoubtSessionInteraction } from "@/lib/learner-profile";
 import { verifyDoubtResponse } from "@/lib/ai/verification";
+import { determineTeachingStrategy } from "@/lib/ai/adaptive-strategy";
 
 const requestSchema = z.object({
   sessionId: z.string().uuid().optional(),
@@ -306,6 +307,22 @@ Follow these rules strictly for VOICE MODE:
         async start(controller) {
           let fullResponseText = "";
           try {
+            // Determine optimal teaching strategy deterministically based on learner profile
+            const masteryForSubject = detectedSubject && learnerProfile?.mastery_scores
+              ? learnerProfile.mastery_scores[detectedSubject] ?? null
+              : null;
+
+            const mistakesForSubject = detectedSubject && learnerProfile?.recent_mistakes
+              ? learnerProfile.recent_mistakes.filter((m) => m.topic.toLowerCase() === detectedSubject?.toLowerCase()).length
+              : learnerProfile?.recent_mistakes?.length || 0;
+
+            const teachingStrategy = determineTeachingStrategy({
+              masteryScore: masteryForSubject,
+              recentMistakesCount: mistakesForSubject,
+              topic: detectedSubject,
+              userPreference: socratic ? "socratic" : learnerProfile?.preferred_explanation_style,
+            });
+
             // Run the multi-step cognitive pipeline (Strategist -> Generator -> Verifier)
             const pipelineResultText = await runCognitivePipeline({
               message,
@@ -315,6 +332,7 @@ Follow these rules strictly for VOICE MODE:
                 : "NO MATCHING NOTES FOUND ABOVE SIMILARITY THRESHOLD",
               userId,
               learnerProfile,
+              teachingStrategy,
             });
 
             // Verification & Reliability Audit (RAG grounding + code execution math check)
