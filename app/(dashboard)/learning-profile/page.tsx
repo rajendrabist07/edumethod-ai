@@ -15,6 +15,7 @@ import {
   UserCheck,
   Zap,
   Info,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -36,6 +37,14 @@ interface LearnerProfile {
   preferred_explanation_style: ExplanationStyle;
   study_times: Record<string, number>;
   updated_at: string;
+}
+
+interface VerificationMetrics {
+  totalChecks: number;
+  passedChecks: number;
+  failedChecks: number;
+  passRatePercentage: number;
+  mathCodeVerifiedCount: number;
 }
 
 const STYLE_DESCRIPTIONS: Record<ExplanationStyle, { label: string; desc: string; icon: string }> = {
@@ -69,28 +78,36 @@ const STYLE_DESCRIPTIONS: Record<ExplanationStyle, { label: string; desc: string
 export default function LearningProfilePage() {
   const { user } = useUser();
   const [profile, setProfile] = useState<LearnerProfile | null>(null);
+  const [metrics, setMetrics] = useState<VerificationMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [updatingStyle, setUpdatingStyle] = useState(false);
 
   useEffect(() => {
-    async function fetchProfile() {
+    async function fetchData() {
       try {
-        const res = await fetch("/api/learner-profile");
-        if (res.ok) {
-          const data = await res.json();
-          setProfile(data.profile);
-        } else {
-          toast.error("Failed to load your learning profile.");
+        const [profileRes, metricsRes] = await Promise.all([
+          fetch("/api/learner-profile"),
+          fetch("/api/reliability-metrics"),
+        ]);
+
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setProfile(profileData.profile);
+        }
+
+        if (metricsRes.ok) {
+          const metricsData = await metricsRes.json();
+          setMetrics(metricsData.metrics);
         }
       } catch (err) {
-        console.error("Error loading learner profile:", err);
-        toast.error("Network error loading learner profile.");
+        console.error("Error loading learning profile or metrics:", err);
+        toast.error("Network error loading learner memory.");
       } finally {
         setLoading(false);
       }
     }
 
-    void fetchProfile();
+    void fetchData();
   }, []);
 
   async function handleStyleChange(newStyle: ExplanationStyle) {
@@ -157,6 +174,39 @@ export default function LearningProfilePage() {
           <p className="text-xs font-medium text-prism-muted leading-relaxed max-w-2xl">
             EduMethod AI automatically remembers your topic mastery, study duration, past mistakes, and preferred explanation style across all doubt-solving and quiz interactions.
           </p>
+        </div>
+
+        {/* Verification & System Reliability Metrics Banner */}
+        <div className="glass-card rounded-2xl p-5 border border-emerald-500/20 bg-emerald-500/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+                <span>System Verification & Reliability Layer</span>
+                <span className="px-2 py-0.5 rounded-full text-4xs font-mono bg-emerald-500/20 text-emerald-800 dark:text-emerald-200">ACTIVE</span>
+              </span>
+              <p className="text-4xs font-medium text-prism-muted leading-tight mt-0.5">
+                Every AI response and quiz is audited by a separate independent verifier & verified via Node code arithmetic execution.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-6 shrink-0 font-mono">
+            <div className="flex flex-col items-center">
+              <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">
+                {metrics?.passRatePercentage ?? 100}%
+              </span>
+              <span className="text-4xs font-bold text-prism-muted uppercase tracking-wider">Pass Rate</span>
+            </div>
+            <div className="h-8 w-px bg-prism-border/50" />
+            <div className="flex flex-col items-center">
+              <span className="text-lg font-black text-blue-600 dark:text-blue-400">
+                {metrics?.mathCodeVerifiedCount ?? 0}
+              </span>
+              <span className="text-4xs font-bold text-prism-muted uppercase tracking-wider">Math Verified</span>
+            </div>
+          </div>
         </div>
 
         {loading ? (

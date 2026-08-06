@@ -9,6 +9,7 @@ import { runCognitivePipeline } from "@/lib/ai/cognitive-pipeline";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getEmbedding } from "@/lib/ai/embeddings";
 import { getOrCreateLearnerProfile, recordDoubtSessionInteraction } from "@/lib/learner-profile";
+import { verifyDoubtResponse } from "@/lib/ai/verification";
 
 const requestSchema = z.object({
   sessionId: z.string().uuid().optional(),
@@ -316,11 +317,19 @@ Follow these rules strictly for VOICE MODE:
               learnerProfile,
             });
 
+            // Verification & Reliability Audit (RAG grounding + code execution math check)
+            const audit = await verifyDoubtResponse(
+              pipelineResultText,
+              chunksMatched.map((c) => c.content),
+              userId
+            );
+
+            fullResponseText = audit.verifiedContent || pipelineResultText;
+
             // Synthetically chunk the verified response to simulate streaming for the UI
-            fullResponseText = pipelineResultText;
             const chunkSize = 20;
-            for (let i = 0; i < pipelineResultText.length; i += chunkSize) {
-              const chunk = pipelineResultText.slice(i, i + chunkSize);
+            for (let i = 0; i < fullResponseText.length; i += chunkSize) {
+              const chunk = fullResponseText.slice(i, i + chunkSize);
               controller.enqueue(encoder.encode(chunk));
               await new Promise((r) => setTimeout(r, 5)); // tiny delay for typewriter effect
             }

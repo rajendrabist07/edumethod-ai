@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { getHash, setCache } from "@/lib/cache";
 import { z } from "zod";
 import { getOrCreateLearnerProfile } from "@/lib/learner-profile";
+import { verifyQuizQuestions } from "@/lib/ai/verification";
 
 const quizSchema = z.object({
   questions: z.array(
@@ -70,12 +71,16 @@ Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[
       return NextResponse.json({ error: "AI response format mismatch" }, { status: 500 });
     }
 
+    // Run Independent Quiz Auditor + Code Execution Math Verification
+    const audit = await verifyQuizQuestions(validated.data.questions, userId);
+    const finalQuestions = audit.verifiedContent || validated.data.questions;
+
     const { error: insertError } = await supabaseAdmin
       .from("quizzes")
       .insert({
         learning_path_id: learningPathId,
         user_id: userId,
-        questions: validated.data.questions,
+        questions: finalQuestions,
       });
 
     if (insertError) {

@@ -8,6 +8,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getHash, getCache, setCache } from "@/lib/cache";
 import { Client } from "@upstash/qstash";
 import { getOrCreateLearnerProfile } from "@/lib/learner-profile";
+import { verifyQuizQuestions } from "@/lib/ai/verification";
 
 const qstash = new Client({
   token: process.env.QSTASH_TOKEN || "mock_token_for_dev",
@@ -137,12 +138,16 @@ Return ONLY valid JSON: { "questions": [{ "question": string, "options": string[
           return NextResponse.json({ error: "AI response format mismatch" }, { status: 500 });
         }
 
+        // Run Independent Quiz Auditor + Code Execution Math Verification
+        const audit = await verifyQuizQuestions(validated.data.questions, userId);
+        const finalQuestions = audit.verifiedContent || validated.data.questions;
+
         const { data: quiz, error: insertError } = await supabaseAdmin
           .from("quizzes")
           .insert({
             learning_path_id: learningPathId,
             user_id: userId,
-            questions: validated.data.questions,
+            questions: finalQuestions,
           })
           .select()
           .single();
