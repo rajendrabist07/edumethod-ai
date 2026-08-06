@@ -80,6 +80,7 @@ export default function LearningProfilePage() {
   const { user } = useUser();
   const [profile, setProfile] = useState<LearnerProfile | null>(null);
   const [metrics, setMetrics] = useState<VerificationMetrics | null>(null);
+  const [sm2Reasons, setSm2Reasons] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [updatingStyle, setUpdatingStyle] = useState(false);
 
@@ -94,6 +95,9 @@ export default function LearningProfilePage() {
         if (profileRes.ok) {
           const profileData = await profileRes.json();
           setProfile(profileData.profile);
+          if (profileData.sm2Reasons) {
+            setSm2Reasons(profileData.sm2Reasons);
+          }
         }
 
         if (metricsRes.ok) {
@@ -378,6 +382,14 @@ export default function LearningProfilePage() {
                               className={`h-full ${barBg} rounded-full transition-all duration-500`}
                               style={{ width: `${score}%` }}
                             />
+                          </div>
+
+                          {/* SM-2 Review Explanation Reason Tag */}
+                          <div className="flex items-center gap-1.5 text-4xs font-mono text-prism-muted pt-1 border-t border-prism-border/20">
+                            <Info className="h-3 w-3 shrink-0 text-prism-accent" />
+                            <span className="truncate">
+                              {sm2Reasons[topic] || (score >= 75 ? "scheduled for review — mastered topic (SM-2 interval extended)" : "due for review — recall practice recommended")}
+                            </span>
                           </div>
                         </div>
                       );

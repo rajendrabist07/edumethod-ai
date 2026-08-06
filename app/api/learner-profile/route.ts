@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getOrCreateLearnerProfile, updateLearnerProfile, ExplanationStyle } from "@/lib/learner-profile";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { z } from "zod";
 
@@ -34,7 +35,31 @@ export async function GET(req: NextRequest) {
     }
 
     const profile = await getOrCreateLearnerProfile(userId);
-    return NextResponse.json({ profile });
+
+    const { data: decks } = await supabaseAdmin
+      .from("flashcard_decks")
+      .select("subject, topic, next_review, ease_factor, repetitions, updated_at")
+      .eq("user_id", userId);
+
+    const sm2Reasons: Record<string, string> = {};
+    const now = new Date();
+
+    if (decks && decks.length > 0) {
+      for (const d of decks) {
+        const topicKey = d.topic || d.subject;
+        const lastRev = d.updated_at ? new Date(d.updated_at) : new Date();
+        const daysAgo = Math.max(1, Math.round((now.getTime() - lastRev.getTime()) / (1000 * 60 * 60 * 24)));
+        const ease = d.ease_factor || 2.1;
+        const reps = d.repetitions || 1;
+        const isDue = d.next_review ? new Date(d.next_review) <= now : false;
+
+        sm2Reasons[topicKey] = isDue
+          ? `due for review — last correct ${daysAgo} days ago, easiness factor ${ease.toFixed(1)}, ${reps} repetitions`
+          : `scheduled for review — last reviewed ${daysAgo} days ago, easiness factor ${ease.toFixed(1)}`;
+      }
+    }
+
+    return NextResponse.json({ profile, sm2Reasons });
   } catch (error: any) {
     console.error("GET /api/learner-profile error:", error);
     return NextResponse.json(

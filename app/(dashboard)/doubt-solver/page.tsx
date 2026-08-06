@@ -13,6 +13,7 @@ import rehypeKatex from "rehype-katex";
 import { useUser } from "@clerk/nextjs";
 import { useLayout } from "@/components/layout/LayoutContext";
 import { Moon, Radio, TriangleAlert, UserRound, Volume2, Zap } from "lucide-react";
+import { TransparencyBadge, TransparencyMeta } from "@/components/ui/TransparencyBadge";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -21,6 +22,7 @@ interface ChatMessage {
   timestamp?: string;
   feedback?: "up" | "down";
   feedbackText?: string;
+  transparency?: TransparencyMeta;
 }
 
 type TutorEffort = "low" | "medium" | "high" | "extra";
@@ -402,13 +404,23 @@ export default function DoubtSolverPage() {
         return;
       }
 
-      // Fetch dynamic session ID header
+      // Fetch dynamic session ID & transparency headers
       const newSessionId = res.headers.get("x-session-id");
       if (newSessionId && newSessionId !== sessionId) {
         setSessionId(newSessionId);
         // Update URL to match current conversation state, refreshing the global history sidebar
         router.replace(`/doubt-solver?sessionId=${newSessionId}`);
       }
+
+      const grounding = res.headers.get("x-transparency-grounding") || "";
+      const strategy = res.headers.get("x-transparency-strategy") || "";
+      const verification = res.headers.get("x-transparency-verification") || "";
+      const isDowngraded = res.headers.get("x-transparency-downgraded") === "true";
+
+      const transparencyMeta: TransparencyMeta | undefined =
+        grounding || strategy || verification
+          ? { grounding, strategy, verification, isDowngraded }
+          : undefined;
 
       // Read response stream
       const reader = res.body?.getReader();
@@ -427,6 +439,16 @@ export default function DoubtSolverPage() {
         const { value, done } = await reader.read();
         
         if (done) {
+          if (transparencyMeta) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              const lastIdx = updated.length - 1;
+              if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
+                updated[lastIdx] = { ...updated[lastIdx], transparency: transparencyMeta };
+              }
+              return updated;
+            });
+          }
           // Speak remainder if any
           if (voiceMode && ttsBufferRef.current.trim()) {
             speakResponse(ttsBufferRef.current, true, true);
@@ -840,6 +862,9 @@ export default function DoubtSolverPage() {
                               >
                                 {m.content}
                               </ReactMarkdown>
+                            )}
+                            {!isUser && m.transparency && (
+                              <TransparencyBadge meta={m.transparency} />
                             )}
                           </div>
                         ) : null}

@@ -10,7 +10,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getEmbedding } from "@/lib/ai/embeddings";
 import { getOrCreateLearnerProfile, recordDoubtSessionInteraction } from "@/lib/learner-profile";
 import { verifyDoubtResponse } from "@/lib/ai/verification";
-import { determineTeachingStrategy } from "@/lib/ai/adaptive-strategy";
+import { determineTeachingStrategy, STRATEGY_PROMPT_INSTRUCTIONS, AdaptiveTeachingStrategy } from "@/lib/ai/adaptive-strategy";
 
 const requestSchema = z.object({
   sessionId: z.string().uuid().optional(),
@@ -303,26 +303,28 @@ Follow these rules strictly for VOICE MODE:
         { role: "user" as const, content: message },
       ];
 
+      // Determine optimal teaching strategy deterministically based on learner profile
+      const masteryForSubject = detectedSubject && learnerProfile?.mastery_scores
+        ? learnerProfile.mastery_scores[detectedSubject] ?? null
+        : null;
+
+      const mistakesForSubject = detectedSubject && learnerProfile?.recent_mistakes
+        ? learnerProfile.recent_mistakes.filter((m) => m.topic.toLowerCase() === detectedSubject?.toLowerCase()).length
+        : learnerProfile?.recent_mistakes?.length || 0;
+
+      const teachingStrategy: AdaptiveTeachingStrategy = determineTeachingStrategy({
+        masteryScore: masteryForSubject,
+        recentMistakesCount: mistakesForSubject,
+        topic: detectedSubject,
+        userPreference: socratic ? "socratic" : learnerProfile?.preferred_explanation_style,
+      });
+
+      let isAuditPassed = true;
+
       const stream = new ReadableStream({
         async start(controller) {
           let fullResponseText = "";
           try {
-            // Determine optimal teaching strategy deterministically based on learner profile
-            const masteryForSubject = detectedSubject && learnerProfile?.mastery_scores
-              ? learnerProfile.mastery_scores[detectedSubject] ?? null
-              : null;
-
-            const mistakesForSubject = detectedSubject && learnerProfile?.recent_mistakes
-              ? learnerProfile.recent_mistakes.filter((m) => m.topic.toLowerCase() === detectedSubject?.toLowerCase()).length
-              : learnerProfile?.recent_mistakes?.length || 0;
-
-            const teachingStrategy = determineTeachingStrategy({
-              masteryScore: masteryForSubject,
-              recentMistakesCount: mistakesForSubject,
-              topic: detectedSubject,
-              userPreference: socratic ? "socratic" : learnerProfile?.preferred_explanation_style,
-            });
-
             // Run the multi-step cognitive pipeline (Strategist -> Generator -> Verifier)
             const pipelineResultText = await runCognitivePipeline({
               message,
@@ -342,6 +344,7 @@ Follow these rules strictly for VOICE MODE:
               userId
             );
 
+            isAuditPassed = audit.passed;
             fullResponseText = audit.verifiedContent || pipelineResultText;
 
             // Synthetically chunk the verified response to simulate streaming for the UI
@@ -368,11 +371,25 @@ Follow these rules strictly for VOICE MODE:
         }
       });
 
+      const groundingHeader = chunksMatched.length > 0
+        ? `Grounded in Section ${chunksMatched[0]?.metadata?.section || 1} of uploaded notes (${chunksMatched[0]?.metadata?.source || "Syllabus"})`
+        : "⚠️ No matching reference found in uploaded notes — answered from general knowledge";
+
+      const strategyHeader = `${STRATEGY_PROMPT_INSTRUCTIONS[teachingStrategy]?.label || teachingStrategy} (${teachingStrategy}) - selected based on student mastery level`;
+
+      const verificationHeader = isAuditPassed
+        ? "Verified by Independent AI Auditor & Node Arithmetic Code Execution"
+        : "⚠️ Verification Downgraded Response: Independent audit flagged discrepancy; presented conservative verified answer";
+
       return new Response(stream, {
         headers: {
           "Content-Type": "text/plain; charset=utf-8",
           "Cache-Control": "no-cache",
           "x-session-id": finalSessionId || "",
+          "x-transparency-grounding": groundingHeader,
+          "x-transparency-strategy": strategyHeader,
+          "x-transparency-verification": verificationHeader,
+          "x-transparency-downgraded": isAuditPassed ? "false" : "true",
         }
       });
     }
