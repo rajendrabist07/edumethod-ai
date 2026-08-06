@@ -60,9 +60,9 @@ export async function checkUsageLimit(
   
   const limits: Record<UsageTier, Record<ActionType, number>> = {
     standard: {
-      learning_path: 5,
-      doubt_message: 30,
-      quiz: 8,
+      learning_path: 20,
+      doubt_message: 200,
+      quiz: 50,
     },
   };
 

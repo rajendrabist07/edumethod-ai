@@ -27,11 +27,11 @@ export const VISION_FALLBACKS: ModelConfig[] = [
 class CircuitBreaker {
   private state: "CLOSED" | "OPEN" | "HALF-OPEN" = "CLOSED";
   private failureCount = 0;
-  private maxFailures = 3;
-  private cooldownMs = 15000; // 15 seconds
+  private maxFailures = 5;
+  private cooldownMs = 5000; // 5 seconds
   private lastFailureTime = 0;
 
-  constructor(maxFailures = 3, cooldownMs = 15000) {
+  constructor(maxFailures = 5, cooldownMs = 5000) {
     this.maxFailures = maxFailures;
     this.cooldownMs = cooldownMs;
   }
@@ -110,8 +110,8 @@ class AIGateway {
       gemini: new GeminiProvider(),
     };
     this.breakers = {
-      groq: new CircuitBreaker(3, 15000),
-      gemini: new CircuitBreaker(3, 15000),
+      groq: new CircuitBreaker(5, 5000),
+      gemini: new CircuitBreaker(5, 5000),
     };
   }
 
@@ -161,8 +161,8 @@ class AIGateway {
             2,
             500
           ),
-          15000,
-          `AI request to ${config.provider} timed out after 15s`
+          35000,
+          `AI request to ${config.provider} timed out after 35s`
         );
 
         breaker.recordSuccess();
@@ -330,8 +330,8 @@ class AIGateway {
             2,
             500
           ),
-          15000,
-          `AI request to ${config.provider} timed out after 15s`
+          35000,
+          `AI request to ${config.provider} timed out after 35s`
         );
 
         breaker.recordSuccess();
