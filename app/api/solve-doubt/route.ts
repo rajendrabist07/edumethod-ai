@@ -203,19 +203,29 @@ Follow these rules strictly for VOICE MODE:
         const queryEmbedding = await getEmbedding(message);
         const { data: matchedChunks, error: rpcError } = await supabaseAdmin.rpc("match_syllabus_chunks", {
           query_embedding: queryEmbedding,
-          match_threshold: 0.3,
-          match_count: 3,
+          match_threshold: 0.35,
+          match_count: 5,
           filter_learning_path_id: targetLearningPathId
         });
 
         if (!rpcError && matchedChunks && matchedChunks.length > 0) {
           chunksMatched = matchedChunks;
           const contextText = matchedChunks
-            .map((c: any, i: number) => `[Syllabus Context Section ${i + 1}]:\n${c.content}`)
+            .map((c: any, i: number) => {
+              const secNum = c.metadata?.section || i + 1;
+              const sourceLabel = c.metadata?.source || "Syllabus Notes";
+              return `[Section ${secNum} of ${sourceLabel} (Similarity: ${(c.similarity * 100).toFixed(0)}%)]:\n${c.content}`;
+            })
             .join("\n\n");
           
-          finalSystemPrompt = `${finalSystemPrompt}\n\nUse the following verified syllabus context when answering the student's question. Address the student's question directly, citing the context sections where applicable (e.g. [Syllabus Context Section 1]).\n\nVerified Context:\n${contextText}`;
+          finalSystemPrompt = `${finalSystemPrompt}\n\n=== VERIFIED GROUNDING CONTEXT FROM STUDENT'S UPLOADED NOTES ===\n${contextText}\n\nCRITICAL GROUNDING RULES:\n1. Ground your explanation strictly in the student's uploaded notes provided above.\n2. YOU MUST EXPLICITLY CITE the section(s) used in your answer (e.g., "Based on Section ${matchedChunks[0]?.metadata?.section || 1} of your notes..."). This provides proof that your response is grounded in their material.`;
+        } else {
+          // No chunks matched above threshold 0.35
+          finalSystemPrompt = `${finalSystemPrompt}\n\n=== GROUNDING NOTICE: NO MATCHING NOTES FOUND ===\nCRITICAL GROUNDING RULE (NO MATCHING NOTES):\n1. No relevant sections were found in the student's uploaded syllabus/notes above the similarity threshold for this question.\n2. YOU MUST EXPLICITLY STATE THIS HONESTLY to the student right at the beginning of your response.\n3. Start your response with: "⚠️ Note: I searched your uploaded syllabus/notes, but could not find a direct reference to this question."\n4. After stating this notice, you may provide a clear general answer while explicitly clarifying that it is from general knowledge, not their uploaded material.`;
         }
+      } else {
+        // No uploaded material exists for this subject yet
+        finalSystemPrompt = `${finalSystemPrompt}\n\n=== GROUNDING NOTICE: NO MATERIAL UPLOADED ===\nCRITICAL GROUNDING RULE:\n1. The student has not uploaded a syllabus or study notes for this subject yet.\n2. Start your response with: "⚠️ Note: You have not uploaded any syllabus or study notes for this subject yet."\n3. After stating this notice, provide a helpful general answer.`;
       }
     } catch (ragError) {
       console.warn("RAG retrieval failed, falling back to standard AI prompt:", ragError);
@@ -299,7 +309,9 @@ Follow these rules strictly for VOICE MODE:
             const pipelineResultText = await runCognitivePipeline({
               message,
               history,
-              context: chunksMatched.length > 0 ? chunksMatched.map((c: any, i: number) => `[Syllabus Context Section ${i + 1}]:\n${c.content}`).join("\n\n") : "",
+              context: chunksMatched.length > 0
+                ? chunksMatched.map((c: any, i: number) => `[Section ${c.metadata?.section || i + 1} of ${c.metadata?.source || "Syllabus Notes"}]:\n${c.content}`).join("\n\n")
+                : "NO MATCHING NOTES FOUND ABOVE SIMILARITY THRESHOLD",
               userId,
               learnerProfile,
             });

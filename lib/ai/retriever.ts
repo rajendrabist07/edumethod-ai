@@ -48,18 +48,22 @@ export async function runRetriever(
         "match_syllabus_chunks",
         {
           query_embedding: queryEmbedding,
-          match_threshold: 0.3,
-          match_count: 3,
+          match_threshold: 0.35,
+          match_count: 5,
           filter_learning_path_id: targetLearningPathId,
         }
       );
 
       if (!rpcError && matchedChunks && matchedChunks.length > 0) {
-        ragChunks = matchedChunks.map((chunk: any) => ({
-          content: chunk.content,
-          source: chunk.metadata?.source || "Syllabus",
-          topic: chunk.topic || null
-        }));
+        ragChunks = matchedChunks.map((chunk: any, i: number) => {
+          const sec = chunk.metadata?.section || i + 1;
+          const src = chunk.metadata?.source || "Syllabus Notes";
+          return {
+            content: chunk.content,
+            source: `Section ${sec} of ${src}`,
+            topic: chunk.topic || null,
+          };
+        });
         
         // Infer topic from the best matched chunk
         const chunkWithTopic = ragChunks.find(c => c.topic);

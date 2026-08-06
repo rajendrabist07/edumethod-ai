@@ -112,18 +112,22 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      // RAG ingestion pipeline: chunk and embed the raw syllabus
+      // RAG ingestion pipeline: chunk (~500 tokens) and embed the raw syllabus
       try {
-        const chunks = chunkText(rawText, 150, 30);
+        const chunks = chunkText(rawText, 350, 50);
         if (chunks.length > 0) {
           const chunkInserts = await Promise.all(
-            chunks.map(async (content) => {
+            chunks.map(async (content, idx) => {
               const embedding = await getEmbedding(content);
               return {
                 learning_path_id: data.id,
                 user_id: userId,
                 content,
                 embedding,
+                metadata: {
+                  source: validated.data.subject,
+                  section: idx + 1,
+                },
               };
             })
           );

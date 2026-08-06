@@ -4,9 +4,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 /**
  * Splitting text content into overlapping chunks to feed the RAG pgvector pipeline.
- * Uses a word-based boundary window with customizable size and overlap.
+ * Uses a word-based boundary window with customizable size (~500 tokens / 350 words) and overlap (50 words).
  */
-export function chunkText(text: string, chunkSizeWord = 100, overlapWord = 20): string[] {
+export function chunkText(text: string, chunkSizeWord = 350, overlapWord = 50): string[] {
   const words = text.trim().split(/\s+/);
   const chunks: string[] = [];
   
