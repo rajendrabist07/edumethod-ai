@@ -14,6 +14,7 @@ import { useUser } from "@clerk/nextjs";
 import { useLayout } from "@/components/layout/LayoutContext";
 import { Moon, Radio, TriangleAlert, UserRound, Volume2, Zap } from "lucide-react";
 import { TransparencyBadge, TransparencyMeta } from "@/components/ui/TransparencyBadge";
+import { MarkdownRenderer } from "@/components/ui/MarkdownRenderer";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -840,39 +841,11 @@ export default function DoubtSolverPage() {
                                   }`
                             }`}
                           >
-                            {isUser ? (
-                              m.content
-                            ) : (
-                              <ReactMarkdown
-                                remarkPlugins={[remarkMath]}
-                                rehypePlugins={[rehypeKatex]}
-                                components={{
-                                  code({ className, children, ...props }: React.ComponentPropsWithoutRef<"code">) {
-                                    const inline = !className;
-                                    return !inline ? (
-                                      <pre className="bg-slate-50 dark:bg-[#0d0d0d] border border-slate-200 dark:border-white/10 rounded-xl p-3.5 my-3 overflow-x-auto text-[11px] font-mono leading-normal shadow-inner">
-                                        <code className={className} {...props}>
-                                          {children}
-                                        </code>
-                                      </pre>
-                                    ) : (
-                                      <code className="bg-slate-100 dark:bg-white/10 border border-slate-200/60 dark:border-white/10 rounded px-1.5 py-0.5 text-[11px] font-mono tracking-tight" {...props}>
-                                        {children}
-                                      </code>
-                                    );
-                                  },
-                                  ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1.5 marker:text-purple-500">{children}</ul>,
-                                  ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1.5 marker:text-purple-500 marker:font-bold">{children}</ol>,
-                                  li: ({ children }) => <li className="text-[14px] font-medium text-prism-text leading-relaxed tracking-tight">{children}</li>,
-                                  p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed text-[14px] tracking-tight">{children}</p>,
-                                  h1: ({ children }) => <h1 className="text-base font-extrabold mt-5 mb-2.5 uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">{children}</h1>,
-                                  h2: ({ children }) => <h2 className="text-[14px] font-bold mt-4 mb-2 uppercase tracking-widest text-indigo-600 dark:text-indigo-400">{children}</h2>,
-                                  h3: ({ children }) => <h3 className="text-[13px] font-bold mt-3 mb-1 uppercase tracking-widest text-purple-600 dark:text-purple-400">{children}</h3>,
-                                }}
-                              >
-                                {m.content}
-                              </ReactMarkdown>
-                            )}
+                             {isUser ? (
+                               m.content
+                             ) : (
+                               <MarkdownRenderer content={m.content} />
+                             )}
                             {!isUser && m.transparency && (
                               <TransparencyBadge meta={m.transparency} />
                             )}

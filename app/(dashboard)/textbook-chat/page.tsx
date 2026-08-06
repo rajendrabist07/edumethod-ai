@@ -10,6 +10,7 @@ import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { toast } from "sonner";
+import { MarkdownRenderer } from "@/components/ui/MarkdownRenderer";
 
 interface LearningPath {
   id: string;
@@ -246,16 +247,11 @@ export default function TextbookChatPage() {
                             : "bg-white/5 border-prism-border text-prism-text rounded-tl-none"
                         }`}
                       >
-                        <ReactMarkdown
-                          remarkPlugins={[remarkMath]}
-                          rehypePlugins={[rehypeKatex]}
-                          components={{
-                            p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                            code: ({ children }) => <code className="bg-black/40 px-1 py-0.5 rounded text-prism-accent font-mono text-[10px]">{children}</code>
-                          }}
-                        >
-                          {msg.content}
-                        </ReactMarkdown>
+                        {isUser ? (
+                          msg.content
+                        ) : (
+                          <MarkdownRenderer content={msg.content} />
+                        )}
                       </div>
                     </div>
                   );
