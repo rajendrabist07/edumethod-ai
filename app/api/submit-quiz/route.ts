@@ -3,7 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { recordQuizSubmission } from "@/lib/learner-profile";
+import { recordQuizSubmission, getOrCreateLearnerProfile } from "@/lib/learner-profile";
+import { determineTeachingStrategy } from "@/lib/ai/adaptive-strategy";
+import { logQuizOutcome } from "@/lib/flywheel";
 
 const requestSchema = z.object({
   quizId: z.string().uuid(),
@@ -54,6 +56,11 @@ export async function POST(req: NextRequest) {
   let correctCount = 0;
   const weakTopics: Record<string, { correct: number; total: number }> = {};
 
+  // Fetch learner profile to evaluate strategy used for each topic
+  const profile = await getOrCreateLearnerProfile(userId);
+  const masteryMap = profile.mastery_scores || {};
+  const mistakes = profile.recent_mistakes || [];
+
   questions.forEach((q, i) => {
     const isCorrect = answers[i] === q.correctIndex;
     if (isCorrect) correctCount++;
@@ -61,6 +68,24 @@ export async function POST(req: NextRequest) {
     if (!weakTopics[q.topic]) weakTopics[q.topic] = { correct: 0, total: 0 };
     weakTopics[q.topic].total++;
     if (isCorrect) weakTopics[q.topic].correct++;
+
+    const topicMistakesCount = mistakes.filter((m) => m.topic.toLowerCase() === q.topic.toLowerCase()).length;
+    const strategyUsed = determineTeachingStrategy({
+      masteryScore: masteryMap[q.topic] ?? null,
+      recentMistakesCount: topicMistakesCount,
+      topic: q.topic,
+      userPreference: profile.preferred_explanation_style,
+    });
+
+    void logQuizOutcome({
+      userId,
+      quizId,
+      questionIndex: i,
+      topic: q.topic,
+      strategyUsed,
+      isCorrect,
+      timeTakenSeconds: 15, // Default average estimate per question
+    });
   });
 
   const weakTopicNames = Object.entries(weakTopics)
