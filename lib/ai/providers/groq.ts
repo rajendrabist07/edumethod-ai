@@ -1,16 +1,23 @@
-import { groq } from "@/lib/groq";
+import Groq from "groq-sdk";
 import { AIProvider, ChatOptions, VisionOptions, ProviderResult } from "./provider-interface";
+
+function getGroqClient(): Groq {
+  return new Groq({
+    apiKey: process.env.GROQ_API_KEY || "",
+  });
+}
 
 export class GroqProvider implements AIProvider {
   name = "groq";
 
   async chat(options: ChatOptions, model: string): Promise<ProviderResult> {
-    const response = await groq.chat.completions.create({
+    const groqClient = getGroqClient();
+    const response = await groqClient.chat.completions.create({
       model,
       messages: options.messages,
       response_format: options.jsonMode ? { type: "json_object" } : undefined,
       temperature: options.temperature,
-      max_completion_tokens: options.maxTokens, // Groq uses max_completion_tokens or max_tokens
+      max_completion_tokens: options.maxTokens,
     });
 
     const text = response.choices[0]?.message?.content || "";
@@ -26,7 +33,8 @@ export class GroqProvider implements AIProvider {
     model: string,
     onChunk: (text: string) => void
   ): Promise<ProviderResult> {
-    const stream = await groq.chat.completions.create({
+    const groqClient = getGroqClient();
+    const stream = await groqClient.chat.completions.create({
       model,
       messages: options.messages,
       response_format: options.jsonMode ? { type: "json_object" } : undefined,
@@ -77,7 +85,8 @@ export class GroqProvider implements AIProvider {
       },
     ];
 
-    const response = await groq.chat.completions.create({
+    const groqClient = getGroqClient();
+    const response = await groqClient.chat.completions.create({
       model,
       messages,
     });
@@ -111,7 +120,8 @@ export class GroqProvider implements AIProvider {
       },
     ];
 
-    const stream = await groq.chat.completions.create({
+    const groqClient = getGroqClient();
+    const stream = await groqClient.chat.completions.create({
       model,
       messages,
       stream: true,

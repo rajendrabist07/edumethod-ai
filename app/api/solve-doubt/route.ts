@@ -380,13 +380,13 @@ Follow these rules strictly for VOICE MODE:
 
       const groundingHeader = chunksMatched.length > 0
         ? `Grounded in Section ${chunksMatched[0]?.metadata?.section || 1} of uploaded notes (${chunksMatched[0]?.metadata?.source || "Syllabus"})`
-        : "⚠️ No matching reference found in uploaded notes — answered from general knowledge";
+        : "No matching reference found in uploaded notes - answered from general knowledge";
 
       const strategyHeader = `${STRATEGY_PROMPT_INSTRUCTIONS[teachingStrategy]?.label || teachingStrategy} (${teachingStrategy}) - selected based on student mastery level`;
 
       const verificationHeader = isAuditPassed
         ? "Verified by Independent AI Auditor & Node Arithmetic Code Execution"
-        : "⚠️ Verification Downgraded Response: Independent audit flagged discrepancy; presented conservative verified answer";
+        : "Verification Downgraded Response: Independent audit flagged discrepancy; presented conservative verified answer";
 
       return new Response(stream, {
         headers: {
