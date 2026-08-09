@@ -23,24 +23,26 @@ export async function GET(req: NextRequest) {
     // This forms a defense-in-depth layer along with Supabase RLS policies
     // to guarantee one user can NEVER see another user's database records.
 
-    // 1. Fetch learning paths (lightweight columns)
+    // 1. Fetch learning paths (lightweight columns, capped at 50 recent items)
     const { data: paths, error: pathError } = await supabaseAdmin
       .from("learning_paths")
       .select("id, subject, created_at")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(50);
 
     if (pathError) {
       console.error("Error querying learning paths history:", pathError);
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
-    // 2. Fetch doubt solver sessions (lightweight columns)
+    // 2. Fetch doubt solver sessions (lightweight columns, capped at 50 recent items)
     const { data: sessions, error: sessionError } = await supabaseAdmin
       .from("doubt_sessions")
       .select("id, created_at, messages")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(50);
 
     if (sessionError) {
       console.error("Error querying doubt sessions history:", sessionError);
