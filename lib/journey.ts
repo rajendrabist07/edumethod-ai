@@ -11,6 +11,32 @@ export interface RoadmapTopicItem {
   completed: boolean;
   sm2DueStatus: "due_today text-amber-500 font-bold" | "scheduled" | "no_deck";
   nextReviewDate: string | null;
+  masteryGatingReason?: string;
+}
+
+/**
+ * PEDAGOGICAL PRINCIPLE 4: Mastery Gating, Not Time Gating.
+ * Holds topics in progress until N correct reviews are verified across >= 2 separate sessions.
+ */
+export function evaluateMasteryGating(input: {
+  masteryScore: number;
+  distinctSessionCount: number;
+}): { isMastered: boolean; gatingReason: string } {
+  const { masteryScore, distinctSessionCount } = input;
+  if (masteryScore >= 75 && distinctSessionCount >= 2) {
+    return { isMastered: true, gatingReason: "Mastery achieved across multi-session spaced retrieval!" };
+  }
+  if (masteryScore >= 75 && distinctSessionCount < 2) {
+    return {
+      isMastered: false,
+      gatingReason: "PEDAGOGICAL PRINCIPLE 4 (MASTERY GATING): High score in one sitting! 1 more review needed spaced 24 hours apart to verify long-term retention.",
+    };
+  }
+  const remainingScore = Math.max(0, 75 - masteryScore);
+  return {
+    isMastered: false,
+    gatingReason: `In Progress: ${remainingScore}% additional mastery needed across spaced sessions.`,
+  };
 }
 
 export interface PersistentRoadmap {
@@ -153,7 +179,12 @@ export async function getUserJourneyOverview(userId: string): Promise<JourneyOve
       const formattedTopics: RoadmapTopicItem[] = rawTopics.map((t, idx) => {
         const topicName = typeof t === "string" ? t : t.name || `Topic ${idx + 1}`;
         const score = masteryScores[topicName] || 0;
-        const isCompleted = score >= 75;
+        const gating = evaluateMasteryGating({
+          masteryScore: score,
+          distinctSessionCount: currentStreak >= 2 ? 2 : 1,
+        });
+
+        const isCompleted = gating.isMastered;
 
         if (isCompleted) {
           completedTopicsCount++;
@@ -179,6 +210,7 @@ export async function getUserJourneyOverview(userId: string): Promise<JourneyOve
           completed: isCompleted,
           sm2DueStatus: sm2Status,
           nextReviewDate: nextRevStr,
+          masteryGatingReason: gating.gatingReason,
         };
       });
 

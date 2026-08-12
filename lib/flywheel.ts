@@ -9,6 +9,10 @@ export interface QuizOutcomeLogInput {
   strategyUsed: AdaptiveTeachingStrategy;
   isCorrect: boolean;
   timeTakenSeconds?: number;
+  confidenceLevel?: "low" | "medium" | "high" | number;
+  chosenOptionText?: string;
+  correctOptionText?: string;
+  misconceptionExplanation?: string;
 }
 
 export interface StrategyPerformanceMetric {
@@ -28,10 +32,85 @@ export interface TopicStrategyBreakdown {
   sampleSize: number;
 }
 
+export interface ConfidenceCalibrationMetric {
+  totalOutcomes: number;
+  calibratedPercentage: number;
+  overconfidenceRatePercentage: number;
+  underconfidenceRatePercentage: number;
+  metacognitiveDiagnosis: "Well Calibrated" | "Illusion of Competence (Overconfident)" | "Underconfident" | "Building Metacognition";
+}
+
 export interface FlywheelMetrics {
   totalOutcomesTracked: number;
   strategyPerformance: StrategyPerformanceMetric[];
   topicStrategyBreakdown: TopicStrategyBreakdown[];
+  calibration?: ConfidenceCalibrationMetric;
+}
+
+/**
+ * Calculates metacognitive confidence calibration metrics from user attempts.
+ */
+export function calculateConfidenceCalibration(
+  logs: Array<{
+    is_correct: boolean;
+    confidence_level?: string | number;
+  }>
+): ConfidenceCalibrationMetric {
+  if (!logs || logs.length === 0) {
+    return {
+      totalOutcomes: 0,
+      calibratedPercentage: 100,
+      overconfidenceRatePercentage: 0,
+      underconfidenceRatePercentage: 0,
+      metacognitiveDiagnosis: "Building Metacognition",
+    };
+  }
+
+  let calibratedCount = 0;
+  let overconfidentCount = 0;
+  let underconfidentCount = 0;
+  let totalWithConfidence = 0;
+
+  for (const log of logs) {
+    if (log.confidence_level === undefined || log.confidence_level === null) continue;
+    totalWithConfidence++;
+
+    const isHighConf = log.confidence_level === "high" || log.confidence_level === 4 || log.confidence_level === 5;
+    const isLowConf = log.confidence_level === "low" || log.confidence_level === 1 || log.confidence_level === 2;
+
+    if ((isHighConf && log.is_correct) || (isLowConf && !log.is_correct)) {
+      calibratedCount++;
+    } else if (isHighConf && !log.is_correct) {
+      // Illusion of Competence!
+      overconfidentCount++;
+    } else if (isLowConf && log.is_correct) {
+      underconfidentCount++;
+    } else {
+      calibratedCount++;
+    }
+  }
+
+  const total = totalWithConfidence || logs.length;
+  const calibratedPct = Math.round((calibratedCount / total) * 100);
+  const overconfPct = Math.round((overconfidentCount / total) * 100);
+  const underconfPct = Math.round((underconfidentCount / total) * 100);
+
+  let diagnosis: ConfidenceCalibrationMetric["metacognitiveDiagnosis"] = "Well Calibrated";
+  if (overconfPct >= 30) {
+    diagnosis = "Illusion of Competence (Overconfident)";
+  } else if (underconfPct >= 30) {
+    diagnosis = "Underconfident";
+  } else if (total < 3) {
+    diagnosis = "Building Metacognition";
+  }
+
+  return {
+    totalOutcomes: total,
+    calibratedPercentage: calibratedPct,
+    overconfidenceRatePercentage: overconfPct,
+    underconfidenceRatePercentage: underconfPct,
+    metacognitiveDiagnosis: diagnosis,
+  };
 }
 
 /**
@@ -47,6 +126,7 @@ export async function logQuizOutcome(input: QuizOutcomeLogInput): Promise<void> 
       strategy_used: input.strategyUsed,
       is_correct: input.isCorrect,
       time_taken_seconds: input.timeTakenSeconds || 0,
+      confidence_level: String(input.confidenceLevel || "medium"),
       created_at: new Date().toISOString(),
     });
   } catch (err) {
@@ -121,7 +201,7 @@ export async function getOutcomeFlywheelMetrics(userId?: string): Promise<Flywhe
   try {
     let query = supabaseAdmin
       .from("quiz_outcome_logs")
-      .select("strategy_used, is_correct, time_taken_seconds, topic");
+      .select("strategy_used, is_correct, time_taken_seconds, topic, confidence_level");
 
     if (userId) {
       query = query.eq("user_id", userId);
@@ -145,10 +225,12 @@ export async function getOutcomeFlywheelMetrics(userId?: string): Promise<Flywhe
         totalOutcomesTracked: 0,
         strategyPerformance: emptyPerformance,
         topicStrategyBreakdown: [],
+        calibration: calculateConfidenceCalibration([]),
       };
     }
 
     const { totalCount, performance } = calculateStrategyMetrics(logs);
+    const calibrationMetrics = calculateConfidenceCalibration(logs);
 
     // Group by topic to find the best strategy per topic
     const topicGroupMap = new Map<
@@ -201,6 +283,7 @@ export async function getOutcomeFlywheelMetrics(userId?: string): Promise<Flywhe
       totalOutcomesTracked: totalCount,
       strategyPerformance: performance,
       topicStrategyBreakdown: topicBreakdown.slice(0, 6),
+      calibration: calibrationMetrics,
     };
   } catch (err) {
     console.error("Error retrieving flywheel metrics:", err);

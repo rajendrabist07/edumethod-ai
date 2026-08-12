@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { interleaveStudyItems } from "@/lib/spaced-repetition";
 
 type DynamicParams = {
   params: Promise<{ deckId: string }>;
@@ -50,7 +51,10 @@ export async function GET(req: NextRequest, { params }: DynamicParams) {
       repetitions: card.repetitions,
       nextReviewDate: card.next_review_date,
       isDue: new Date(card.next_review_date) <= now,
+      topic: card.topic || deck.topic || deck.subject,
     }));
+
+    const interleavedCards = interleaveStudyItems(formattedCards);
 
     return NextResponse.json({
       deck: {
@@ -59,7 +63,7 @@ export async function GET(req: NextRequest, { params }: DynamicParams) {
         topic: deck.topic,
         createdAt: deck.created_at,
       },
-      cards: formattedCards,
+      cards: interleavedCards,
     });
   } catch (error) {
     console.error("Single deck API error:", error);

@@ -4,11 +4,30 @@
 ![Next.js 16](https://img.shields.io/badge/Next.js-16.2-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Supabase](https://img.shields.io/badge/Supabase-pgvector-emerald?style=flat-square&logo=supabase)
-![Vitest](https://img.shields.io/badge/Tests-39%20Passed-brightgreen?style=flat-square&logo=vitest)
+![Vitest](https://img.shields.io/badge/Tests-50%20Passed-brightgreen?style=flat-square&logo=vitest)
 
-**EduMethod AI** is a production-oriented, AI-powered learning workspace designed to outclass generic chat interfaces through **structured memory**, **RAG grounding on student materials**, **independent verification**, **adaptive teaching strategies**, **spaced repetition roadmaps**, **system transparency**, and an **empirical outcome data flywheel**.
+**EduMethod AI** is a production-oriented learning workspace built on cognitive learning science principles (**The Pedagogical Core**), structured memory, RAG grounding, multi-provider AI failover, independent verification, and outcome analytics.
 
-Unlike stateless chat windows that reset every session, EduMethod AI remembers each student's mastery profile, verifies AI outputs before displaying them, executes arithmetic via sandboxed code, and continually tracks which teaching strategy delivers the highest correctness rate per topic.
+Unlike general AI assistants that simply give away answers immediately, EduMethod AI enforces **struggle before solution**, **retrieval before review**, **confidence calibration**, **multi-session mastery gating**, **interleaved practice**, and **misconception-aware corrections** — creating a system built specifically for how people actually learn.
+
+---
+
+## 🎓 The Pedagogical Core (6 Learning Science Principles)
+
+EduMethod AI embeds 6 default learning-science constraints across the platform:
+
+1. **🧩 Struggle Before Solution (`lib/ai/adaptive-strategy.ts`)**:
+   Fresh doubt threads default to Socratic scaffolding (guiding questions/hints) rather than direct answers, unless the student explicitly surrenders (*"just tell me"*) or attempt count reaches $\ge 2$.
+2. **🧠 Retrieval Before Review (`lib/spaced-repetition.ts`)**:
+   Flashcard and topic reviews require an active text recall attempt before the answer is revealed.
+3. **🎯 Confidence Calibration (`lib/flywheel.ts`)**:
+   Students rate confidence before revealing quiz answers. The system calculates a metacognitive calibration score and flags overconfidence (*Illusion of Competence*).
+4. **🔒 Mastery Gating Across Multi-Session Spacing (`lib/journey.ts`)**:
+   Topics require $\ge 2$ correct retrievals across at least 2 separate sessions (spaced 24 hours apart) before being marked as mastered.
+5. **🔀 Interleaved Practice (`lib/spaced-repetition.ts`)**:
+   Review sessions interleave items across multiple active topics rather than drilling in single-topic blocks.
+6. **❌ Misconception-Aware Correction (`app/api/submit-quiz/route.ts`)**:
+   Wrong quiz submissions generate targeted explanations diagnosing the specific misconception behind the chosen wrong answer.
 
 ---
 

@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { calculateSM2, mapRatingToQuality } from "@/lib/spaced-repetition";
+import { calculateSM2, mapRatingToQuality, verifyRetrievalBeforeReview } from "@/lib/spaced-repetition";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { recordFlashcardReview } from "@/lib/learner-profile";
 
 const reviewSchema = z.object({
   cardId: z.string().uuid(),
   rating: z.enum(["again", "hard", "good", "easy"]),
+  recalledText: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid request payload" }, { status: 400 });
     }
 
-    const { cardId, rating } = parsed.data;
+    const { cardId, rating, recalledText } = parsed.data;
 
     // Fetch the flashcard from database
     const { data: card, error: cardError } = await supabaseAdmin
@@ -46,6 +47,12 @@ export async function POST(req: NextRequest) {
     if (cardError || !card) {
       return NextResponse.json({ error: "Flashcard not found" }, { status: 404 });
     }
+
+    // PEDAGOGICAL PRINCIPLE 2: Retrieval Before Review
+    const retrievalResult = verifyRetrievalBeforeReview({
+      recalledText,
+      cardAnswer: card.back,
+    });
 
     // Map user rating string to SM-2 quality score
     const quality = mapRatingToQuality(rating);
@@ -83,6 +90,7 @@ export async function POST(req: NextRequest) {
       nextReviewDate: nextReviewDate.toISOString(),
       interval,
       repetitions,
+      retrievalBeforeReview: retrievalResult,
     });
   } catch (error) {
     console.error("Flashcard review API error:", error);

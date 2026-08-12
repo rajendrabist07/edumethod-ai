@@ -10,6 +10,7 @@ import { logQuizOutcome } from "@/lib/flywheel";
 const requestSchema = z.object({
   quizId: z.string().uuid(),
   answers: z.array(z.number()),
+  confidenceLevels: z.array(z.union([z.enum(["low", "medium", "high"]), z.number()])).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 
-  const { quizId, answers } = parsed.data;
+  const { quizId, answers, confidenceLevels } = parsed.data;
 
   const { data: quiz, error: fetchError } = await supabaseAdmin
     .from("quizzes")
@@ -55,6 +56,12 @@ export async function POST(req: NextRequest) {
 
   let correctCount = 0;
   const weakTopics: Record<string, { correct: number; total: number }> = {};
+  const misconceptions: Array<{
+    questionIndex: number;
+    chosenOption: string;
+    correctOption: string;
+    misconceptionExplanation: string;
+  }> = [];
 
   // Fetch learner profile to evaluate strategy used for each topic
   const profile = await getOrCreateLearnerProfile(userId);
@@ -69,6 +76,21 @@ export async function POST(req: NextRequest) {
     weakTopics[q.topic].total++;
     if (isCorrect) weakTopics[q.topic].correct++;
 
+    let misconceptionExplanation: string | undefined;
+
+    if (!isCorrect) {
+      const chosenText = q.options[answers[i]] || `Option ${answers[i]}`;
+      const correctText = q.options[q.correctIndex] || `Option ${q.correctIndex}`;
+      misconceptionExplanation = `PEDAGOGICAL PRINCIPLE 6 (MISCONCEPTION-AWARE CORRECTION): You chose '${chosenText}', which represents a plausible misconception in ${q.topic}. The correct principle is '${correctText}'. Make sure to distinguish between these two concepts.`;
+
+      misconceptions.push({
+        questionIndex: i,
+        chosenOption: chosenText,
+        correctOption: correctText,
+        misconceptionExplanation,
+      });
+    }
+
     const topicMistakesCount = mistakes.filter((m) => m.topic.toLowerCase() === q.topic.toLowerCase()).length;
     const strategyUsed = determineTeachingStrategy({
       masteryScore: masteryMap[q.topic] ?? null,
@@ -77,6 +99,8 @@ export async function POST(req: NextRequest) {
       userPreference: profile.preferred_explanation_style,
     });
 
+    const userConfidence = confidenceLevels?.[i] || "medium";
+
     void logQuizOutcome({
       userId,
       quizId,
@@ -84,7 +108,11 @@ export async function POST(req: NextRequest) {
       topic: q.topic,
       strategyUsed,
       isCorrect,
-      timeTakenSeconds: 15, // Default average estimate per question
+      timeTakenSeconds: 15,
+      confidenceLevel: userConfidence,
+      chosenOptionText: q.options[answers[i]],
+      correctOptionText: q.options[q.correctIndex],
+      misconceptionExplanation,
     });
   });
 
@@ -99,5 +127,6 @@ export async function POST(req: NextRequest) {
     score: correctCount,
     totalQuestions: questions.length,
     weakTopics: weakTopicNames,
+    misconceptionCorrections: misconceptions,
   });
 }

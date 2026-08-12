@@ -93,3 +93,79 @@ export function calculateMasteryScore(avgRepetitions: number, avgEaseFactor: num
   return Math.min(Math.max(Math.round(rawMastery), 0), 100);
 }
 
+/**
+ * PEDAGOGICAL PRINCIPLE 5: Interleaved, Not Blocked, Practice.
+ * Round-robin merges study/flashcard items across multiple active topics
+ * to maximize long-term retention over blocked practice.
+ */
+export function interleaveStudyItems<T extends { topic?: string; subject?: string }>(items: T[]): T[] {
+  if (!items || items.length <= 1) return items;
+
+  // Group items by topic/subject key
+  const topicMap = new Map<string, T[]>();
+  items.forEach((item) => {
+    const key = (item.topic || item.subject || "General").trim().toLowerCase();
+    if (!topicMap.has(key)) {
+      topicMap.set(key, []);
+    }
+    topicMap.get(key)!.push(item);
+  });
+
+  // If only 1 active topic, return original items
+  if (topicMap.size <= 1) return items;
+
+  const topicArrays = Array.from(topicMap.values());
+  const interleaved: T[] = [];
+  let maxLen = 0;
+  topicArrays.forEach((arr) => {
+    if (arr.length > maxLen) maxLen = arr.length;
+  });
+
+  for (let i = 0; i < maxLen; i++) {
+    for (const arr of topicArrays) {
+      if (i < arr.length) {
+        interleaved.push(arr[i]);
+      }
+    }
+  }
+
+  return interleaved;
+}
+
+/**
+ * PEDAGOGICAL PRINCIPLE 2: Retrieval Before Review.
+ * Evaluates active text recall input prior to revealing card/answer details.
+ */
+export function verifyRetrievalBeforeReview(input: {
+  recalledText?: string;
+  cardAnswer: string;
+}): { attempted: boolean; similarityScore: number; passed: boolean } {
+  const { recalledText, cardAnswer } = input;
+  if (!recalledText || recalledText.trim().length === 0) {
+    return { attempted: false, similarityScore: 0, passed: false };
+  }
+
+  const cleanRecall = recalledText.trim().toLowerCase();
+  const cleanAnswer = cardAnswer.trim().toLowerCase();
+
+  // Simple token overlap metric for active recall
+  const recallTokens = new Set(cleanRecall.split(/\s+/).filter((w) => w.length > 2));
+  const answerTokens = cleanAnswer.split(/\s+/).filter((w) => w.length > 2);
+
+  if (answerTokens.length === 0) {
+    return { attempted: true, similarityScore: 100, passed: true };
+  }
+
+  let matches = 0;
+  answerTokens.forEach((token) => {
+    if (recallTokens.has(token)) matches++;
+  });
+
+  const score = Math.round((matches / answerTokens.length) * 100);
+  return {
+    attempted: true,
+    similarityScore: score,
+    passed: score >= 40 || cleanAnswer.includes(cleanRecall) || cleanRecall.includes(cleanAnswer),
+  };
+}
+

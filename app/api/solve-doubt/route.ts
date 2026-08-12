@@ -329,11 +329,15 @@ Follow these rules strictly for VOICE MODE:
         ? learnerProfile.recent_mistakes.filter((m) => m?.topic?.toLowerCase() === detectedSubject?.toLowerCase()).length
         : learnerProfile?.recent_mistakes?.length || 0;
 
+      const attemptCount = (history.filter((m: any) => m.role === "user").length || 0) + 1;
+
       const teachingStrategy: AdaptiveTeachingStrategy = determineTeachingStrategy({
         masteryScore: masteryForSubject,
         recentMistakesCount: mistakesForSubject,
         topic: detectedSubject,
         userPreference: socratic ? "socratic" : learnerProfile?.preferred_explanation_style,
+        attemptCount,
+        message,
       });
 
       let isAuditPassed = true;
