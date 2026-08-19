@@ -21,7 +21,7 @@ export function StatBadge({ label, value, icon, variant = "default", className =
     <div className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md ${variants[variant]} ${className}`}>
       {icon && <span className="shrink-0">{icon}</span>}
       <span className="opacity-80">{label}</span>
-      <strong className="font-mono font-bold tracking-tight">{value}</strong>
+      {value ? <strong className="font-mono font-bold tracking-tight">{value}</strong> : null}
     </div>
   );
 }
