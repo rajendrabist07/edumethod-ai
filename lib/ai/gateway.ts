@@ -14,12 +14,12 @@ export interface ModelConfig {
 export const TEXT_FALLBACKS: ModelConfig[] = [
   { provider: "groq", model: "llama-3.3-70b-versatile" },
   { provider: "groq", model: "llama-3.1-8b-instant" },
-  { provider: "gemini", model: "gemini-2.0-flash" },
+  { provider: "gemini", model: "gemini-2.5-flash" },
   { provider: "gemini", model: "gemini-1.5-flash" },
 ];
 
 export const VISION_FALLBACKS: ModelConfig[] = [
-  { provider: "gemini", model: "gemini-2.0-flash" },
+  { provider: "gemini", model: "gemini-2.5-flash" },
   { provider: "gemini", model: "gemini-1.5-flash" },
   { provider: "groq", model: "llama-3.2-11b-vision-preview" },
 ];

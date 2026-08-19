@@ -63,7 +63,8 @@ export async function runCognitivePipeline({
     [
       { provider: "groq", model: "llama-3.1-8b-instant" },
       { provider: "groq", model: "llama-3.3-70b-versatile" },
-      { provider: "gemini", model: "gemini-2.0-flash" },
+      { provider: "gemini", model: "gemini-2.5-flash" },
+      { provider: "gemini", model: "gemini-1.5-flash" },
     ]
   );
 
@@ -103,7 +104,8 @@ ${strategyDetails.promptInstruction}\n\nAddress any known student misconceptions
     [
       { provider: "groq", model: "llama-3.3-70b-versatile" },
       { provider: "groq", model: "llama-3.1-8b-instant" },
-      { provider: "gemini", model: "gemini-2.0-flash" },
+      { provider: "gemini", model: "gemini-2.5-flash" },
+      { provider: "gemini", model: "gemini-1.5-flash" },
     ]
   );
 
@@ -129,7 +131,8 @@ ${strategyDetails.promptInstruction}\n\nAddress any known student misconceptions
     [
       { provider: "groq", model: "llama-3.1-8b-instant" },
       { provider: "groq", model: "llama-3.3-70b-versatile" },
-      { provider: "gemini", model: "gemini-2.0-flash" },
+      { provider: "gemini", model: "gemini-2.5-flash" },
+      { provider: "gemini", model: "gemini-1.5-flash" },
     ]
   );
 
@@ -163,7 +166,8 @@ ${strategyDetails.promptInstruction}\n\nAddress any known student misconceptions
       [
         { provider: "groq", model: "llama-3.3-70b-versatile" },
         { provider: "groq", model: "llama-3.1-8b-instant" },
-        { provider: "gemini", model: "gemini-2.0-flash" },
+        { provider: "gemini", model: "gemini-2.5-flash" },
+      { provider: "gemini", model: "gemini-1.5-flash" },
       ]
     );
     return retryResult.text || generatedResponse;
