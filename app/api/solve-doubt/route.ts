@@ -308,18 +308,6 @@ Follow these rules strictly for VOICE MODE:
         }
       });
     } else {
-      const messagesToSend = [
-        {
-          role: "system" as const,
-          content: finalSystemPrompt,
-        },
-        ...history.map((m: { role: "user" | "assistant"; content: string }) => ({
-          role: m.role,
-          content: m.content,
-        })),
-        { role: "user" as const, content: message },
-      ];
-
       // Determine optimal teaching strategy deterministically based on learner profile
       const masteryForSubject = detectedSubject && learnerProfile?.mastery_scores
         ? learnerProfile.mastery_scores[detectedSubject] ?? null

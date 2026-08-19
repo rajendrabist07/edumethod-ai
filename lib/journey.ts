@@ -90,7 +90,7 @@ export function calculateStreak(activityDates: (string | Date)[]): number {
   }
 
   let streak = 0;
-  let checkDate = dateStrings.includes(todayStr) ? new Date() : yesterdayObj;
+  const checkDate = dateStrings.includes(todayStr) ? new Date() : yesterdayObj;
 
   while (true) {
     const checkStr = checkDate.toISOString().split("T")[0];
